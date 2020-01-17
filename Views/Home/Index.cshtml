@@ -1,5 +1,4 @@
-﻿@model FinalWork_BD_Test.Models.Thesis
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -13,15 +12,5 @@
 else
 {
 <div class="text-center">
-    @using (Html.BeginForm("Thesis", "Home", FormMethod.Post))
-    {
-        @Html.LabelFor(model => model.Topic)
-        @Html.TextBoxFor(model => model.Topic)
-        <br />
-        @Html.LabelFor(model => model.Teacher)
-        @Html.TextBoxFor(model => model.Teacher)
-        <br />
-        <input type="submit" value="Отправить" />
-    }
 </div>
 }

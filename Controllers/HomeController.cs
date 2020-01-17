@@ -41,13 +41,5 @@ namespace FinalWork_BD_Test.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpPost]
-        public async Task<string> Thesis(Thesis thesis)
-        {
-            _context.Add(thesis);
-            await _context.SaveChangesAsync();
-
-            return thesis.Topic;
-        }
     }
 }
