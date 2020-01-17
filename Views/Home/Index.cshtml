@@ -1,8 +1,27 @@
-﻿@{
+﻿@model FinalWork_BD_Test.Models.Thesis
+@{
     ViewData["Title"] = "Home Page";
 }
 
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="text-lg-center">
+        <a href="https://localhost:44342/Identity/Account/Login">Вход</a>
+        <a href="https://localhost:44342/Identity/Account/Register">Регистрация</a>
+    </div>
+}
+else
+{
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @using (Html.BeginForm("Thesis", "Home", FormMethod.Post))
+    {
+        @Html.LabelFor(model => model.Topic)
+        @Html.TextBoxFor(model => model.Topic)
+        <br />
+        @Html.LabelFor(model => model.Teacher)
+        @Html.TextBoxFor(model => model.Teacher)
+        <br />
+        <input type="submit" value="Отправить" />
+    }
 </div>
+}
