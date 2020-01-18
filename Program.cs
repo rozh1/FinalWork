@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Migrations;
+using FinalWork_BD_Test.Data.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,12 +19,11 @@ namespace FinalWork_BD_Test
     {
         public static void Main(string[] args)
         {
-            //CreateHostBuilder(args).Build().Run();
-            // TD: добавить миграию бд
             var host = CreateHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+
                 var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
                 context.Database.Migrate();
                 TestSeed.Seed(context);
