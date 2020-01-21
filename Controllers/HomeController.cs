@@ -45,6 +45,23 @@ namespace FinalWork_BD_Test.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        [Authorize]
+        public async Task<IActionResult> RegisterTopic()
+        {
+            var curUser = await _userManager.GetUserAsync(this.User);
+            var search = from topic in _context.Topics
+                                            where topic.UpdatedBy == curUser.Id
+                                            select topic;
+            int searchResult = search.ToList().Count;
+
+            if (searchResult != 0)
+                ViewBag.Registered = true;
+            else
+                ViewBag.Registered = false;
+
+            return View();
+        }
+
         /// <summary>
         /// Регситрация тем
         /// </summary>
@@ -63,6 +80,12 @@ namespace FinalWork_BD_Test.Controllers
             // добавляем запись в БД и сохраняем изменения
             _context.Topics.Add(topic);
             await _context.SaveChangesAsync();
+        }
+
+        [Authorize]
+        public IActionResult UpdateTopic()
+        {
+            return View();
         }
 
         /// <summary>

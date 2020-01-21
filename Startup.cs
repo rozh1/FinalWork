@@ -30,13 +30,8 @@ namespace FinalWork_BD_Test
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-            //
-            /*services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<ApplicationDbContext>();*/
-            //--------
             services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI();
-            //
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

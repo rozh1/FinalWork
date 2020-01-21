@@ -22,6 +22,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+	                    @if (User.Identity.IsAuthenticated)
+	                    {
+		                    <li class="nav-item dropdown">
+			                    <a class="nav-link text-dark dropdown-toggle">ВКР</a>
+			                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				                    <a class="dropdown-item" asp-controller="Home" asp-action="RegisterTopic">Зарегистрировать</a>
+				                    <a class="dropdown-item" asp-controller="Home" asp-action="UpdateTopic">Редактировать</a>
+			                    </div>
+		                    </li>
+	                    }
                     </ul>
                 </div>
             </div>

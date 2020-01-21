@@ -1,0 +1,13 @@
+﻿@model FinalWork_BD_Test.Data.Models.Topic
+@if (!ViewBag.Registered)
+{
+	<form id="Topic" method="post" asp-controller="Home" asp-action="RegisterTopic">
+	Html.DisplayNameFor(m => m.Title);
+	Html.TextBoxFor(m => m.Title);
+	<button type="submit" class="btn btn-primary">Log in</button>
+	</form>
+}
+else
+{
+	<h2>Вы уже зарегистрировали тему</h2>
+}
