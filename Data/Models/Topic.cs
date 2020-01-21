@@ -17,6 +17,12 @@ namespace FinalWork_BD_Test.Data.Models
         public string Title { get; set; }
 
         [HiddenInput]
+        public Guid AuthorId { get; set; }
+
+        [ForeignKey("AuthorId")]
+        public virtual User Author { get; set; }
+
+        [HiddenInput]
         public Guid? SuperVisorId { get; set; }
 
         [ForeignKey("SuperVisorId")]

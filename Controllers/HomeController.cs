@@ -45,74 +45,48 @@ namespace FinalWork_BD_Test.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        /// <summary>
+        /// Страница добавления и редактирования тем
+        /// </summary>
+        /// <returns> Возвращает представление </returns>
+        [HttpGet]
         [Authorize]
-        public async Task<IActionResult> RegisterTopic()
+        public IActionResult Topic()
         {
-            var curUser = await _userManager.GetUserAsync(this.User);
-            var search = from topic in _context.Topics
-                                            where topic.UpdatedBy == curUser.Id
-                                            select topic;
-            int searchResult = search.ToList().Count;
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
 
-            if (searchResult != 0)
-                ViewBag.Registered = true;
+            // Получаем тему
+            var userTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
+
+            //  В зависимости от наличия у пользователя темы, создаем пустую или используем готовую модель для заполнения формы
+            if (userTopic == null)
+                return View("Topic"); // new Topic() ?
             else
-                ViewBag.Registered = false;
-
-            return View();
+                return View(userTopic);
         }
 
-        /// <summary>
-        /// Регситрация тем
-        /// </summary>
-        /// <param name="topic"> Данные из формы </param>
         [HttpPost]
         [Authorize]
-        public async void RegisterTopic(Topic topic)
+        public IActionResult Topic([FromForm] Topic topic)
         {
-            // узнаем данные текущего авторизованного пользователя
-            var curUser = await _userManager.GetUserAsync(this.User);
+            
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            
+            // Получаем предыдущую тему, для обновления поля UpdatedBy
+            var prvTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
 
-            // заполняем недостающие поля
+            // Заполняем поля темы
             topic.CreatedDate = DateTime.Now;
-            topic.UpdatedBy = curUser.Id;
+            topic.Author = currentUser;
+            topic.UpdatedByObj = null;
 
-            // добавляем запись в БД и сохраняем изменения
+            // И записываем topic в UpdatedBy 
+            if (prvTopic != null)
+               prvTopic.UpdatedByObj = topic;
+            
             _context.Topics.Add(topic);
-            await _context.SaveChangesAsync();
-        }
-
-        [Authorize]
-        public IActionResult UpdateTopic()
-        {
+            _context.SaveChanges();
             return View();
-        }
-
-        /// <summary>
-        /// Обновление ланных тем
-        /// </summary>
-        /// <param name="topic"> Данные из формы </param>
-        [HttpPost]
-        [Authorize]
-        public async void UpdateTopic(Topic topic)
-        {
-            // узнаем данные текущего авторизованного пользователя
-            var curUser = await _userManager.GetUserAsync(this.User);
-
-            // заполняем недостающие поля
-            topic.CreatedDate = DateTime.Now;
-            topic.UpdatedBy = curUser.Id;
-
-            // достаем запись со старыми данными из БД
-            Topic oldTopic = _context.Topics.Where(t => t.Id == topic.Id).ToList()[0] as Topic;
-
-            // добавляем данные о новой записи
-            oldTopic.UpdatedByObj = topic;
-
-            // добавляем запись в БД и сохраняем изменения
-            _context.Update(oldTopic);
-            _context.Topics.Add(topic);
-            await _context.SaveChangesAsync();
         }
     }
 }

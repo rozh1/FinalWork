@@ -25,10 +25,10 @@
 	                    @if (User.Identity.IsAuthenticated)
 	                    {
 		                    <li class="nav-item dropdown">
-			                    <a class="nav-link text-dark dropdown-toggle">ВКР</a>
-			                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				                    <a class="dropdown-item" asp-controller="Home" asp-action="RegisterTopic">Зарегистрировать</a>
-				                    <a class="dropdown-item" asp-controller="Home" asp-action="UpdateTopic">Редактировать</a>
+			                    <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ВКР</a>
+			                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" >
+				                    <a class="dropdown-item" asp-controller="Home" asp-action="Topic">Тема</a>
+                                    <a class="dropdown-item disabled" asp-controller="Home" asp-action="Something">Что-то еще</a>
 			                    </div>
 		                    </li>
 	                    }
