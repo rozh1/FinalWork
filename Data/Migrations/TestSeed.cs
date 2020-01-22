@@ -13,11 +13,7 @@ namespace FinalWork_BD_Test.Data.Migrations
             var appContext = Context as ApplicationDbContext;
             if (appContext == null)
                 return;
-            if (appContext.Topics.Count() == 0)
-            {
-                appContext.Topics.Add(new Models.Topic() { Title = "tst" });
-                appContext.SaveChanges();
-            }
+            
         }
     }
 }
