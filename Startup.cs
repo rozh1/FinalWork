@@ -32,7 +32,7 @@ namespace FinalWork_BD_Test
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<ApplicationDbContext>();
             services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI();
+                .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI().AddDefaultTokenProviders();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
