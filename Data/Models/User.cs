@@ -8,5 +8,6 @@ namespace FinalWork_BD_Test.Data.Models
 {
     public class User : IdentityUser<Guid>
     {
+        public virtual ICollection<StudentProfile> StudentProfiles { get; set; } 
     }
 }
