@@ -31,7 +31,7 @@ namespace FinalWork_BD_Test
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<ApplicationDbContext>();
-            services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI().AddDefaultTokenProviders();
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -66,6 +66,8 @@ namespace FinalWork_BD_Test
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+            app.UseMiddleware<RegisterMiddleware>();
         }
     }
 }

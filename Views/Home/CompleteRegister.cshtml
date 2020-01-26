@@ -1,0 +1,56 @@
+﻿@model FinalWork_BD_Test.Data.Models.StudentProfile
+
+<h4>StudentProfile</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CompleteRegister">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstNameRP" class="control-label"></label>
+                <input asp-for="FirstNameRP" class="form-control" />
+                <span asp-validation-for="FirstNameRP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondNameRP" class="control-label"></label>
+                <input asp-for="SecondNameRP" class="form-control" />
+                <span asp-validation-for="SecondNameRP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleNameRP" class="control-label"></label>
+                <input asp-for="MiddleNameRP" class="form-control" />
+                <span asp-validation-for="MiddleNameRP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstNameDP" class="control-label"></label>
+                <input asp-for="FirstNameDP" class="form-control" />
+                <span asp-validation-for="FirstNameDP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondNameDP" class="control-label"></label>
+                <input asp-for="SecondNameDP" class="form-control" />
+                <span asp-validation-for="SecondNameDP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleNameDP" class="control-label"></label>
+                <input asp-for="MiddleNameDP" class="form-control" />
+                <span asp-validation-for="MiddleNameDP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Group" class="control-label"></label>
+                <input asp-for="Group" class="form-control" />
+                <span asp-validation-for="Group" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GraduateYear" class="control-label"></label>
+                <input asp-for="GraduateYear" class="form-control" />
+                <span asp-validation-for="GraduateYear" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

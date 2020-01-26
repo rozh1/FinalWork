@@ -88,5 +88,26 @@ namespace FinalWork_BD_Test.Controllers
             _context.SaveChanges();
             return View();
         }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult CompleteRegister()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult CompleteRegister([FromForm] StudentProfile profile)
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+
+            profile.User = currentUser;
+
+            _context.StudentProfiles.Add(profile);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
