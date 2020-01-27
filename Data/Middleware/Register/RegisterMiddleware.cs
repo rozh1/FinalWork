@@ -24,8 +24,9 @@ namespace FinalWork_BD_Test.Data
 
         public async Task Invoke(HttpContext httpContext, ApplicationDbContext dbContext, UserManager<User> userManager)
         {
+
             if (httpContext.Request.Path == PathString.FromUriComponent(
-                    new Uri($"{httpContext.Request.Scheme}://{httpContext.Request.Host}" + "/Home/CompleteRegister")))
+                    new Uri($"{httpContext.Request.Scheme}://{httpContext.Request.Host}" + "/Home/CompleteRegister")) || !httpContext.User.Identity.IsAuthenticated)
             {
                 await _next(httpContext);
                 return;
