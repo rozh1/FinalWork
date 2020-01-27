@@ -8,8 +8,10 @@ using Microsoft.Extensions.Logging;
 using FinalWork_BD_Test.Models;
 using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
+using FinalWork_BD_Test.Data.Models.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FinalWork_BD_Test.Controllers
 {
@@ -76,6 +78,12 @@ namespace FinalWork_BD_Test.Controllers
             var prvTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
 
             // Заполняем поля темы
+            topic.Supervisor = new User()
+            {
+                FirstNameIP = topic.Supervisor.FirstNameIP,
+                SecondNameIP = topic.Supervisor.SecondNameIP,
+                MiddleNameIP = topic.Supervisor.MiddleNameIP
+            };
             topic.CreatedDate = DateTime.Now;
             topic.Author = currentUser;
             topic.UpdatedByObj = null;
@@ -91,23 +99,99 @@ namespace FinalWork_BD_Test.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult CompleteRegister()
+        public IActionResult StudentProfile()
         {
-            return View();
+            #region костыль
+
+            List<SelectListItem> degrees = new List<SelectListItem>();
+            foreach (var v in _context.Degrees.ToList())
+            {
+                degrees.Add(new SelectListItem(v.Name, v.Name));
+            }
+
+            List<SelectListItem> genders = new List<SelectListItem>();
+            foreach (var v in _context.Genders.ToList())
+            {
+                genders.Add(new SelectListItem(v.Name, v.Name));
+            }
+
+            List<SelectListItem> edu_forms = new List<SelectListItem>();
+            foreach (var v in _context.EducationForms.ToList())
+            {
+                edu_forms.Add(new SelectListItem(v.Name, v.Name));
+            }
+
+            List<SelectListItem> semesters = new List<SelectListItem>();
+            foreach (var v in _context.Semesters.ToList())
+            {
+                semesters.Add(new SelectListItem(v.Name, v.Name));
+            }
+
+            #endregion
+
+            ViewBag.Degree = degrees;
+            ViewBag.Gender = genders;
+            ViewBag.EducationForm = edu_forms;
+            ViewBag.GraduateSemester = semesters;
+
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+
+            var profile = _context.StudentProfiles.FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
+
+            if (profile == null)
+                return View();
+            else
+                return View(profile);
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult CompleteRegister([FromForm] StudentProfile profile)
+        public IActionResult StudentProfile([FromForm] StudentProfileView form)
         {
+            StudentProfile profile = Fill_profile_from_form(form);
+
             var currentUser = _userManager.GetUserAsync(this.User).Result;
 
+            var prvProfile = _context.StudentProfiles.FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
+
+            profile.CreatedDate = DateTime.Now;
             profile.User = currentUser;
+            profile.UpdatedByObj = null;
+
+            if (prvProfile != null)
+                prvProfile.UpdatedByObj = profile;
 
             _context.StudentProfiles.Add(profile);
             _context.SaveChanges();
 
-            return RedirectToAction("Index", "Home");
+            if (prvProfile == null)
+                return RedirectToAction("Index", "Home");
+            else
+                return View(profile);
         }
+
+        private StudentProfile Fill_profile_from_form(StudentProfileView form)
+        {
+            StudentProfile profile = new StudentProfile
+            {
+                FirstNameRP = form.FirstNameRP,
+                SecondNameRP = form.SecondNameRP,
+                MiddleNameRP = form.MiddleNameRP,
+
+                FirstNameDP = form.FirstNameDP,
+                SecondNameDP = form.SecondNameDP,
+                MiddleNameDP = form.MiddleNameDP,
+
+                Degree = _context.Degrees.FirstOrDefault(d => d.Name == form.Degree),
+                Gender = _context.Genders.FirstOrDefault(d => d.Name == form.Gender),
+                EducationForm = _context.EducationForms.FirstOrDefault(d => d.Name == form.EducationForm),
+                Group = form.Group,
+                GraduateYear = form.GraduateYear,
+                GraduateSemester = _context.Semesters.FirstOrDefault(d => d.Name == form.GraduateSemester),
+            };
+
+            return profile;
+        }
+
     }
 }

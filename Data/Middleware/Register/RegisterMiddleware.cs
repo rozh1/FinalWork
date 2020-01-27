@@ -26,7 +26,7 @@ namespace FinalWork_BD_Test.Data
         {
 
             if (httpContext.Request.Path == PathString.FromUriComponent(
-                    new Uri($"{httpContext.Request.Scheme}://{httpContext.Request.Host}" + "/Home/CompleteRegister")) || !httpContext.User.Identity.IsAuthenticated)
+                    new Uri($"{httpContext.Request.Scheme}://{httpContext.Request.Host}" + "/Home/StudentProfile")) || !httpContext.User.Identity.IsAuthenticated)
             {
                 await _next(httpContext);
                 return;
@@ -46,7 +46,7 @@ namespace FinalWork_BD_Test.Data
 
             if (!completed_register)
             {
-                var location = new Uri($"{httpContext.Request.Scheme}://{httpContext.Request.Host}" + "/Home/CompleteRegister");
+                var location = new Uri($"{httpContext.Request.Scheme}://{httpContext.Request.Host}" + "/Home/StudentProfile");
                 httpContext.Response.Redirect(location.ToString());
             }
             await _next(httpContext);
