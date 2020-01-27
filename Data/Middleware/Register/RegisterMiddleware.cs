@@ -24,6 +24,14 @@ namespace FinalWork_BD_Test.Data
 
         public async Task Invoke(HttpContext httpContext, ApplicationDbContext dbContext, UserManager<User> userManager)
         {
+            if (httpContext.Request.Path == PathString.FromUriComponent(
+                    new Uri($"{httpContext.Request.Scheme}://{httpContext.Request.Host}" + "/Home/CompleteRegister")))
+            {
+                await _next(httpContext);
+                return;
+            }
+
+
             bool completed_register = false;
 
             if (httpContext.User.Identity.IsAuthenticated)
@@ -40,10 +48,8 @@ namespace FinalWork_BD_Test.Data
                 var location = new Uri($"{httpContext.Request.Scheme}://{httpContext.Request.Host}" + "/Home/CompleteRegister");
                 httpContext.Response.Redirect(location.ToString());
             }
-            else
-            {
-                await _next(httpContext);
-            }
+            await _next(httpContext);
+
         }
     }
 }

@@ -58,6 +58,7 @@ namespace FinalWork_BD_Test
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<RegisterMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
@@ -67,7 +68,7 @@ namespace FinalWork_BD_Test
                 endpoints.MapRazorPages();
             });
 
-            app.UseMiddleware<RegisterMiddleware>();
+            
         }
     }
 }
