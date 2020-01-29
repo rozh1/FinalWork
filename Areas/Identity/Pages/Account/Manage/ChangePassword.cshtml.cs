@@ -36,7 +36,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
         {
             [Required]
             [DataType(DataType.Password)]
-            [Display(Name = "Current password")]
+            [Display(Name = "Текущий пароль")]
             public string OldPassword { get; set; }
 
             [Required]
@@ -47,7 +47,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirm new password")]
-            [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+            [Compare("NewPassword", ErrorMessage = "Новый пароль и подтверждение пароля не совпадают.")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -92,8 +92,8 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            _logger.LogInformation("User changed their password successfully.");
-            StatusMessage = "Your password has been changed.";
+            _logger.LogInformation("Пароль изменен успешно.");
+            StatusMessage = "Ваш пароль изменен успешно.";
 
             return RedirectToPage();
         }

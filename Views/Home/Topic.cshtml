@@ -4,18 +4,17 @@
 			<label asp-for="Title"></label>
 			<input asp-for="Title" class="form-control" />
 		</div>
-		<div class="form-group">
-			<label asp-for="Supervisor.FirstNameIP"></label>
-			<input asp-for="Supervisor.FirstNameIP" class="form-control" />
-		</div>
-		<div class="form-group">
-			<label asp-for="Supervisor.SecondNameIP"></label>
-			<input asp-for="Supervisor.SecondNameIP" class="form-control" />
-		</div>
-		<div class="form-group">
-			<label asp-for="Supervisor.MiddleNameIP"></label>
-			<input asp-for="Supervisor.MiddleNameIP" class="form-control" />
-		</div>
-
+			<div class="form-group">
+				<label asp-for="Supervisor.SecondNameIP">Фамилия научного руководителя</label>
+				<input asp-for="Supervisor.SecondNameIP" class="form-control"/>
+			</div>
+			<div class="form-group">
+				<label asp-for="Supervisor.FirstNameIP">Имя научного руководителя</label>
+				<input asp-for="Supervisor.FirstNameIP" class="form-control"/>
+			</div>
+			<div class="form-group">
+				<label asp-for="Supervisor.MiddleNameIP">Отчество научного руководителя</label>
+				<input asp-for="Supervisor.MiddleNameIP" class="form-control"/>
+			</div>
 		<button id="update-topic-button" type="submit" class="btn btn-primary">Сохранить</button>
 	</form>
