@@ -72,9 +72,9 @@ namespace FinalWork_BD_Test.Controllers
         [Authorize]
         public IActionResult Topic([FromForm] Topic topic)
         {
-            
+
             var currentUser = _userManager.GetUserAsync(this.User).Result;
-            
+
             // Получаем предыдущую тему, для обновления поля UpdatedBy
             var prvTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
 
@@ -91,8 +91,8 @@ namespace FinalWork_BD_Test.Controllers
 
             // И записываем topic в UpdatedBy 
             if (prvTopic != null)
-               prvTopic.UpdatedByObj = topic;
-            
+                prvTopic.UpdatedByObj = topic;
+
             _context.Topics.Add(topic);
             _context.SaveChanges();
             return View();
@@ -103,7 +103,7 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult StudentProfile()
         {
             var currentUser = _userManager.GetUserAsync(this.User).Result;
-            
+
             // Явная загрузка связанных данных, т.к они не подгружались неявно. 
             StudentProfile profile = _context.StudentProfiles
                 .Include(profile => profile.Degree)
@@ -112,16 +112,20 @@ namespace FinalWork_BD_Test.Controllers
                 .Include(profile => profile.GraduateSemester)
                 .FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
 
-            
+            if (profile == null)
+            {
+                ViewBag.Degree = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name");
+                ViewBag.Gender = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name");
+                ViewBag.EducationForm = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name");
+                ViewBag.GraduateSemester = new SelectList(_context.Semesters.AsEnumerable(), "Name", "Name");
+                return View();
+            }
+
             ViewBag.Degree = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name", profile.Degree.Name);
             ViewBag.Gender = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name", profile.Gender.Name);
             ViewBag.EducationForm = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name", profile.EducationForm.Name);
             ViewBag.GraduateSemester = new SelectList(_context.Semesters.AsEnumerable(), "Name", "Name", profile.GraduateSemester.Name);
-            
-            if (profile == null)
-                return View();
-            else
-                return View(profile);
+            return View(profile);
         }
 
         [HttpPost]
