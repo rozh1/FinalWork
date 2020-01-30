@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using FinalWork_BD_Test.Data.Models;
+using FinalWork_BD_Test.Data.Models.Profiles;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -99,10 +100,10 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account
                 {
                     UserName = Input.Email, 
                     Email = Input.Email,
-                    FirstNameIP = Input.FirstNameIP,
-                    SecondNameIP = Input.SecondNameIP,
-                    MiddleNameIP = Input.MiddleNameIP
+                    UserProfiles = new List<UserProfile>()
                 };
+                user.UserProfiles.Add(new UserProfile(){FirstNameIP = Input.FirstNameIP, SecondNameIP = Input.SecondNameIP, MiddleNameIP = Input.MiddleNameIP, CreatedDate = DateTime.Now});
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

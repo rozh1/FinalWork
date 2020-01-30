@@ -12,6 +12,7 @@ using FinalWork_BD_Test.Data.Models.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinalWork_BD_Test.Controllers
 {
@@ -78,12 +79,12 @@ namespace FinalWork_BD_Test.Controllers
             var prvTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
 
             // Заполняем поля темы
-            topic.Supervisor = new User()
-            {
-                FirstNameIP = topic.Supervisor.FirstNameIP,
-                SecondNameIP = topic.Supervisor.SecondNameIP,
-                MiddleNameIP = topic.Supervisor.MiddleNameIP
-            };
+            //topic.Supervisor = new User()
+            //{
+            //    FirstNameIP = topic.Supervisor.FirstNameIP,
+            //    SecondNameIP = topic.Supervisor.SecondNameIP,
+            //    MiddleNameIP = topic.Supervisor.MiddleNameIP
+            //};
             topic.CreatedDate = DateTime.Now;
             topic.Author = currentUser;
             topic.UpdatedByObj = null;
@@ -101,43 +102,22 @@ namespace FinalWork_BD_Test.Controllers
         [Authorize]
         public IActionResult StudentProfile()
         {
-            #region костыль
-
-            List<SelectListItem> degrees = new List<SelectListItem>();
-            foreach (var v in _context.Degrees.ToList())
-            {
-                degrees.Add(new SelectListItem(v.Name, v.Name));
-            }
-
-            List<SelectListItem> genders = new List<SelectListItem>();
-            foreach (var v in _context.Genders.ToList())
-            {
-                genders.Add(new SelectListItem(v.Name, v.Name));
-            }
-
-            List<SelectListItem> edu_forms = new List<SelectListItem>();
-            foreach (var v in _context.EducationForms.ToList())
-            {
-                edu_forms.Add(new SelectListItem(v.Name, v.Name));
-            }
-
-            List<SelectListItem> semesters = new List<SelectListItem>();
-            foreach (var v in _context.Semesters.ToList())
-            {
-                semesters.Add(new SelectListItem(v.Name, v.Name));
-            }
-
-            #endregion
-
-            ViewBag.Degree = degrees;
-            ViewBag.Gender = genders;
-            ViewBag.EducationForm = edu_forms;
-            ViewBag.GraduateSemester = semesters;
-
             var currentUser = _userManager.GetUserAsync(this.User).Result;
+            
+            // Явная загрузка связанных данных, т.к они не подгружались неявно. 
+            StudentProfile profile = _context.StudentProfiles
+                .Include(profile => profile.Degree)
+                .Include(profile => profile.Gender)
+                .Include(profile => profile.EducationForm)
+                .Include(profile => profile.GraduateSemester)
+                .FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
 
-            var profile = _context.StudentProfiles.FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
-
+            
+            ViewBag.Degree = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name", profile.Degree.Name);
+            ViewBag.Gender = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name", profile.Gender.Name);
+            ViewBag.EducationForm = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name", profile.EducationForm.Name);
+            ViewBag.GraduateSemester = new SelectList(_context.Semesters.AsEnumerable(), "Name", "Name", profile.GraduateSemester.Name);
+            
             if (profile == null)
                 return View();
             else
@@ -167,7 +147,8 @@ namespace FinalWork_BD_Test.Controllers
             if (prvProfile == null)
                 return RedirectToAction("Index", "Home");
             else
-                return View(profile);
+                //return View(profile);
+                return RedirectToAction("StudentProfile", "Home");
         }
 
         private StudentProfile Fill_profile_from_form(StudentProfileView form)

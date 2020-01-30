@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Data;
+using FinalWork_BD_Test.Data.Models.Profiles;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ namespace FinalWork_BD_Test.Data
     public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
     {
         public DbSet<Topic> Topics { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<StudentProfile> StudentProfiles { get; set; }
         public DbSet<Degree> Degrees { get; set; }
         public DbSet<Gender> Genders { get; set; }

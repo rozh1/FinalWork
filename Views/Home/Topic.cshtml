@@ -5,16 +5,16 @@
 			<input asp-for="Title" class="form-control" />
 		</div>
 			<div class="form-group">
-				<label asp-for="Supervisor.SecondNameIP">Фамилия научного руководителя</label>
-				<input asp-for="Supervisor.SecondNameIP" class="form-control"/>
+				<label asp-for="Supervisor.UserProfiles.First().SecondNameIP">Фамилия научного руководителя</label>
+				<input asp-for="Supervisor.UserProfiles.First().SecondNameIP" class="form-control"/>
 			</div>
 			<div class="form-group">
-				<label asp-for="Supervisor.FirstNameIP">Имя научного руководителя</label>
-				<input asp-for="Supervisor.FirstNameIP" class="form-control"/>
+				<label asp-for="Supervisor.UserProfiles.First().FirstNameIP">Имя научного руководителя</label>
+				<input asp-for="Supervisor.UserProfiles.First().FirstNameIP" class="form-control"/>
 			</div>
 			<div class="form-group">
-				<label asp-for="Supervisor.MiddleNameIP">Отчество научного руководителя</label>
-				<input asp-for="Supervisor.MiddleNameIP" class="form-control"/>
+				<label asp-for="Supervisor.UserProfiles.First().MiddleNameIP">Отчество научного руководителя</label>
+				<input asp-for="Supervisor.UserProfiles.First().MiddleNameIP" class="form-control"/>
 			</div>
 		<button id="update-topic-button" type="submit" class="btn btn-primary">Сохранить</button>
 	</form>
