@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+WORKDIR /app
+EXPOSE 80 443 5000
+
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+WORKDIR /src
+COPY ["FinalWork_BD_Test.csproj", ""]
+RUN dotnet restore "./FinalWork_BD_Test.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "FinalWork_BD_Test.csproj" -c Debug -o /app
+
+FROM build AS publish
+RUN dotnet publish "FinalWork_BD_Test.csproj" -c Debug -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "FinalWork_BD_Test.dll"]
