@@ -8,8 +8,11 @@ using Microsoft.Extensions.Logging;
 using FinalWork_BD_Test.Models;
 using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
+using FinalWork_BD_Test.Data.Models.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinalWork_BD_Test.Controllers
 {
@@ -46,50 +49,134 @@ namespace FinalWork_BD_Test.Controllers
         }
 
         /// <summary>
-        /// Регситрация тем
+        /// Страница добавления и редактирования тем
         /// </summary>
-        /// <param name="topic"> Данные из формы </param>
-        [HttpPost]
+        /// <returns> Возвращает представление </returns>
+        [HttpGet]
         [Authorize]
-        public async void RegisterTopic(Topic topic)
+        public IActionResult Topic()
         {
-            // узнаем данные текущего авторизованного пользователя
-            var curUser = await _userManager.GetUserAsync(this.User);
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
 
-            // заполняем недостающие поля
-            topic.CreatedDate = DateTime.Now;
-            topic.UpdatedBy = curUser.Id;
+            // Получаем тему
+            var userTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
 
-            // добавляем запись в БД и сохраняем изменения
-            _context.Topics.Add(topic);
-            await _context.SaveChangesAsync();
+            //  В зависимости от наличия у пользователя темы, создаем пустую или используем готовую модель для заполнения формы
+            if (userTopic == null)
+                return View("Topic"); // new Topic() ?
+            else
+                return View(userTopic);
         }
 
-        /// <summary>
-        /// Обновление ланных тем
-        /// </summary>
-        /// <param name="topic"> Данные из формы </param>
         [HttpPost]
         [Authorize]
-        public async void UpdateTopic(Topic topic)
+        public IActionResult Topic([FromForm] Topic topic)
         {
-            // узнаем данные текущего авторизованного пользователя
-            var curUser = await _userManager.GetUserAsync(this.User);
 
-            // заполняем недостающие поля
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+
+            // Получаем предыдущую тему, для обновления поля UpdatedBy
+            var prvTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
+
+            // Заполняем поля темы
+            //topic.Supervisor = new User()
+            //{
+            //    FirstNameIP = topic.Supervisor.FirstNameIP,
+            //    SecondNameIP = topic.Supervisor.SecondNameIP,
+            //    MiddleNameIP = topic.Supervisor.MiddleNameIP
+            //};
             topic.CreatedDate = DateTime.Now;
-            topic.UpdatedBy = curUser.Id;
+            topic.Author = currentUser;
+            topic.UpdatedByObj = null;
 
-            // достаем запись со старыми данными из БД
-            Topic oldTopic = _context.Topics.Where(t => t.Id == topic.Id).ToList()[0] as Topic;
+            // И записываем topic в UpdatedBy 
+            if (prvTopic != null)
+                prvTopic.UpdatedByObj = topic;
 
-            // добавляем данные о новой записи
-            oldTopic.UpdatedByObj = topic;
-
-            // добавляем запись в БД и сохраняем изменения
-            _context.Update(oldTopic);
             _context.Topics.Add(topic);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
+            return View();
         }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult StudentProfile()
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+
+            // Явная загрузка связанных данных, т.к они не подгружались неявно. 
+            StudentProfile profile = _context.StudentProfiles
+                .Include(profile => profile.Degree)
+                .Include(profile => profile.Gender)
+                .Include(profile => profile.EducationForm)
+                .Include(profile => profile.GraduateSemester)
+                .FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
+
+            if (profile == null)
+            {
+                ViewBag.Degree = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name");
+                ViewBag.Gender = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name");
+                ViewBag.EducationForm = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name");
+                ViewBag.GraduateSemester = new SelectList(_context.Semesters.AsEnumerable(), "Name", "Name");
+                return View();
+            }
+
+            ViewBag.Degree = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name", profile.Degree.Name);
+            ViewBag.Gender = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name", profile.Gender.Name);
+            ViewBag.EducationForm = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name", profile.EducationForm.Name);
+            ViewBag.GraduateSemester = new SelectList(_context.Semesters.AsEnumerable(), "Name", "Name", profile.GraduateSemester.Name);
+            return View(profile);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult StudentProfile([FromForm] StudentProfileView form)
+        {
+            StudentProfile profile = Fill_profile_from_form(form);
+
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+
+            var prvProfile = _context.StudentProfiles.FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
+
+            profile.CreatedDate = DateTime.Now;
+            profile.User = currentUser;
+            profile.UpdatedByObj = null;
+
+            if (prvProfile != null)
+                prvProfile.UpdatedByObj = profile;
+
+            _context.StudentProfiles.Add(profile);
+            _context.SaveChanges();
+
+            if (prvProfile == null)
+                return RedirectToAction("Index", "Home");
+            else
+                //return View(profile);
+                return RedirectToAction("StudentProfile", "Home");
+        }
+
+        private StudentProfile Fill_profile_from_form(StudentProfileView form)
+        {
+            StudentProfile profile = new StudentProfile
+            {
+                FirstNameRP = form.FirstNameRP,
+                SecondNameRP = form.SecondNameRP,
+                MiddleNameRP = form.MiddleNameRP,
+
+                FirstNameDP = form.FirstNameDP,
+                SecondNameDP = form.SecondNameDP,
+                MiddleNameDP = form.MiddleNameDP,
+
+                Degree = _context.Degrees.FirstOrDefault(d => d.Name == form.Degree),
+                Gender = _context.Genders.FirstOrDefault(d => d.Name == form.Gender),
+                EducationForm = _context.EducationForms.FirstOrDefault(d => d.Name == form.EducationForm),
+                Group = form.Group,
+                GraduateYear = form.GraduateYear,
+                GraduateSemester = _context.Semesters.FirstOrDefault(d => d.Name == form.GraduateSemester),
+            };
+
+            return profile;
+        }
+
     }
 }

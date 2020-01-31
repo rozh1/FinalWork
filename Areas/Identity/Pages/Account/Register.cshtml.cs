@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using FinalWork_BD_Test.Data.Models;
+using FinalWork_BD_Test.Data.Models.Profiles;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -46,21 +47,40 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage = "Необходимо ввести email")]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Необходимо ввести пароль")]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Пароль")]
             public string Password { get; set; }
 
+            [Required(ErrorMessage = "Необходимо ввести подтверждение пароля")]
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Подтверждение пароля")]
+            [Compare("Password", ErrorMessage = "Пароль и подтверждение пароля не совпадают.")]
             public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "Необходимо ввести имя")]
+            [RegularExpression(@"[А-Яа-яЁё]+", 
+                ErrorMessage = "Неккоректный ввод имени. Имя должно содержать только русские буквы")]
+            [Display(Name = "Имя")]
+            public string FirstNameIP { get; set; }
+
+            [Required(ErrorMessage = "Необходимо ввести фамилию")]
+            [RegularExpression(@"[А-Яа-яЁё]+", 
+                ErrorMessage = "Неккоректный ввод фамилии. Фамилия должна содержать только русские буквы")]
+            [Display(Name = "Фамилия")]
+            public string SecondNameIP { get; set; }
+
+            [Required(ErrorMessage = "Необходимо ввести отчество")]
+            [RegularExpression(@"[А-Яа-яЁё]+", 
+                ErrorMessage = "Неккоректный ввод отчества. Отчество должно содержать только русские буквы")]
+            [Display(Name = "Отчество")]
+            public string MiddleNameIP { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -71,11 +91,19 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            //returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl = Url.Action("StudentProfile", "Home");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = Input.Email, Email = Input.Email };
+                var user = new User
+                {
+                    UserName = Input.Email, 
+                    Email = Input.Email,
+                    UserProfiles = new List<UserProfile>()
+                };
+                user.UserProfiles.Add(new UserProfile(){FirstNameIP = Input.FirstNameIP, SecondNameIP = Input.SecondNameIP, MiddleNameIP = Input.MiddleNameIP, CreatedDate = DateTime.Now});
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

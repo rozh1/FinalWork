@@ -46,7 +46,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
         {
             [Required]
             [EmailAddress]
-            [Display(Name = "New email")]
+            [Display(Name = "Новая электронная почта")]
             public string NewEmail { get; set; }
         }
 
@@ -68,7 +68,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Не удалось загрузить данные пользователя с ID '{_userManager.GetUserId(User)}'.");
             }
 
             await LoadAsync(user);
@@ -80,7 +80,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Не удалось загрузить данные пользователя с ID '{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)
@@ -108,7 +108,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
                 return RedirectToPage();
             }
 
-            StatusMessage = "Your email is unchanged.";
+            StatusMessage = "Ваша электронная почта не изменена.";
             return RedirectToPage();
         }
 
@@ -117,7 +117,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Не удалось загрузить данные пользователя с ID '{_userManager.GetUserId(User)}'.");
             }
 
             if (!ModelState.IsValid)

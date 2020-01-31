@@ -11,7 +11,5 @@ namespace FinalWork_BD_Test.Data.Models.Base
     {
         [Key]
         public Guid Id { get; set; }
-
-        // дата создания
     }
 }

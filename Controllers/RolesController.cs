@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinalWork_BD_Test.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class RolesController : Controller
     {
         RoleManager<Role> _roleManager;

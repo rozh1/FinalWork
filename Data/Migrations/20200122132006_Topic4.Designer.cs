@@ -3,113 +3,23 @@ using System;
 using FinalWork_BD_Test.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FinalWork_BD_Test.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200122132006_Topic4")]
+    partial class Topic4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Data.EducationForm", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("character varying(10)")
-                        .HasMaxLength(10);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EducationForms");
-                });
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Data.Gender", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("character varying(7)")
-                        .HasMaxLength(7);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Genders");
-                });
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Data.Semester", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("character varying(5)")
-                        .HasMaxLength(5);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Semesters");
-                });
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Degree", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Degrees");
-                });
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Profiles.UserProfile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("FirstNameIP")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MiddleNameIP")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SecondNameIP")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UpdatedBy");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserProfiles");
-                });
 
             modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Role", b =>
                 {
@@ -136,75 +46,6 @@ namespace FinalWork_BD_Test.Migrations
                         .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
-                });
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.StudentProfile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid?>("DegreeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("EducationFormId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("FirstNameDP")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstNameRP")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("GenderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("GraduateSemesterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("GraduateYear")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Group")
-                        .HasColumnType("character varying(5)")
-                        .HasMaxLength(5);
-
-                    b.Property<string>("MiddleNameDP")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MiddleNameRP")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SecondNameDP")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SecondNameRP")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DegreeId");
-
-                    b.HasIndex("EducationFormId");
-
-                    b.HasIndex("GenderId");
-
-                    b.HasIndex("GraduateSemesterId");
-
-                    b.HasIndex("UpdatedBy");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("StudentProfiles");
                 });
 
             modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Topic", b =>
@@ -405,44 +246,6 @@ namespace FinalWork_BD_Test.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Profiles.UserProfile", b =>
-                {
-                    b.HasOne("FinalWork_BD_Test.Data.Models.Profiles.UserProfile", "UpdatedByObj")
-                        .WithMany()
-                        .HasForeignKey("UpdatedBy");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.User", "User")
-                        .WithMany("UserProfiles")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.StudentProfile", b =>
-                {
-                    b.HasOne("FinalWork_BD_Test.Data.Models.Degree", "Degree")
-                        .WithMany()
-                        .HasForeignKey("DegreeId");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.Data.EducationForm", "EducationForm")
-                        .WithMany()
-                        .HasForeignKey("EducationFormId");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.Data.Gender", "Gender")
-                        .WithMany()
-                        .HasForeignKey("GenderId");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.Data.Semester", "GraduateSemester")
-                        .WithMany()
-                        .HasForeignKey("GraduateSemesterId");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.StudentProfile", "UpdatedByObj")
-                        .WithMany()
-                        .HasForeignKey("UpdatedBy");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.User", "User")
-                        .WithMany("StudentProfiles")
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Topic", b =>

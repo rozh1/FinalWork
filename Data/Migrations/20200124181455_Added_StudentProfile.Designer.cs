@@ -3,15 +3,17 @@ using System;
 using FinalWork_BD_Test.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FinalWork_BD_Test.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200124181455_Added_StudentProfile")]
+    partial class Added_StudentProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,39 +78,6 @@ namespace FinalWork_BD_Test.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Degrees");
-                });
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Profiles.UserProfile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("FirstNameIP")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MiddleNameIP")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SecondNameIP")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UpdatedBy");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Role", b =>
@@ -405,17 +374,6 @@ namespace FinalWork_BD_Test.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Profiles.UserProfile", b =>
-                {
-                    b.HasOne("FinalWork_BD_Test.Data.Models.Profiles.UserProfile", "UpdatedByObj")
-                        .WithMany()
-                        .HasForeignKey("UpdatedBy");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.User", "User")
-                        .WithMany("UserProfiles")
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("FinalWork_BD_Test.Data.Models.StudentProfile", b =>
