@@ -25,7 +25,6 @@ namespace FinalWork_BD_Test
                 var services = scope.ServiceProvider;
 
                 var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
-                context.Database.EnsureCreated();
                 context.Database.Migrate();
                 DataSeed.Seed(context);
             }
