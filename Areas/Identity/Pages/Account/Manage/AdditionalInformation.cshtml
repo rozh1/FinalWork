@@ -1,0 +1,82 @@
+@page
+@using System.Collections
+@model AdditionalInformationModel
+@{
+    ViewData["Title"] = "Дополнительные сведения";
+    ViewData["ActivePage"] = ManageNavPages.AdditionalInformation;
+}
+
+<h4>Дополнительные сведения</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Input.FirstNameRP" class="control-label"></label>
+                <input asp-for="Input.FirstNameRP" class="form-control" />
+                <span asp-validation-for="Input.FirstNameRP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.SecondNameRP" class="control-label"></label>
+                <input asp-for="Input.SecondNameRP" class="form-control" />
+                <span asp-validation-for="Input.SecondNameRP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.MiddleNameRP" class="control-label"></label>
+                <input asp-for="Input.MiddleNameRP" class="form-control" />
+                <span asp-validation-for="Input.MiddleNameRP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.FirstNameDP" class="control-label"></label>
+                <input asp-for="Input.FirstNameDP" class="form-control" />
+                <span asp-validation-for="Input.FirstNameDP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.SecondNameDP" class="control-label"></label>
+                <input asp-for="Input.SecondNameDP" class="form-control" />
+                <span asp-validation-for="Input.SecondNameDP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.MiddleNameDP" class="control-label"></label>
+                <input asp-for="Input.MiddleNameDP" class="form-control" />
+                <span asp-validation-for="Input.MiddleNameDP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Degree" class="control-label"></label>
+                @Html.DropDownList("Degree")
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Gender" class="control-label"></label>
+                @Html.DropDownList("Gender")
+                <span asp-validation-for="Input.Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.EducationForm" class="control-label"></label>
+                @Html.DropDownList("EducationForm")
+                <span asp-validation-for="Input.EducationForm" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Group" class="control-label"></label>
+                <input asp-for="Input.Group" class="form-control" />
+                <span asp-validation-for="Input.Group" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.GraduateYear" class="control-label"></label>
+                <input asp-for="Input.GraduateYear" class="form-control" />
+                <span asp-validation-for="Input.GraduateYear" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.GraduateSemester" class="control-label"></label>
+                @Html.DropDownList("GraduateSemester")
+                <span asp-validation-for="Input.GraduateSemester" class="text-danger"></span>
+            </div>
+	        <div class="form-group">
+		        <input type="submit" value="Save" class="btn btn-primary" />
+	        </div>
+
+        </form>
+    </div>
+</div>
+
+
