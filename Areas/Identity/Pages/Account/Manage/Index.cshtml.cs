@@ -23,6 +23,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
+        [Display(Name = "Логин")]
         public string Username { get; set; }
 
         [TempData]

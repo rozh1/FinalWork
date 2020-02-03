@@ -58,9 +58,9 @@ namespace FinalWork_BD_Test.Data.Models
         /// Фамилия в дательном падеже
         /// </summary>
         [Required(ErrorMessage = "Введите фамилию в дательном падеже")]
-        [Display(Name = "Фамилию в дательном падеже")]
+        [Display(Name = "Фамилия в дательном падеже")]
         [RegularExpression(@"[А-Яа-яЁё]+", 
-            ErrorMessage = "Фамилию в дательном падеже должна содержать только русские буквы")]
+            ErrorMessage = "Фамилия в дательном падеже должна содержать только русские буквы")]
         public string SecondNameDP { get; set; }
 
         /// <summary>
