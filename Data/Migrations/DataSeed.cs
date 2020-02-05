@@ -55,6 +55,26 @@ namespace FinalWork_BD_Test.Data.Migrations
                 _changed = true;
             }
 
+            if (!appContext.AcademicDegrees.Any())
+            {
+                appContext.AcademicDegrees.AddRange(
+                    new AcademicDegree(){Name="к.т.н."},
+                    new AcademicDegree(){Name="к.ф.-м.н."},
+                    new AcademicDegree(){Name="д.т.н."},
+                    new AcademicDegree(){Name="д.ф.-м.н."}
+                    );
+                _changed = true;
+            }
+
+            if (!appContext.AcademicTitles.Any())
+            {
+                appContext.AcademicTitles.AddRange(
+                    new AcademicTitle() { Name="Доцент"},
+                    new AcademicTitle() { Name="Профессор"}
+                    );
+                _changed = true;
+            }
+
             if (_changed)
                 appContext.SaveChanges();
 

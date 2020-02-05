@@ -11,5 +11,6 @@ namespace FinalWork_BD_Test.Data.Models
     {
         public virtual ICollection<UserProfile> UserProfiles { get; set; }
         public virtual ICollection<StudentProfile> StudentProfiles { get; set; } 
+        public virtual ICollection<LecturerProfile> LecturerProfiles { get; set; }
     }
 }
