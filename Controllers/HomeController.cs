@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,7 @@ using FinalWork_BD_Test.Models;
 using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Data;
+using FinalWork_BD_Test.Data.Models.Profiles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -178,5 +180,96 @@ namespace FinalWork_BD_Test.Controllers
             return profile;
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult LecturerProfile()
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+
+            // Явная загрузка связанных данных, т.к они не подгружались неявно. 
+            LecturerProfile profile = _context.LecturerProfiles
+                .Include(profile => profile.AcademicDegree)
+                .Include(profile => profile.AcademicTitle)
+                .FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
+
+            if (profile == null)
+            {
+                ViewBag.AcademicDegreeId = new SelectList(_context.AcademicDegrees.AsEnumerable(), "Id", "Name");
+                ViewBag.AcademicTitleId = new SelectList(_context.AcademicTitles.AsEnumerable(), "Id", "Name");
+                return View();
+            }
+
+            ViewBag.AcademicDegreeId = new SelectList(_context.AcademicDegrees.AsEnumerable(), "Id", "Name", profile.AcademicDegree.Id);
+            ViewBag.AcademicTitleId = new SelectList(_context.AcademicTitles.AsEnumerable(), "Id", "Name", profile.AcademicTitle.Id);
+            return View(profile);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult LecturerProfile([FromForm] LecturerProfile profile)
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+
+            _context.LecturerProfiles.Load();
+            LecturerProfile prvProfile = currentUser.LecturerProfiles.FirstOrDefault(lp => lp.UpdatedByObj == null);
+
+            profile.CreatedDate = DateTime.Now;
+            profile.User = currentUser;
+            profile.UpdatedByObj = null;
+
+            if (prvProfile != null)
+                prvProfile.UpdatedByObj = profile;
+
+            _context.LecturerProfiles.Add(profile);
+            _context.SaveChanges();
+            return RedirectToAction("LecturerProfile", "Home");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult UserProfile()
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+ 
+            var profile = _context.UserProfiles.FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
+
+            if (profile == null)
+            {
+                return View();
+            }
+            return View(profile);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult UserProfile([FromForm] UserProfile profile)
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+
+            profile.CreatedDate = DateTime.Now;
+            profile.User = currentUser;
+            profile.UpdatedByObj = null;
+
+            _context.UserProfiles.Load();
+            UserProfile prvProfile;
+            //var prvProfile = _context.LecturerProfiles.FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
+            if (currentUser.UserProfiles != null)
+            {
+                prvProfile = currentUser.UserProfiles.FirstOrDefault(lp => lp.UpdatedByObj == null);
+                if (prvProfile != null)
+                    prvProfile.UpdatedByObj = profile;
+                currentUser.UserProfiles.Add(profile);
+            }
+            else
+            {
+                currentUser.UserProfiles = new List<UserProfile>();
+                prvProfile = _context.UserProfiles.FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
+                if (prvProfile != null)
+                    prvProfile.UpdatedByObj = profile;
+                _context.UserProfiles.Add(profile);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("UserProfile", "Home");
+        }
     }
 }
