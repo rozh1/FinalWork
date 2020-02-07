@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
+using FinalWork_BD_Test.Data.Models.Profiles;
 using FinalWork_BD_Test.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,12 +25,15 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
         }
         
         public StudentProfile Input { get; set; }
-        
+
+        [TempData]
+        public string StatusMessage { get; set; }
+
         public IActionResult OnGet()
         {
             var currentUser = _userManager.GetUserAsync(this.User).Result;
 
-            // Явная загрузка связанных данных, т.к они не подгружались неявно. 
+            // Жадная загрузка связанных данных
             StudentProfile profile = _context.StudentProfiles
                 .Include(profile => profile.Degree)
                 .Include(profile => profile.Gender)
@@ -39,68 +43,48 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
 
             if (profile == null)
             {
-                ViewData["Degree"] = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name");
-                ViewData["Gender"] = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name");
-                ViewData["EducationForm"] = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name");
-                ViewData["GraduateSemester"] = new SelectList(_context.Semesters.AsEnumerable(), "Name", "Name");
+                ViewData["DegreeId"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name");
+                ViewData["GenderId"] = new SelectList(_context.Genders.AsEnumerable(), "Id", "Name");
+                ViewData["EducationFormId"] = new SelectList(_context.EducationForms.AsEnumerable(), "Id", "Name");
+                ViewData["GraduateSemesterId"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name");
+
                 return Page();
             }
             
-            ViewData["Degree"] = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name", profile.Degree.Name);
-            ViewData["Gender"] = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name", profile.Gender.Name);
-            ViewData["EducationForm"] = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name", profile.EducationForm.Name);
-            ViewData["GraduateSemester"] = new SelectList(_context.Semesters.AsEnumerable(), "Name", "Name", profile.GraduateSemester.Name);
+            ViewData["DegreeId"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name", profile.Degree.Id);
+            ViewData["GenderId"] = new SelectList(_context.Genders.AsEnumerable(), "Id", "Name", profile.Gender.Id);
+            ViewData["EducationFormId"] = new SelectList(_context.EducationForms.AsEnumerable(), "Id", "Name", profile.EducationForm.Id);
+            ViewData["GraduateSemesterId"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", profile.GraduateSemester.Id);
+
             Input = profile;
             return Page();
         }
         
-        public IActionResult OnPost([FromForm] StudentProfileView form)
+        public IActionResult OnPost([FromForm] StudentProfile formProfile)
         {
-            StudentProfile profile = Fill_profile_from_form(form);
+            User currentUser = _userManager.GetUserAsync(this.User).Result;
 
-            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            // Явная загрузка, связанных с пользователем профилей
+            _context.Entry(currentUser).Collection(c => c.StudentProfiles).Load();
 
-            var prvProfile = _context.StudentProfiles.FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
+            // Предыдущий профиль пользователя, необходим для связи в истории изменений
+            StudentProfile prvProfile = currentUser.StudentProfiles.FirstOrDefault(up => up.UpdatedByObj == null);
 
-            profile.CreatedDate = DateTime.Now;
-            profile.User = currentUser;
-            profile.UpdatedByObj = null;
+            // Заполняем незаполненные ранее поля
+            formProfile.CreatedDate = DateTime.Now;
+            formProfile.User = currentUser;
+            formProfile.UpdatedByObj = null;
 
+            
             if (prvProfile != null)
-                prvProfile.UpdatedByObj = profile;
+                prvProfile.UpdatedByObj = formProfile;
 
-            _context.StudentProfiles.Add(profile);
+            _context.StudentProfiles.Add(formProfile);
             _context.SaveChanges();
 
-            if (prvProfile == null)
-                return RedirectToAction("Index", "Home");
-            else
-                //return View(profile);
-                return RedirectToPage("AdditionalInformation");
-                return RedirectToAction("StudentProfile", "Home");
-        }
+            StatusMessage = "Ваши данные были обновлены";
 
-        private StudentProfile Fill_profile_from_form(StudentProfileView form)
-        {
-            StudentProfile profile = new StudentProfile
-            {
-                FirstNameRP = form.FirstNameRP,
-                SecondNameRP = form.SecondNameRP,
-                MiddleNameRP = form.MiddleNameRP,
-
-                FirstNameDP = form.FirstNameDP,
-                SecondNameDP = form.SecondNameDP,
-                MiddleNameDP = form.MiddleNameDP,
-
-                Degree = _context.Degrees.FirstOrDefault(d => d.Name == form.Degree),
-                Gender = _context.Genders.FirstOrDefault(d => d.Name == form.Gender),
-                EducationForm = _context.EducationForms.FirstOrDefault(d => d.Name == form.EducationForm),
-                Group = form.Group,
-                GraduateYear = form.GraduateYear,
-                GraduateSemester = _context.Semesters.FirstOrDefault(d => d.Name == form.GraduateSemester),
-            };
-
-            return profile;
+            return RedirectToPage();
         }
     }
 }

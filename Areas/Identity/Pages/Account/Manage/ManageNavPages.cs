@@ -34,7 +34,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
 
         public static string TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
 
-        public static string AdditionalInformationClass(ViewContext viewContext) =>
+        public static string AdditionalInformationNavClass(ViewContext viewContext) =>
             PageNavClass(viewContext, AdditionalInformation);
         
         private static string PageNavClass(ViewContext viewContext, string page)
