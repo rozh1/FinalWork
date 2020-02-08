@@ -1,0 +1,6 @@
+@using FinalWork_BD_Test.Views.VKR
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link @NavBarViews.CommonNavClass(ViewContext)" asp-action="Common">Общее</a></li>
+    <li class="nav-item"><a class="nav-link disabled @NavBarViews.DocumentsNavClass(ViewContext)" asp-action="Documents">Документы</a></li>
+    <li class="nav-item"><a class="nav-link disabled @NavBarViews.BuildVkrNavClass(ViewContext)" asp-action="BuildVkr">Сборка ВКР</a></li>
+</ul>

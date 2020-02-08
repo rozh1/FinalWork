@@ -40,7 +40,6 @@ namespace FinalWork_BD_Test.Controllers
         /// <returns> Возвращает представление </returns>
         public IActionResult Index()
         {
-            //ViewBag.id = _context.
             return View();
         }
 
@@ -49,57 +48,7 @@ namespace FinalWork_BD_Test.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        /// <summary>
-        /// Страница добавления и редактирования тем
-        /// </summary>
-        /// <returns> Возвращает представление </returns>
-        [HttpGet]
-        [Authorize]
-        public IActionResult Topic()
-        {
-            var currentUser = _userManager.GetUserAsync(this.User).Result;
-
-            // Получаем тему
-            var userTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
-
-            //  В зависимости от наличия у пользователя темы, создаем пустую или используем готовую модель для заполнения формы
-            if (userTopic == null)
-                return View("Topic"); // new Topic() ?
-            else
-                return View(userTopic);
-        }
-
-        [HttpPost]
-        [Authorize]
-        public IActionResult Topic([FromForm] Topic topic)
-        {
-
-            var currentUser = _userManager.GetUserAsync(this.User).Result;
-
-            // Получаем предыдущую тему, для обновления поля UpdatedBy
-            var prvTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
-
-            // Заполняем поля темы
-            //topic.Supervisor = new User()
-            //{
-            //    FirstNameIP = topic.Supervisor.FirstNameIP,
-            //    SecondNameIP = topic.Supervisor.SecondNameIP,
-            //    MiddleNameIP = topic.Supervisor.MiddleNameIP
-            //};
-            topic.CreatedDate = DateTime.Now;
-            topic.Author = currentUser;
-            topic.UpdatedByObj = null;
-
-            // И записываем topic в UpdatedBy 
-            if (prvTopic != null)
-                prvTopic.UpdatedByObj = topic;
-
-            _context.Topics.Add(topic);
-            _context.SaveChanges();
-            return View();
-        }
-
+        
         [HttpGet]
         [Authorize]
         public IActionResult StudentProfile()
@@ -270,6 +219,13 @@ namespace FinalWork_BD_Test.Controllers
                 _context.SaveChanges();
             }
             return RedirectToAction("UserProfile", "Home");
+        }
+
+        public string Faq()
+        {
+            string res = "";
+
+            return res;
         }
     }
 }

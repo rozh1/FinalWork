@@ -76,8 +76,8 @@ namespace FinalWork_BD_Test.Data.Models
         /// <summary>
         /// Степень образования
         /// </summary>
-        [Required(ErrorMessage = "Выберите степень образования")]
-        [Display(Name = "Степень образования")]
+        [Required(ErrorMessage = "Выберите степень высшего образования")]
+        [Display(Name = "Степень высшего образования")]
         public Guid DegreeId { get; set; }
         [ForeignKey("DegreeId")]
         public virtual Degree Degree { get; set; }

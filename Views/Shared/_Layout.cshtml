@@ -24,13 +24,12 @@
                         </li>
 	                    @if (User.Identity.IsAuthenticated)
 	                    {
-		                    <li class="nav-item dropdown">
-			                    <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ВКР</a>
-			                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" >
-				                    <a class="dropdown-item" asp-controller="Home" asp-action="Topic">Тема</a>
-                                    <a class="dropdown-item disabled" asp-controller="Home" asp-action="Something">В разработке</a>
-			                    </div>
-		                    </li>
+	                        <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Vkr" asp-action="Common">ВКР</a>
+                            </li>
+	                        <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">FAQ</a>
+                            </li>
 	                    }
                     </ul>
                 </div>
