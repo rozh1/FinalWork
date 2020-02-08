@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
+using FinalWork_BD_Test.Data.Models.Profiles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,10 @@ namespace FinalWork_BD_Test.Controllers
             _userManager = u;
         }
 
+        /// <summary>
+        /// Общие сведения о ВКР
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Common()
         {
@@ -40,6 +45,11 @@ namespace FinalWork_BD_Test.Controllers
             }
         }
         
+        /// <summary>
+        /// Регистрация/редактирование ВКР
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Common([FromForm] Topic topic)
         {
@@ -62,6 +72,12 @@ namespace FinalWork_BD_Test.Controllers
             return RedirectToAction();
         }
 
+        /// <summary>
+        /// Равны ли обе ВКР
+        /// </summary>
+        /// <param name="beforeTopic"></param>
+        /// <param name="afterTopic"></param>
+        /// <returns></returns>
         private bool EqualsTopics(Topic beforeTopic, Topic afterTopic)
         {
             if (beforeTopic.Title == afterTopic.Title)
@@ -81,6 +97,29 @@ namespace FinalWork_BD_Test.Controllers
         {
             ViewData["ActiveView"] = "BuildVkr";
             return View();
+        }
+
+        /// <summary>
+        /// Добавление нового научного руководителя
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult NewSuperVisor()
+        {
+            return View();
+        }
+        
+        /// <summary>
+        /// Добавление нового научного руководителя
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult NewSuperVisor([FromForm] UserProfile user)
+        {
+            _context.UserProfiles.Add(user);
+            _context.SaveChanges();
+
+            return RedirectToAction("Common");
         }
     }
 }

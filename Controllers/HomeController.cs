@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ using FinalWork_BD_Test.Data.Models.Data;
 using FinalWork_BD_Test.Data.Models.Profiles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +27,7 @@ namespace FinalWork_BD_Test.Controllers
 
         //public HomeController(ILogger<HomeController> logger)
 
-        public ApplicationDbContext _context;
+        private ApplicationDbContext _context;
         private UserManager<User> _userManager;
 
         public HomeController(ApplicationDbContext context, UserManager<User> userManager)
@@ -40,6 +43,20 @@ namespace FinalWork_BD_Test.Controllers
         /// <returns> Возвращает представление </returns>
         public IActionResult Index()
         {
+            string textToPage = "";
+            string filePath = "~/Static/MainPage.txt";
+            
+            using (FileStream fl = new FileStream(filePath, FileMode.Open))
+            {
+                byte[] array = new byte[fl.Length];
+
+                fl.Read(array, 0, array.Length);
+
+                textToPage = System.Text.Encoding.Default.GetString(array);
+            }
+
+            ViewData["MainPageText"] = textToPage;
+            
             return View();
         }
 
