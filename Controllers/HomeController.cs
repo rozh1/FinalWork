@@ -44,7 +44,7 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult Index()
         {
             string textToPage = "";
-            string filePath = "~/Static/MainPage.txt";
+            string filePath = "Static/MainPage.txt";
             
             using (FileStream fl = new FileStream(filePath, FileMode.Open))
             {
