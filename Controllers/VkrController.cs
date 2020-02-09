@@ -6,6 +6,7 @@ using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Profiles;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -44,7 +45,8 @@ namespace FinalWork_BD_Test.Controllers
             ViewData["ActiveView"] = "Common";
             if (vkr != null)
             {
-                //ViewData["beforeTopic"] = userTopic;
+                HttpContext.Session.SetString("beforeVkrTitle", vkr.Topic.Title);
+                HttpContext.Session.SetString("beforeVkrSupervisor", vkr.SupervisorUP.Id.ToString());
                 ViewData["UserProfile.Id"] = GetSupervisorList(vkr.SupervisorUP);
                 return View(vkr);
             }
@@ -69,20 +71,30 @@ namespace FinalWork_BD_Test.Controllers
         /// Регистрация/редактирование ВКР
         /// </summary>
         /// <param name="topic"></param>
+        /// <param name="userProfile"></param>
         /// <returns></returns>
         [HttpPost]
         public IActionResult Common([FromForm] Topic topic, [FromForm] UserProfile userProfile)
         {
-            if (ViewData["beforeTopic"] != null)
-                if (EqualsTopics((Topic)ViewData["beforeTopic"], topic))
-                    return RedirectToAction();
             UserProfile supervisor =
                 _context.UserProfiles.FirstOrDefault(t => t.Id == userProfile.Id && t.UpdatedByObj == null);
+            
             var currentUser = _userManager.GetUserAsync(this.User).Result;
+            
             _context.UserProfiles.Load();
+            
             VKR prvVKR = _context.VKRs.FirstOrDefault(t => t.UpdatedByObj == null);
             VKR vkr = new VKR() { Topic = topic, CreatedDate = DateTime.Now, SupervisorUP = supervisor, StudentUP = currentUser.UserProfiles.FirstOrDefault(t => t.UpdatedByObj == null) };
+            
             _context.VKRs.Add(vkr);
+
+            VKR beforeVkr = CreateBeforeVkr();
+            
+            if (beforeVkr != null)
+                if (EqualsVkr(beforeVkr, vkr))
+                    return RedirectToAction();
+            
+
             if (prvVKR != null)
                 prvVKR.UpdatedByObj = vkr;
 
@@ -104,16 +116,42 @@ namespace FinalWork_BD_Test.Controllers
         /// <summary>
         /// Равны ли обе ВКР
         /// </summary>
-        /// <param name="beforeTopic"></param>
-        /// <param name="afterTopic"></param>
+        /// <param name="beforeVkr"></param>
+        /// <param name="afterVkr"></param>
         /// <returns></returns>
-        private bool EqualsTopics(Topic beforeTopic, Topic afterTopic)
+        private bool EqualsVkr(VKR beforeVkr, VKR afterVkr)
         {
-            if (beforeTopic.Title == afterTopic.Title)
-                //if (beforeTopic.SuperVisorId == afterTopic.SuperVisorId)
-                return true;
+            if (beforeVkr.Topic.Title == afterVkr.Topic.Title)
+                if (beforeVkr.SupervisorUP == afterVkr.SupervisorUP)
+                    return true;
 
             return false;
+        }
+
+        
+        /// <summary>
+        /// Создает объект ВКР для сравнения с данными из формы
+        /// </summary>
+        /// <returns></returns>
+        private VKR CreateBeforeVkr()
+        {
+            Topic topic = new Topic()
+            {
+                Title = HttpContext.Session.GetString("beforeVkrTitle")
+            };
+            
+            Guid superVisorId = new Guid(HttpContext.Session.GetString("beforeVkrSupervisor"));
+
+            UserProfile superVisor = 
+                _context.UserProfiles.FirstOrDefault(u => u.Id == superVisorId);
+
+            VKR res = new VKR()
+            {
+                Topic = topic,
+                SupervisorUP = superVisor
+            };
+
+            return res;
         }
 
         public IActionResult Documents()

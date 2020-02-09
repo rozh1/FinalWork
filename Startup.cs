@@ -28,12 +28,16 @@ namespace FinalWork_BD_Test
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+            
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<ApplicationDbContext>();
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI().AddDefaultTokenProviders();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddSessionStateTempDataProvider();
             services.AddRazorPages();
         }
 
@@ -54,6 +58,8 @@ namespace FinalWork_BD_Test
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseSession();
+            
             app.UseRouting();
 
             app.UseAuthentication();
