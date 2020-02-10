@@ -9,32 +9,32 @@
 <hr />
 <partial name="_StatusMessage" model="Model.StatusMessage" />
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <form method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Input.FirstNameRP" class="control-label"></label>
-                <input asp-for="Input.FirstNameRP" name ="FirstNameRP" class="form-control" />
+                <input asp-for="Input.FirstNameRP" name="FirstNameRP" class="form-control"/>
                 <span asp-validation-for="Input.FirstNameRP" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.SecondNameRP" class="control-label"></label>
-                <input asp-for="Input.SecondNameRP" name ="SecondNameRP" class="form-control" />
+                <input asp-for="Input.SecondNameRP" name="SecondNameRP" class="form-control"/>
                 <span asp-validation-for="Input.SecondNameRP" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.MiddleNameRP" class="control-label"></label>
-                <input asp-for="Input.MiddleNameRP" name="MiddleNameRP" class="form-control" />
+                <input asp-for="Input.MiddleNameRP" name="MiddleNameRP" class="form-control"/>
                 <span asp-validation-for="Input.MiddleNameRP" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.FirstNameDP" class="control-label"></label>
-                <input asp-for="Input.FirstNameDP" name="FirstNameDP" class="form-control" />
+                <input asp-for="Input.FirstNameDP" name="FirstNameDP" class="form-control"/>
                 <span asp-validation-for="Input.FirstNameDP" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.SecondNameDP" class="control-label"></label>
-                <input asp-for="Input.SecondNameDP" name="SecondNameDP" class="form-control" />
+                <input asp-for="Input.SecondNameDP" name="SecondNameDP" class="form-control"/>
                 <span asp-validation-for="Input.SecondNameDP" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -44,17 +44,20 @@
             </div>
             <div class="form-group">
                 <label asp-for="Input.DegreeId" class="control-label"></label>
-                @Html.DropDownList("DegreeId")
+                @Html.DropDownList("DegreeId", ViewData["DegreeId"] as SelectList, 
+                    new { @class = "form-control"})
                 <span asp-validation-for="Input.DegreeId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.GenderId" class="control-label"></label>
-                @Html.DropDownList("GenderId")
+                @Html.DropDownList("GenderId", ViewData["GenderId"] as SelectList, 
+                    new { @class = "form-control"})
                 <span asp-validation-for="Input.GenderId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Input.EducationFormId" class="control-label"></label>
-                @Html.DropDownList("EducationFormId")
+                @Html.DropDownList("EducationFormId", ViewData["EducationFormId"] as SelectList, 
+                    new { @class = "form-control"})
                 <span asp-validation-for="Input.EducationFormId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -69,7 +72,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Input.GraduateSemesterId" class="control-label"></label>
-                @Html.DropDownList("GraduateSemesterId")
+                @Html.DropDownList("GraduateSemesterId", ViewData["GraduateSemesterId"] as SelectList, 
+                    new { @class = "form-control"})
                 <span asp-validation-for="Input.GraduateSemesterId" class="text-danger"></span>
             </div>
 	        <div class="form-group">
