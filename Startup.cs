@@ -66,6 +66,12 @@ namespace FinalWork_BD_Test
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                
+                endpoints.MapAreaControllerRoute(
+                    name: "AdminPanel",
+                    areaName: "Admin",
+                    pattern: "{controller=Admin}/{action=Index}");
+                endpoints.MapRazorPages();
             });
 
             

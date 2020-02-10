@@ -23,10 +23,14 @@
 
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
-    <Folder Include="Areas\Admin\Data\" />
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\Views\" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Admin\AllUsers.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Admin\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Admin\_AdminNavBar.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Admin\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\_StatusMessage.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ValidationScriptsPartial.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewStart.cshtml" />
   </ItemGroup>
 
 </Project>
