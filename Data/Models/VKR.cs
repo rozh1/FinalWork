@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,8 +24,12 @@ namespace FinalWork_BD_Test.Data.Models
         /// </summary>
         public UserProfile ReviewerUP { get; set; }
 
-        public DateTime Year { get; set; }
-        public Semester Semester { get; set; }
+        [Required]
+        [MaxLength(4), MinLength(4)]
+        public ulong Year { get; set; }
+
+        public Guid SemesterId { get; set; }
+        public virtual Semester Semester { get; set; }
 
     }
 }
