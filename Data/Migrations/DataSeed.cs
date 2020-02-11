@@ -1,17 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace FinalWork_BD_Test.Data.Migrations
 {
     public static class DataSeed
     {
         private static bool _changed = false;
-        public static void Seed(DbContext сontext)
+        public static void Seed(DbContext сontext, UserManager<User> userManager)
         {
             var appContext = сontext as ApplicationDbContext;
             if (appContext == null)
@@ -63,10 +65,10 @@ namespace FinalWork_BD_Test.Data.Migrations
             if (!appContext.AcademicDegrees.Any())
             {
                 appContext.AcademicDegrees.AddRange(
-                    new AcademicDegree(){Name="к.т.н.", Id = Guid.Parse("d552a078-ad35-4275-a969-b0d09681e018") },
-                    new AcademicDegree(){Name="к.ф.-м.н.", Id = Guid.Parse("69a4f8c8-f3bb-4d8a-a064-0be5f8040e44") },
-                    new AcademicDegree(){Name="д.т.н.", Id = Guid.Parse("ecc78e5f-9723-4794-ba08-2156bd20f86d") },
-                    new AcademicDegree(){Name="д.ф.-м.н.", Id = Guid.Parse("3c1a4473-04ee-4a45-b47e-99fc2580b886") }
+                    new AcademicDegree() { Name = "к.т.н.", Id = Guid.Parse("d552a078-ad35-4275-a969-b0d09681e018") },
+                    new AcademicDegree() { Name = "к.ф.-м.н.", Id = Guid.Parse("69a4f8c8-f3bb-4d8a-a064-0be5f8040e44") },
+                    new AcademicDegree() { Name = "д.т.н.", Id = Guid.Parse("ecc78e5f-9723-4794-ba08-2156bd20f86d") },
+                    new AcademicDegree() { Name = "д.ф.-м.н.", Id = Guid.Parse("3c1a4473-04ee-4a45-b47e-99fc2580b886") }
                     );
                 _changed = true;
             }
@@ -75,15 +77,79 @@ namespace FinalWork_BD_Test.Data.Migrations
             if (!appContext.AcademicTitles.Any())
             {
                 appContext.AcademicTitles.AddRange(
-                    new AcademicTitle() { Name="Доцент", Id = Guid.Parse("922b0692-e54a-49c2-b89f-413b49124f57") },
-                    new AcademicTitle() { Name="Профессор", Id = Guid.Parse("1e576607-6fd7-42e4-a474-61702647a672") }
+                    new AcademicTitle() { Name = "Доцент", Id = Guid.Parse("922b0692-e54a-49c2-b89f-413b49124f57") },
+                    new AcademicTitle() { Name = "Профессор", Id = Guid.Parse("1e576607-6fd7-42e4-a474-61702647a672") }
                     );
                 _changed = true;
             }
 
+            if (appContext.Roles.FirstOrDefault(r => r.Name == "Admin") == null)
+            {
+                Role adminRole = new Role("Admin");
+                appContext.Roles.Add(adminRole);
+
+                _changed = true;
+            }
+
+            if (appContext.UserRoles.FirstOrDefault(ur => ur.RoleId == appContext.Roles.FirstOrDefault(r => r.Name == "Admin").Id) == null)
+            {
+                User adminUser = new User
+                {
+                    UserName = "admin@asu.vkr",
+                };
+
+                string pass = GeneratePassword();
+                File.WriteAllText("AdminPass.txt", pass);
+                userManager.CreateAsync(adminUser, pass).Wait();
+            }
+
             if (_changed)
                 appContext.SaveChanges();
-
         }
+
+        public static string GeneratePassword(
+            int requiredLength = 12,
+            int requiredUniqueChars = 4,
+            bool requireDigit = true,
+            bool requireLowercase = true,
+            bool requireNonAlphanumeric = true,
+            bool requireUppercase = true)
+        {
+            string[] randomChars = new[] {
+                "ABCDEFGHJKLMNOPQRSTUVWXYZ",    // uppercase 
+                "abcdefghijkmnopqrstuvwxyz",    // lowercase
+                "0123456789",                   // digits
+                "!@$?_-"                        // non-alphanumeric
+            };
+            Random rand = new Random(Environment.TickCount);
+            List<char> chars = new List<char>();
+
+            if (requireUppercase)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[0][rand.Next(0, randomChars[0].Length)]);
+
+            if (requireLowercase)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[1][rand.Next(0, randomChars[1].Length)]);
+
+            if (requireDigit)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[2][rand.Next(0, randomChars[2].Length)]);
+
+            if (requireNonAlphanumeric)
+                chars.Insert(rand.Next(0, chars.Count),
+                    randomChars[3][rand.Next(0, randomChars[3].Length)]);
+
+            for (int i = chars.Count; i < requiredLength
+                                      || chars.Distinct().Count() < requiredUniqueChars; i++)
+            {
+                string rcs = randomChars[rand.Next(0, randomChars.Length)];
+                chars.Insert(rand.Next(0, chars.Count),
+                    rcs[rand.Next(0, rcs.Length)]);
+            }
+
+            return new string(chars.ToArray());
+        }
+
     }
 }
