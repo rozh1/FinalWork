@@ -21,9 +21,11 @@ namespace FinalWork_BD_Test.Controllers
     {
         private ApplicationDbContext _context;
         private UserManager<User> _userManager;
+        private RoleManager<Role> _roleManager;
 
-        public VkrController(ApplicationDbContext c, UserManager<User> u)
+        public VkrController(ApplicationDbContext c, UserManager<User> u, RoleManager<Role> rm)
         {
+            _roleManager = rm;
             _context = c;
             _userManager = u;
         }
@@ -204,11 +206,26 @@ namespace FinalWork_BD_Test.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult NewSuperVisor([FromForm] UserProfile user)
+        public IActionResult NewSuperVisor([FromForm] UserProfile userProfile)
         {
-            _context.UserProfiles.Add(user);
-            _context.SaveChanges();
+            _context.UserProfiles.Add(userProfile);
 
+
+            //User supervisor = new User();
+            //{
+            //    UserProfiles = new List<UserProfile>()
+            //};
+            //supervisor.UserProfiles.Add(userProfile);
+           // userProfile.User = supervisor;
+
+            //_userManager.CreateAsync(supervisor).Wait();
+
+            //Role role = _context.Roles.First(r => r.Name == "Supervisor");
+
+            //_context.UserRoles.Add(new IdentityUserRole<Guid> {RoleId = role.Id, UserId = supervisor.Id});
+           // _userManager.AddToRoleAsync(supervisor, _roleManager.Roles.First().ToString());
+
+            _context.SaveChanges();
             return RedirectToAction("Common");
         }
     }

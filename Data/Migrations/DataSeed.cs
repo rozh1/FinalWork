@@ -83,10 +83,13 @@ namespace FinalWork_BD_Test.Data.Migrations
                 _changed = true;
             }
 
-            if (appContext.Roles.FirstOrDefault(r => r.Name == "Admin") == null)
+            if (!appContext.Roles.Any())
             {
-                Role adminRole = new Role("Admin");
-                appContext.Roles.Add(adminRole);
+                appContext.Roles.AddRange(
+                    new Role { Name = "Admin", NormalizedName = "ADMIN", Id = Guid.Parse("c9b59c8c-76a6-4483-ab61-f592302e1352") },
+                    new Role { Name = "Supervisor", NormalizedName = "SUPERVISOR", Id = Guid.Parse("0f0ebe12-f363-4daf-b1d3-42165f4b2874") },
+                    new Role { Name = "Student", NormalizedName = "STUDENT", Id = Guid.Parse("dc8bfb02-7fa0-4c2a-be0d-69fcf7dacb10") }
+                    );
 
                 _changed = true;
             }
@@ -101,6 +104,7 @@ namespace FinalWork_BD_Test.Data.Migrations
                 string pass = GeneratePassword();
                 File.WriteAllText("AdminPass.txt", pass);
                 userManager.CreateAsync(adminUser, pass).Wait();
+                userManager.AddToRoleAsync(adminUser, "Admin").Wait();
             }
 
             if (_changed)

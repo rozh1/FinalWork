@@ -64,11 +64,13 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
         {
             User currentUser = _userManager.GetUserAsync(this.User).Result;
 
+                //_context.UserProfiles.Load();
             // Явная загрузка, связанных с пользователем профилей
-            _context.Entry(currentUser).Collection(c => c.StudentProfiles).Load();
+            //_context.Entry(currentUser).Collection(c => c.StudentProfiles).Load();
+            //_context.UserProfiles.FirstOrDefault(u => u.User == currentUser && u.UpdatedByObj == null);
 
             // Предыдущий профиль пользователя, необходим для связи в истории изменений
-            StudentProfile prvProfile = currentUser.StudentProfiles.FirstOrDefault(up => up.UpdatedByObj == null);
+            StudentProfile prvProfile = _context.StudentProfiles.FirstOrDefault(up => up.UpdatedByObj == null && up.User == currentUser);
 
             // Заполняем незаполненные ранее поля
             formProfile.CreatedDate = DateTime.Now;

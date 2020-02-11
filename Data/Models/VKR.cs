@@ -26,8 +26,11 @@ namespace FinalWork_BD_Test.Data.Models
 
         [Required]
         [MaxLength(4), MinLength(4)]
+        [Display(Name = "Год")]
         public ulong Year { get; set; }
 
+        [Required]
+        [Display(Name = "Семестр")]
         public Guid SemesterId { get; set; }
         public virtual Semester Semester { get; set; }
 
