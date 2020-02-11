@@ -55,7 +55,7 @@ namespace FinalWork_BD_Test.Controllers
                 return View(vkr);
             }
 
-            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name");
+            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", CurrentSemester().Id);
             ViewData["UserProfile.Id"] = GetSupervisorList();
             return View(new VKR { Year = (ulong)DateTime.Now.Year });
         }
@@ -167,6 +167,14 @@ namespace FinalWork_BD_Test.Controllers
             };
 
             return res;
+        }
+
+        private Semester CurrentSemester()
+        {
+            int month = DateTime.Today.Month;
+            if (month >= 2 && month <= 8)
+                return _context.Semesters.FirstOrDefault(s => s.Name == "Весна");
+            return _context.Semesters.FirstOrDefault(s => s.Name == "Осень");
         }
 
         public IActionResult Documents()
