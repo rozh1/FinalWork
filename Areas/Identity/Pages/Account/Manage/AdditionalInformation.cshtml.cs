@@ -64,20 +64,19 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
             // Предыдущий профиль пользователя, необходим для связи в истории изменений
             StudentProfile prvProfile = _context.StudentProfiles.FirstOrDefault(up => up.UpdatedByObj == null && up.User == currentUser);
 
-            if (Equals(prvProfile, formProfile))
+            if (prvProfile != null)
             {
-                StatusMessage = "Изменения не обнаружены";
-                return RedirectToPage();
+                prvProfile.UpdatedByObj = formProfile;
+                if (Equals(prvProfile, formProfile))
+                {
+                    StatusMessage = "Изменения не обнаружены";
+                    return RedirectToPage();
+                }
             }
 
             // Заполняем незаполненные ранее поля
             formProfile.CreatedDate = DateTime.Now;
             formProfile.User = currentUser;
-            formProfile.UpdatedByObj = null;
-
-
-            if (prvProfile != null)
-                prvProfile.UpdatedByObj = formProfile;
 
             _context.StudentProfiles.Add(formProfile);
             _context.SaveChanges();
