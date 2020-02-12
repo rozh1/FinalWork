@@ -110,24 +110,6 @@ namespace FinalWork_BD_Test.Data.Models
         [MaxLength(5)]
         public string Group { get; set; } // Думаю стоит хранить в строке, но при этом ограничить её длину
 
-        /// <summary>
-        /// Год выпуска
-        /// </summary>
-        [Required(ErrorMessage = "Введите год окончания")]
-        [Display(Name = "Год окончания")]
-        [RegularExpression(@"[1-9 0]+", 
-            ErrorMessage = "Год окончания должен содержать только цифры")]
-        public ushort GraduateYear { get; set; } // Или же в DateTime?
-
-        /// <summary>
-        /// Семестр выпуска
-        /// </summary>
-        [Required(ErrorMessage = "Выберите семестр, когда будет окончание")]
-        [Display(Name = "Семестр, когда будет окончание")]
-        public Guid GraduateSemesterId { get; set; }
-        [ForeignKey("GraduateSemesterId")]
-        public Semester GraduateSemester { get; set; }
-
         //место работы(или место предполагаемой работы) после выпуска
         //public string WorkPlace {get; set;}
     }
