@@ -64,9 +64,15 @@ namespace FinalWork_BD_Test.Controllers
 
         private SelectList GetSupervisorList(UserProfile supervisor = null)
         {
+            var users = _userManager.GetUsersInRoleAsync("Supervisor").Result;
+            _context.UserProfiles.Load();
+
             Dictionary<Guid, string> dc = new Dictionary<Guid, string>();
-            foreach (var userProfile in _context.UserProfiles.Where(t => t.UpdatedByObj == null))
+            foreach (var user in users)
             {
+                var userProfile = user.UserProfiles?.FirstOrDefault(up => up.UpdatedByObj == null);
+                if (userProfile == null)
+                    continue;
                 dc.Add(userProfile.Id, $"{userProfile.SecondNameIP} {userProfile.FirstNameIP[0]}.{userProfile.MiddleNameIP[0]}.");
             }
             if (supervisor != null)
@@ -83,32 +89,31 @@ namespace FinalWork_BD_Test.Controllers
         [HttpPost]
         public IActionResult Common([FromForm] Topic topic, [FromForm] UserProfile userProfile, [FromForm] ulong year, [FromForm] Semester semester)
         {
-            UserProfile supervisor =
-                _context.UserProfiles.FirstOrDefault(t => t.Id == userProfile.Id && t.UpdatedByObj == null);
-
+            //UserProfile supervisor =
+            //    _context.UserProfiles.FirstOrDefault(t => t.Id == userProfile.Id && t.UpdatedByObj == null);
+            
             var currentUser = _userManager.GetUserAsync(this.User).Result;
 
-            _context.UserProfiles.Load();
+            topic.CreatedDate = DateTime.Now;
+            topic.Author = currentUser;
+            _context.Entry(currentUser).Collection(cu => cu.UserProfiles).Load();
 
             VKR prvVKR = _context.VKRs
                 .Include(t => t.Topic)
-                .FirstOrDefault(t => t.UpdatedByObj == null);
+                .FirstOrDefault(t => t.UpdatedByObj == null && t.StudentUP.User == currentUser);
+
+
 
             VKR vkr = new VKR()
             {
                 Topic = topic,
                 CreatedDate = DateTime.Now,
-                SupervisorUP = supervisor,
+                SupervisorUPId = userProfile.Id,
                 StudentUP = currentUser.UserProfiles.FirstOrDefault(t => t.UpdatedByObj == null),
                 Year = year,
                 SemesterId = semester.Id
             };
-
-
-
-            //VKR beforeVkr = CreateBeforeVkr();
-
-            // if (beforeVkr != null)
+            
             if (prvVKR != null)
                 if (EqualsVkr(prvVKR, vkr))
                     return RedirectToAction();
@@ -117,16 +122,6 @@ namespace FinalWork_BD_Test.Controllers
             if (prvVKR != null)
                 prvVKR.UpdatedByObj = vkr;
 
-            var prvTopic = _context.Topics.FirstOrDefault(t => t.Author == currentUser && t.UpdatedByObj == null);
-
-            topic.CreatedDate = DateTime.Now;
-            topic.Author = currentUser;
-            topic.UpdatedByObj = null;
-
-            if (prvTopic != null)
-                prvTopic.UpdatedByObj = topic;
-
-            _context.Topics.Add(topic);
             _context.SaveChanges();
 
             return RedirectToAction();
@@ -140,8 +135,14 @@ namespace FinalWork_BD_Test.Controllers
         /// <returns></returns>
         private bool EqualsVkr(VKR beforeVkr, VKR afterVkr)
         {
-            if (beforeVkr.Topic.Title == afterVkr.Topic.Title && beforeVkr.SupervisorUP == afterVkr.SupervisorUP && beforeVkr.SemesterId == afterVkr.SemesterId && beforeVkr.Year == afterVkr.Year)
-                return true;
+            if (beforeVkr.Topic.Title == afterVkr.Topic.Title)
+            {
+                afterVkr.Topic = beforeVkr.Topic;
+                if (beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId && beforeVkr.SemesterId == afterVkr.SemesterId &&
+                    beforeVkr.Year == afterVkr.Year)
+                    return true;
+            }
+
             return false;
         }
 
@@ -208,24 +209,20 @@ namespace FinalWork_BD_Test.Controllers
         [HttpPost]
         public IActionResult NewSuperVisor([FromForm] UserProfile userProfile)
         {
+            userProfile.CreatedDate = DateTime.Now;
             _context.UserProfiles.Add(userProfile);
 
+            /* Создать пользователя без имени можно, но не присвоится роль
+             * Создаю пользователя с именем, созданого из guid профиля
+             */
+            User supervisor = new User { UserName = userProfile.Id.ToString() };
+            _userManager.CreateAsync(supervisor).Wait();
 
-            //User supervisor = new User();
-            //{
-            //    UserProfiles = new List<UserProfile>()
-            //};
-            //supervisor.UserProfiles.Add(userProfile);
-           // userProfile.User = supervisor;
-
-            //_userManager.CreateAsync(supervisor).Wait();
-
-            //Role role = _context.Roles.First(r => r.Name == "Supervisor");
-
-            //_context.UserRoles.Add(new IdentityUserRole<Guid> {RoleId = role.Id, UserId = supervisor.Id});
-           // _userManager.AddToRoleAsync(supervisor, _roleManager.Roles.First().ToString());
-
+            userProfile.User = supervisor;
             _context.SaveChanges();
+
+            _userManager.AddToRoleAsync(supervisor, "Supervisor").Wait();
+
             return RedirectToAction("Common");
         }
     }
