@@ -98,6 +98,7 @@ namespace FinalWork_BD_Test.Data.Migrations
             {
                 User adminUser = new User
                 {
+                    Id = Guid.Parse("51bba30f-0b3a-4cde-86dd-17419ce1b130"),
                     UserName = "admin@asu.vkr",
                 };
 
