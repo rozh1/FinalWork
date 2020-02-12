@@ -46,6 +46,7 @@ namespace FinalWork_BD_Test.Controllers
                 .FirstOrDefault(t => t.StudentUP.User == currentUser && t.UpdatedByObj == null);
 
             ViewData["ActiveView"] = "Common";
+            ViewData["CurrentYear"] = (ulong) DateTime.Now.Year;
             if (vkr != null)
             {
                 HttpContext.Session.SetString("beforeVkrTitle", vkr.Topic.Title);
