@@ -30,13 +30,11 @@ namespace FinalWork_BD_Test.Controllers
 
         private ApplicationDbContext _context;
         private UserManager<User> _userManager;
-        private IHostEnvironment _environment;
 
-        public HomeController(ApplicationDbContext context, UserManager<User> userManager, IHostEnvironment env)
+        public HomeController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _environment = env;
         }
 
         /// <summary>
@@ -46,10 +44,11 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult Index()
         {
             string textToPage = "";
-
-            string filePath = "Static/MainPage.txt";
             
-            using (FileStream fl = new FileStream(filePath, FileMode.Open))
+            var file = Path.Combine(Directory.GetCurrentDirectory(), 
+                "Static", "MainPage.txt");
+            
+            using (FileStream fl = new FileStream(file, FileMode.Open))
             {
                 byte[] array = new byte[fl.Length];
 
@@ -240,9 +239,10 @@ namespace FinalWork_BD_Test.Controllers
         {
             string result = "";
             
-            string filePath = _environment.ContentRootPath + "/Static/FaqPage.html";
+            var file = Path.Combine(Directory.GetCurrentDirectory(), 
+                "Static", "FaqPage.html");
             
-            using (FileStream fl = new FileStream(filePath, FileMode.Open))
+            using (FileStream fl = new FileStream(file, FileMode.Open))
             {
                 byte[] array = new byte[fl.Length];
 
