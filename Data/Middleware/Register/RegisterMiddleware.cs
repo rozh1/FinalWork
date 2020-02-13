@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 
 namespace FinalWork_BD_Test.Data
 {
@@ -40,10 +41,15 @@ namespace FinalWork_BD_Test.Data
 
             if (httpContext.User.Identity.IsAuthenticated)
             {
-                var currentUser = userManager.GetUserAsync(httpContext.User).Result;
-                var studentProfile = dbContext.StudentProfiles.FirstOrDefault(t => t.User == currentUser);
+                var currentUser = await userManager.GetUserAsync(httpContext.User);
+                if (await userManager.IsInRoleAsync(currentUser, "Student"))
+                {
+                    var studentProfile = dbContext.StudentProfiles.FirstOrDefault(t => t.User == currentUser);
 
-                if (studentProfile != null)
+                    if (studentProfile != null)
+                        completed_register = true;
+                }
+                else
                     completed_register = true;
             }
 

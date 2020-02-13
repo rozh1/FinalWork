@@ -23,7 +23,7 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
             _context = context;
             _userManager = userManager;
         }
-        
+
         public StudentProfile Input { get; set; }
 
         [TempData]
@@ -38,7 +38,6 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
                 .Include(profile => profile.Degree)
                 .Include(profile => profile.Gender)
                 .Include(profile => profile.EducationForm)
-                .Include(profile => profile.GraduateSemester)
                 .FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
 
             if (profile == null)
@@ -46,38 +45,38 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
                 ViewData["DegreeId"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name");
                 ViewData["GenderId"] = new SelectList(_context.Genders.AsEnumerable(), "Id", "Name");
                 ViewData["EducationFormId"] = new SelectList(_context.EducationForms.AsEnumerable(), "Id", "Name");
-                ViewData["GraduateSemesterId"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name");
 
                 return Page();
             }
-            
+
             ViewData["DegreeId"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name", profile.Degree.Id);
             ViewData["GenderId"] = new SelectList(_context.Genders.AsEnumerable(), "Id", "Name", profile.Gender.Id);
             ViewData["EducationFormId"] = new SelectList(_context.EducationForms.AsEnumerable(), "Id", "Name", profile.EducationForm.Id);
-            ViewData["GraduateSemesterId"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", profile.GraduateSemester.Id);
 
             Input = profile;
             return Page();
         }
-        
+
         public IActionResult OnPost([FromForm] StudentProfile formProfile)
         {
             User currentUser = _userManager.GetUserAsync(this.User).Result;
 
-            // Явная загрузка, связанных с пользователем профилей
-            _context.Entry(currentUser).Collection(c => c.StudentProfiles).Load();
-
             // Предыдущий профиль пользователя, необходим для связи в истории изменений
-            StudentProfile prvProfile = currentUser.StudentProfiles.FirstOrDefault(up => up.UpdatedByObj == null);
+            StudentProfile prvProfile = _context.StudentProfiles.FirstOrDefault(up => up.UpdatedByObj == null && up.User == currentUser);
+
+            if (prvProfile != null)
+            {
+                prvProfile.UpdatedByObj = formProfile;
+                if (Equals(prvProfile, formProfile))
+                {
+                    StatusMessage = "Изменения не обнаружены";
+                    return RedirectToPage();
+                }
+            }
 
             // Заполняем незаполненные ранее поля
             formProfile.CreatedDate = DateTime.Now;
             formProfile.User = currentUser;
-            formProfile.UpdatedByObj = null;
-
-            
-            if (prvProfile != null)
-                prvProfile.UpdatedByObj = formProfile;
 
             _context.StudentProfiles.Add(formProfile);
             _context.SaveChanges();
@@ -86,5 +85,23 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
 
             return RedirectToPage();
         }
+
+        // Если будет использоваться где-то еще, то стоит перенести в модель
+        private static bool Equals(StudentProfile previous, StudentProfile current)
+        {
+            if (previous.FirstNameDP == current.FirstNameDP
+                && previous.SecondNameDP == current.SecondNameDP
+                && previous.MiddleNameDP == current.MiddleNameDP
+                && previous.FirstNameRP == current.FirstNameRP
+                && previous.SecondNameRP == current.SecondNameRP
+                && previous.MiddleNameRP == current.MiddleNameRP
+                && previous.DegreeId == current.DegreeId
+                && previous.EducationFormId == current.EducationFormId
+                && previous.GenderId == current.GenderId
+                && previous.Group == current.Group)
+                return true;
+            return false;
+        }
+
     }
 }

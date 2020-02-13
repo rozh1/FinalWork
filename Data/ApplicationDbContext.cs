@@ -22,6 +22,7 @@ namespace FinalWork_BD_Test.Data
         public DbSet<Semester> Semesters { get; set; }
         public DbSet<AcademicDegree> AcademicDegrees { get; set; }
         public DbSet<AcademicTitle> AcademicTitles { get; set; }
+        public DbSet<VKR> VKRs { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

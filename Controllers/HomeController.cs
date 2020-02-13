@@ -46,7 +46,8 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult Index()
         {
             string textToPage = "";
-            string filePath = _environment.ContentRootPath + "/Static/MainPage.txt";
+
+            string filePath = "Static/MainPage.txt";
             
             using (FileStream fl = new FileStream(filePath, FileMode.Open))
             {
@@ -79,7 +80,6 @@ namespace FinalWork_BD_Test.Controllers
                 .Include(profile => profile.Degree)
                 .Include(profile => profile.Gender)
                 .Include(profile => profile.EducationForm)
-                .Include(profile => profile.GraduateSemester)
                 .FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
 
             if (profile == null)
@@ -87,14 +87,12 @@ namespace FinalWork_BD_Test.Controllers
                 ViewBag.Degree = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name");
                 ViewBag.Gender = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name");
                 ViewBag.EducationForm = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name");
-                ViewBag.GraduateSemester = new SelectList(_context.Semesters.AsEnumerable(), "Name", "Name");
                 return View();
             }
 
             ViewBag.Degree = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name", profile.Degree.Name);
             ViewBag.Gender = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name", profile.Gender.Name);
             ViewBag.EducationForm = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name", profile.EducationForm.Name);
-            ViewBag.GraduateSemester = new SelectList(_context.Semesters.AsEnumerable(), "Name", "Name", profile.GraduateSemester.Name);
             return View(profile);
         }
 
@@ -141,8 +139,6 @@ namespace FinalWork_BD_Test.Controllers
                 Gender = _context.Genders.FirstOrDefault(d => d.Name == form.Gender),
                 EducationForm = _context.EducationForms.FirstOrDefault(d => d.Name == form.EducationForm),
                 Group = form.Group,
-                GraduateYear = form.GraduateYear,
-                GraduateSemester = _context.Semesters.FirstOrDefault(d => d.Name == form.GraduateSemester),
             };
 
             return profile;

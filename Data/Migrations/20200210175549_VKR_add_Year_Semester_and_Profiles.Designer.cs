@@ -3,15 +3,17 @@ using System;
 using FinalWork_BD_Test.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FinalWork_BD_Test.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200210175549_VKR_add_Year_Semester_and_Profiles")]
+    partial class VKR_add_Year_Semester_and_Profiles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,6 +255,12 @@ namespace FinalWork_BD_Test.Migrations
                     b.Property<Guid>("GenderId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("GraduateSemesterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("GraduateYear")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Group")
                         .IsRequired()
                         .HasColumnType("character varying(5)")
@@ -287,6 +295,8 @@ namespace FinalWork_BD_Test.Migrations
                     b.HasIndex("EducationFormId");
 
                     b.HasIndex("GenderId");
+
+                    b.HasIndex("GraduateSemesterId");
 
                     b.HasIndex("UpdatedBy");
 
@@ -402,7 +412,6 @@ namespace FinalWork_BD_Test.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("SemesterId")
-                        .IsRequired()
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("StudentSPId")
@@ -603,6 +612,12 @@ namespace FinalWork_BD_Test.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FinalWork_BD_Test.Data.Models.Data.Semester", "GraduateSemester")
+                        .WithMany()
+                        .HasForeignKey("GraduateSemesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FinalWork_BD_Test.Data.Models.StudentProfile", "UpdatedByObj")
                         .WithMany()
                         .HasForeignKey("UpdatedBy");
@@ -633,9 +648,7 @@ namespace FinalWork_BD_Test.Migrations
 
                     b.HasOne("FinalWork_BD_Test.Data.Models.Data.Semester", "Semester")
                         .WithMany()
-                        .HasForeignKey("SemesterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SemesterId");
 
                     b.HasOne("FinalWork_BD_Test.Data.Models.StudentProfile", "StudentSP")
                         .WithMany()

@@ -3,15 +3,17 @@ using System;
 using FinalWork_BD_Test.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FinalWork_BD_Test.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200209134456_VKR_add_Topic_and_Supervisor")]
+    partial class VKR_add_Topic_and_Supervisor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,6 +255,12 @@ namespace FinalWork_BD_Test.Migrations
                     b.Property<Guid>("GenderId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("GraduateSemesterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("GraduateYear")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Group")
                         .IsRequired()
                         .HasColumnType("character varying(5)")
@@ -287,6 +295,8 @@ namespace FinalWork_BD_Test.Migrations
                     b.HasIndex("EducationFormId");
 
                     b.HasIndex("GenderId");
+
+                    b.HasIndex("GraduateSemesterId");
 
                     b.HasIndex("UpdatedBy");
 
@@ -398,20 +408,7 @@ namespace FinalWork_BD_Test.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<Guid?>("ReviewerUPId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("SemesterId")
-                        .IsRequired()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("StudentSPId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid?>("StudentUPId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("SupervisorLPId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("SupervisorUPId")
@@ -423,21 +420,9 @@ namespace FinalWork_BD_Test.Migrations
                     b.Property<Guid?>("UpdatedBy")
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("Year")
-                        .HasColumnType("numeric")
-                        .HasMaxLength(4);
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ReviewerUPId");
-
-                    b.HasIndex("SemesterId");
-
-                    b.HasIndex("StudentSPId");
-
                     b.HasIndex("StudentUPId");
-
-                    b.HasIndex("SupervisorLPId");
 
                     b.HasIndex("SupervisorUPId");
 
@@ -603,6 +588,12 @@ namespace FinalWork_BD_Test.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FinalWork_BD_Test.Data.Models.Data.Semester", "GraduateSemester")
+                        .WithMany()
+                        .HasForeignKey("GraduateSemesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FinalWork_BD_Test.Data.Models.StudentProfile", "UpdatedByObj")
                         .WithMany()
                         .HasForeignKey("UpdatedBy");
@@ -627,27 +618,9 @@ namespace FinalWork_BD_Test.Migrations
 
             modelBuilder.Entity("FinalWork_BD_Test.Data.Models.VKR", b =>
                 {
-                    b.HasOne("FinalWork_BD_Test.Data.Models.Profiles.UserProfile", "ReviewerUP")
-                        .WithMany()
-                        .HasForeignKey("ReviewerUPId");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.Data.Semester", "Semester")
-                        .WithMany()
-                        .HasForeignKey("SemesterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.StudentProfile", "StudentSP")
-                        .WithMany()
-                        .HasForeignKey("StudentSPId");
-
                     b.HasOne("FinalWork_BD_Test.Data.Models.Profiles.UserProfile", "StudentUP")
                         .WithMany()
                         .HasForeignKey("StudentUPId");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.Profiles.LecturerProfile", "SupervisorLP")
-                        .WithMany()
-                        .HasForeignKey("SupervisorLPId");
 
                     b.HasOne("FinalWork_BD_Test.Data.Models.Profiles.UserProfile", "SupervisorUP")
                         .WithMany()
