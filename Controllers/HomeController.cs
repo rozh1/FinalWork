@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace FinalWork_BD_Test.Controllers
 {
@@ -29,12 +30,13 @@ namespace FinalWork_BD_Test.Controllers
 
         private ApplicationDbContext _context;
         private UserManager<User> _userManager;
+        private IHostEnvironment _environment;
 
-        public HomeController(ApplicationDbContext context, UserManager<User> userManager)
+        public HomeController(ApplicationDbContext context, UserManager<User> userManager, IHostEnvironment env)
         {
-            //_logger = logger;
             _context = context;
             _userManager = userManager;
+            _environment = env;
         }
 
         /// <summary>
@@ -44,6 +46,7 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult Index()
         {
             string textToPage = "";
+
             string filePath = "Static/MainPage.txt";
             
             using (FileStream fl = new FileStream(filePath, FileMode.Open))
@@ -235,9 +238,20 @@ namespace FinalWork_BD_Test.Controllers
 
         public string Faq()
         {
-            string res = "";
+            string result = "";
+            
+            string filePath = _environment.ContentRootPath + "/Static/FaqPage.html";
+            
+            using (FileStream fl = new FileStream(filePath, FileMode.Open))
+            {
+                byte[] array = new byte[fl.Length];
 
-            return res;
+                fl.Read(array, 0, array.Length);
+
+                result = System.Text.Encoding.Default.GetString(array);
+            }
+            
+            return result;
         }
     }
 }
