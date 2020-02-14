@@ -1,7 +1,7 @@
-@using FinalWork_BD_Test.Areas.Admin.Pages
+@using FinalWork_BD_Test.Areas.Admin.Views.Home
 <ul class="nav nav-pills flex-column">
-    <li class="nav-item"><a class="nav-link @AdminNavBar.IndexNavClass(ViewContext)" asp-controller="Admin" asp-action="Index">Начальная страница</a></li>
-    <li class="nav-item"><a class="nav-link @AdminNavBar.AllUsersNavClass(ViewContext)" asp-controller="Admin" asp-action="AllUsers">Все пользователи</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.IndexNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="Index">Начальная страница</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.AllUsersNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="AllUsers">Все пользователи</a></li>
     <li class="nav-item"><a class="nav-link @AdminNavBar.FindUserNavClass(ViewContext)" >Найти пользователя</a></li>
     <li class="nav-item"><a class="nav-link @AdminNavBar.AllRolesNavClass(ViewContext)" >Все роли</a></li>
     <li class="nav-item"><a class="nav-link disabled" >Все рецеденты</a></li>

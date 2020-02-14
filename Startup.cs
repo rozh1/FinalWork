@@ -68,15 +68,14 @@ namespace FinalWork_BD_Test
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
-                
                 endpoints.MapAreaControllerRoute(
                     name: "AdminPanel",
                     areaName: "Admin",
-                    pattern: "{controller=Admin}/{action=Index}");
+                    pattern: "Admin/{controller=Home}/{action=Index}");
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
 

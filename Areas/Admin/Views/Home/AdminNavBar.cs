@@ -1,9 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace FinalWork_BD_Test.Areas.Admin.Pages
+namespace FinalWork_BD_Test.Areas.Admin.Views.Home
 {
-    public class AdminNavBar
+    public static class AdminNavBar
     {
         public static string Index => "Index";
 

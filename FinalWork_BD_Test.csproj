@@ -38,6 +38,7 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ValidationScriptsPartial.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewImports.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewStart.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Admin\AllUsers.cshtml" />
   </ItemGroup>
 
 </Project>
