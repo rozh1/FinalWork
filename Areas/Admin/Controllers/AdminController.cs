@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FinalWork_BD_Test.Areas.Admin.Models;
 using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Profiles;
+using FinalWork_BD_Test.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +20,13 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
     {
         private ApplicationDbContext _context;
         private UserManager<User> _userManager;
+        private RoleManager<Role> _roleManager;
 
-        public HomeController(ApplicationDbContext c, UserManager<User> u)
+        public HomeController(ApplicationDbContext c, UserManager<User> u, RoleManager<Role> r)
         {
             _context = c;
             _userManager = u;
+            _roleManager = r;
         }
 
         public IActionResult Index()
@@ -34,7 +39,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             int pageSize = 10;
 
-            IQueryable<UserProfile> source = _context.UserProfiles;
+            IQueryable<User> source = _context.Users;
             var count = source.Count();
             var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
  
@@ -42,7 +47,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             UserProfileViewModel viewModel = new UserProfileViewModel
             {
                 PageViewModel = pageViewModel,
-                UserProfiles = items
+                Users = items
             };
 
             ViewData["ActiveView"] = "AllUsers";
@@ -52,11 +57,14 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult EditUser(Guid id = default(Guid))
         {
-            UserProfile profile = null;
+            User profile = null;
             if (id != default(Guid))
-                profile = _context.UserProfiles.FirstOrDefault(u => u.Id == id);
+                profile = _context.Users.FirstOrDefault(u => u.Id == id);
 
-            return profile == null ? View() : View(profile);
+            UserProfile model = null;
+            if (profile?.UserProfiles != null) model = profile.UserProfiles.FirstOrDefault();
+
+            return model == null ? View() : View(model);
         }
 
         [HttpPost]
@@ -92,12 +100,104 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
     
         public IActionResult DeleteUser(Guid id)
         {
-            var user = _context.UserProfiles.FirstOrDefault(u => u.Id == id)?.User;
-            if (user != null)
-                foreach (var profile in user.UserProfiles)
-                    _context.UserProfiles.Remove(profile);
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            _userManager.DeleteAsync(user);
 
             return RedirectToAction("AllUsers");
         }
+
+        public IActionResult AllRoles()
+        {
+            ViewData["roles"] = _roleManager.Roles.ToList();
+            ViewData["ActiveView"] = "AllRoles";
+            return View(_roleManager.Roles.ToList());
+        }
+        
+        public IActionResult CreateRole()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRole(string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                IdentityResult result = await _roleManager.CreateAsync(new Role(name));
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("AllRoles");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+            }
+
+            return View(name);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(string id)
+        {
+            Role role = await _roleManager.FindByIdAsync(id);
+            if (role != null)
+            {
+                IdentityResult result = await _roleManager.DeleteAsync(role);
+            }
+            return RedirectToAction("AllRoles");
+        }
+        
+        public async Task<IActionResult> EditUserRoles(string userId)
+        {
+            // получаем пользователя
+            User user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                // получем список ролей пользователя
+                var userRoles = await _userManager.GetRolesAsync(user);
+                var allRoles = _roleManager.Roles.ToList();
+                ChangeRoleViewModel model = new ChangeRoleViewModel
+                {
+                    UserId = user.Id,
+                    UserEmail = user.Email,
+                    UserRoles = userRoles,
+                    AllRoles = allRoles
+                };
+                return View(model);
+            }
+
+            return NotFound();
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> EditUserRoles(string userId, List<string> roles)
+        {
+            // получаем пользователя
+            User user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                // получем список ролей пользователя
+                var userRoles = await _userManager.GetRolesAsync(user);
+                // получаем все роли
+                var allRoles = _roleManager.Roles.ToList();
+                // получаем список ролей, которые были добавлены
+                var addedRoles = roles.Except(userRoles);
+                // получаем роли, которые были удалены
+                var removedRoles = userRoles.Except(roles);
+
+                await _userManager.AddToRolesAsync(user, addedRoles);
+
+                await _userManager.RemoveFromRolesAsync(user, removedRoles);
+
+                return RedirectToAction();
+            }
+
+            return NotFound();
+        }
+
     }
 }

@@ -4,12 +4,12 @@
 
 <h2>Изменение ролей для пользователя @Model.UserEmail</h2>
 
-<form asp-action="Edit" method="post">
+<form asp-action="EditUserRoles" method="post">
 	<input type="hidden" name="userId" value="@Model.UserId" />
 	<div class="form-group">
 		@foreach (Role role in Model.AllRoles)
 		{
-			<input type="checkbox" name="roles" value="@role.Name"
+			<input class="form-check" type="checkbox" name="roles" value="@role.Name"
 			       @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") />@role.Name <br />
 		}
 	</div>
