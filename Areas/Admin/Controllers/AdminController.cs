@@ -39,7 +39,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             int pageSize = 10;
 
-            IQueryable<User> source = _context.Users;
+            IQueryable<User> source = _context.Users.Include(profile => profile.UserProfiles);
             var count = source.Count();
             var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
  
@@ -59,7 +59,13 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             User profile = null;
             if (id != default(Guid))
-                profile = _context.Users.FirstOrDefault(u => u.Id == id);
+            {
+                profile = _context.Users
+                    .Include(i => i.UserProfiles)
+                    .Include(i => i.LecturerProfiles)
+                    .Include(i => i.StudentProfiles)
+                    .FirstOrDefault(u => u.Id == id);
+            }
 
             UserProfile model = null;
             if (profile?.UserProfiles != null) model = profile.UserProfiles.FirstOrDefault();
@@ -72,24 +78,51 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             if (newProfile.Id != Guid.Empty)
             {
-                if (newProfile.User != null)
-                    _context.Users.Update(newProfile.User);
+                // если редактирование
+                var oldProfile = _context.UserProfiles
+                    .Include(u => u.User)
+                    .FirstOrDefault(u => u.Id == newProfile.Id);
 
-                _context.UserProfiles.Update(newProfile);
+                if (oldProfile != null)
+                {
+                    var changedUser = oldProfile.User;
+                    changedUser.Email = newProfile.User.Email;
+                    changedUser.PhoneNumber = newProfile.User.PhoneNumber;
+
+                    newProfile.User = changedUser;
+                    oldProfile.UpdatedByObj = newProfile;
+
+                    newProfile.Id = Guid.Empty;
+                    newProfile.CreatedDate = DateTime.Now;
+
+                    _context.UserProfiles.Add(newProfile);
+                }
             }
             else
             {
-                _context.Users.Add(newProfile.User);
+                // если добавление
+                newProfile.CreatedDate = DateTime.Now;
                 
-                var newUserId = _context.Find<User>(newProfile.User).Id;
-                newProfile.User.Id = newUserId;
+                var newUser = newProfile.User;
+                newUser.UserName = newUser.Email;
+                
+                newUser.UserProfiles = new List<UserProfile>()
+                {
+                    newProfile
+                };
+                
+                string pass = newUser.PasswordHash;
+                newUser.PasswordHash = null;
 
-                _context.Add(newProfile);
+                _userManager.CreateAsync(newUser, pass).Wait();
+                _userManager.AddToRoleAsync(newUser, "Student").Wait();
             }
 
             _context.SaveChanges();
 
-            var model = _context.Find<UserProfile>(newProfile);
+            var model = _context.UserProfiles
+                .Include(u => u.User)
+                .FirstOrDefault(u => u.Id == newProfile.Id);
             return View(model);
         }
 
@@ -100,8 +133,12 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
     
         public IActionResult DeleteUser(Guid id)
         {
+            // TODO: реализовать удаление пользователя (желательно просто деактивировать его)
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
-            _userManager.DeleteAsync(user);
+            //_userManager.DeleteAsync(user).Wait();
+            
+            _context.Entry(user).State = EntityState.Detached;
+            _context.SaveChanges();
 
             return RedirectToAction("AllUsers");
         }
@@ -153,17 +190,15 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         
         public async Task<IActionResult> EditUserRoles(string userId)
         {
-            // получаем пользователя
             User user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                // получем список ролей пользователя
                 var userRoles = await _userManager.GetRolesAsync(user);
                 var allRoles = _roleManager.Roles.ToList();
                 ChangeRoleViewModel model = new ChangeRoleViewModel
                 {
                     UserId = user.Id,
-                    UserEmail = user.Email,
+                    UserName = user.UserName,
                     UserRoles = userRoles,
                     AllRoles = allRoles
                 };
@@ -176,28 +211,61 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> EditUserRoles(string userId, List<string> roles)
         {
-            // получаем пользователя
             User user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                // получем список ролей пользователя
                 var userRoles = await _userManager.GetRolesAsync(user);
-                // получаем все роли
                 var allRoles = _roleManager.Roles.ToList();
-                // получаем список ролей, которые были добавлены
                 var addedRoles = roles.Except(userRoles);
-                // получаем роли, которые были удалены
                 var removedRoles = userRoles.Except(roles);
 
                 await _userManager.AddToRolesAsync(user, addedRoles);
 
                 await _userManager.RemoveFromRolesAsync(user, removedRoles);
 
-                return RedirectToAction();
+                return RedirectToAction("EditUserRoles", new {userId = userId});
             }
 
             return NotFound();
         }
 
+        [HttpGet]
+        public IActionResult EditLectureProfile(Guid id)
+        {
+            var profile = _context.LecturerProfiles
+                .Include(u => u.User)
+                .FirstOrDefault(u => u.Id == id);
+
+            return View(profile);
+        }
+
+        [HttpPost]
+        public IActionResult EditLectureProfile([FromForm] LecturerProfile newProfile)
+        {
+            var oldProfile = _context.LecturerProfiles
+                .Include(u => u.User)
+                .FirstOrDefault(u => u.Id == newProfile.Id);
+
+            if (oldProfile != null)
+            {
+                oldProfile.UpdatedByObj = newProfile;
+
+                newProfile.User = oldProfile.User;
+                newProfile.CreatedDate = DateTime.Now;
+            }
+            else
+            {
+                var user = _context.Users.FirstOrDefault(u => u.Id == newProfile.User.Id);
+
+                newProfile.User = user;
+                newProfile.CreatedDate = DateTime.Now;
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("EditLectureProfile", new {id = newProfile.User.Id});
+        }
+        
+        // TODO: сделать редактирование профиля студента аналогично профилю науч рука
     }
 }

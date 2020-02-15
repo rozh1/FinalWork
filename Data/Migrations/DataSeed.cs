@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Data;
+using FinalWork_BD_Test.Data.Models.Profiles;
 using Microsoft.AspNetCore.Identity;
 
 namespace FinalWork_BD_Test.Data.Migrations
@@ -106,6 +107,10 @@ namespace FinalWork_BD_Test.Data.Migrations
                 File.WriteAllText("AdminPass.txt", pass);
                 userManager.CreateAsync(adminUser, pass).Wait();
                 userManager.AddToRoleAsync(adminUser, "Admin").Wait();
+                
+                appContext.Users.FirstOrDefault(u => u.Id == adminUser.Id)?
+                    .UserProfiles.Add(new UserProfile());
+                _changed = true;
             }
 
             if (_changed)
