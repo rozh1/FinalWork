@@ -2,7 +2,7 @@
 <ul class="nav nav-pills flex-column">
     <li class="nav-item"><a class="nav-link @AdminNavBar.IndexNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="Index">Начальная страница</a></li>
     <li class="nav-item"><a class="nav-link @AdminNavBar.AllUsersNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="AllUsers">Все пользователи</a></li>
-    <li class="nav-item"><a class="nav-link @AdminNavBar.FindUserNavClass(ViewContext)" >Найти пользователя</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.FindUsersNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="FindUsers">Найти пользователя</a></li>
     <li class="nav-item"><a class="nav-link @AdminNavBar.AllRolesNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="AllRoles">Все роли</a></li>
     <li class="nav-item"><a class="nav-link disabled" >Все рецеденты</a></li>
     <li class="nav-item"><a class="nav-link disabled" >Найти рецедента</a></li>

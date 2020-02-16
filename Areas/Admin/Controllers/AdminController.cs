@@ -37,11 +37,24 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult AllUsers(int page=1)
+        public IActionResult AllUsers(int page=1, UserProfile searchData = null)
         {
             int pageSize = 7;
 
-            IQueryable<User> source = _context.Users.Include(profile => profile.UserProfiles);
+            IEnumerable<User> source = null;
+
+            if (searchData != null)
+            {
+                var data = CreateSearchExpression(searchData).Select(u => u.User);
+
+                source = data;
+            }
+            else
+            {
+                source = _context.Users
+                    .Include(profile => profile.UserProfiles);
+            }
+
             var count = source.Count();
             var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
  
@@ -97,6 +110,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 newProfile.Id = Guid.Empty;
                 newProfile.CreatedDate = DateTime.Now;
 
+                //_userManager.UpdateAsync(newProfile.User).Wait();
                 newProfile.User.UserProfiles.Add(newProfile);
                 _context.UserProfiles.Add(newProfile);
             }
@@ -425,6 +439,39 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("EditStudentProfile", new {id = newProfile.User.Id});
+        }
+
+        [HttpGet]
+        public IActionResult FindUsers()
+        {
+            return View();
+        }
+        
+        private IQueryable<UserProfile> CreateSearchExpression(UserProfile data)
+        {
+            var source = _context.UserProfiles
+                .Include(u => u.User)
+                .Where(u => u.UpdatedByObj == null);
+            
+            if (data.User.UserName != null)
+                source.Where(u => u.User.UserName == data.User.UserName);
+
+            if (data.User.Email != null)
+                source.Where(u => u.User.Email == data.User.Email);
+
+            if (data.User.PhoneNumber != null)
+                source.Where(u => u.User.PhoneNumber == data.User.PhoneNumber);
+
+            if (data.FirstNameIP != null)
+                source.Where(u => u.FirstNameIP == data.FirstNameIP);
+
+            if (data.SecondNameIP != null)
+                source.Where(u => u.SecondNameIP == data.SecondNameIP);
+
+            if (data.MiddleNameIP != null)
+                source.Where(u => u.MiddleNameIP == data.MiddleNameIP);
+            
+            return source;
         }
     }
 }

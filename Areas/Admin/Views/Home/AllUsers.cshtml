@@ -21,9 +21,9 @@
             <td>@u.UserName</td>
             <td>@u.PhoneNumber</td>
             
-            @if (u.UserProfiles?.FirstOrDefault() != null)
+            @if (u.UserProfiles?.FirstOrDefault(u => u.UpdatedByObj == null) != null)
             {
-                var up = u.UserProfiles.FirstOrDefault();
+                var up = u.UserProfiles.FirstOrDefault(u => u.UpdatedByObj == null);
                 <td>@up.SecondNameIP</td>
                 <td>@up.FirstNameIP</td>
                 <td>@up.MiddleNameIP</td>
@@ -45,6 +45,7 @@
 {
     <a asp-action="AllUsers"
        asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       asp-route-data="@ViewData["data"]"
        class="btn btn-outline-dark">
         <i class="glyphicon glyphicon-chevron-left"></i>
         Назад
@@ -54,6 +55,7 @@
 {
     <a asp-action="AllUsers"
        asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       asp-route-data="@ViewData["data"]"
        class="btn btn-outline-dark">
         Вперед
         <i class="glyphicon glyphicon-chevron-right"></i>
