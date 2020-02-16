@@ -38,6 +38,7 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult Common()
         {
             var currentUser = _userManager.GetUserAsync(this.User).Result;
+            
             var vkr = _context.VKRs
                 .Include(t => t.StudentUP)
                 .Include(t => t.SupervisorUP)
@@ -47,39 +48,27 @@ namespace FinalWork_BD_Test.Controllers
 
             ViewData["ActiveView"] = "Common";
             ViewData["CurrentYear"] = (ulong) DateTime.Now.Year;
+            
             if (vkr != null)
             {
-                HttpContext.Session.SetString("beforeVkrTitle", vkr.Topic.Title);
-                HttpContext.Session.SetString("beforeVkrSupervisor", vkr.SupervisorUP.Id.ToString());
-                ViewData["UserProfile.Id"] = GetSupervisorList(vkr.SupervisorUP);
+                ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager, vkr.SupervisorUP);
+                
                 if (vkr.Semester == null)
                     vkr.Semester = _context.Semesters.First();
+                
                 ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", vkr.Semester.Id);
+                
                 return View(vkr);
             }
 
-            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", CurrentSemester().Id);
-            ViewData["UserProfile.Id"] = GetSupervisorList();
+            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(),
+                "Id", "Name", Semester.CurrentSemester(_context).Id);
+            
+            ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager);
+            
             return View(new VKR { Year = (ulong)DateTime.Now.Year });
         }
 
-        private SelectList GetSupervisorList(UserProfile supervisor = null)
-        {
-            var users = _userManager.GetUsersInRoleAsync("Supervisor").Result;
-            _context.UserProfiles.Load();
-
-            Dictionary<Guid, string> dc = new Dictionary<Guid, string>();
-            foreach (var user in users)
-            {
-                var userProfile = user.UserProfiles?.FirstOrDefault(up => up.UpdatedByObj == null);
-                if (userProfile == null)
-                    continue;
-                dc.Add(userProfile.Id, $"{userProfile.SecondNameIP} {userProfile.FirstNameIP[0]}.{userProfile.MiddleNameIP[0]}.");
-            }
-            if (supervisor != null)
-                return new SelectList(dc, "Key", "Value", supervisor.Id);
-            return new SelectList(dc, "Key", "Value");
-        }
 
         /// <summary>
         /// Регистрация/редактирование ВКР
@@ -116,7 +105,7 @@ namespace FinalWork_BD_Test.Controllers
             };
             
             if (prvVKR != null)
-                if (EqualsVkr(prvVKR, vkr))
+                if (VKR.EqualsVkr(prvVKR, vkr))
                     return RedirectToAction();
 
             _context.VKRs.Add(vkr);
@@ -127,60 +116,8 @@ namespace FinalWork_BD_Test.Controllers
 
             return RedirectToAction();
         }
-
-        /// <summary>
-        /// Равны ли обе ВКР
-        /// </summary>
-        /// <param name="beforeVkr"></param>
-        /// <param name="afterVkr"></param>
-        /// <returns></returns>
-        private bool EqualsVkr(VKR beforeVkr, VKR afterVkr)
-        {
-            if (beforeVkr.Topic.Title == afterVkr.Topic.Title)
-            {
-                afterVkr.Topic = beforeVkr.Topic;
-                if (beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId && beforeVkr.SemesterId == afterVkr.SemesterId &&
-                    beforeVkr.Year == afterVkr.Year)
-                    return true;
-            }
-
-            return false;
-        }
-
-
-        /// <summary>
-        /// Создает объект ВКР для сравнения с данными из формы
-        /// </summary>
-        /// <returns></returns>
-        private VKR CreateBeforeVkr()
-        {
-            Topic topic = new Topic()
-            {
-                Title = HttpContext.Session.GetString("beforeVkrTitle")
-            };
-
-            Guid superVisorId = new Guid(HttpContext.Session.GetString("beforeVkrSupervisor"));
-
-            UserProfile superVisor =
-                _context.UserProfiles.FirstOrDefault(u => u.Id == superVisorId);
-
-            VKR res = new VKR()
-            {
-                Topic = topic,
-                SupervisorUP = superVisor
-            };
-
-            return res;
-        }
-
-        private Semester CurrentSemester()
-        {
-            int month = DateTime.Today.Month;
-            if (month >= 2 && month <= 8)
-                return _context.Semesters.FirstOrDefault(s => s.Name == "Весна");
-            return _context.Semesters.FirstOrDefault(s => s.Name == "Осень");
-        }
-
+        
+        
         public IActionResult Documents()
         {
             ViewData["ActiveView"] = "Documents";
@@ -216,7 +153,7 @@ namespace FinalWork_BD_Test.Controllers
             /* Создать пользователя без имени можно, но не присвоится роль
              * Создаю пользователя с именем, созданого из guid профиля
              */
-            User supervisor = new User { UserName = userProfile.Id.ToString() };
+            User supervisor = new User { UserName = "null" };
             _userManager.CreateAsync(supervisor).Wait();
 
             userProfile.User = supervisor;

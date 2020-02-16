@@ -1,4 +1,4 @@
-@model FinalWork_BD_Test.Data.Models.Profiles.LecturerProfile
+@model FinalWork_BD_Test.Data.Models.StudentProfile
 
 @{
     ViewData["ActiveView"] = AdminNavBar.AllUsers;
@@ -47,16 +47,27 @@
                 <span asp-validation-for="MiddleNameDP" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AcademicDegreeId" class="control-label"></label>
-                @Html.DropDownList("AcademicDegreeId", ViewData["AcademicDegreeId"] as SelectList, 
+                <label asp-for="DegreeId" class="control-label"></label>
+                @Html.DropDownList("DegreeId", ViewData["DegreeId"] as SelectList, 
                     new { @class = "form-control"})
-                <span asp-validation-for="AcademicDegreeId" class="text-danger"></span>
+                <span asp-validation-for="DegreeId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AcademicTitleId" class="control-label"></label>
-                @Html.DropDownList("AcademicTitleId", ViewData["AcademicTitleId"] as SelectList, 
+                <label asp-for="GenderId" class="control-label"></label>
+                @Html.DropDownList("GenderId", ViewData["GenderId"] as SelectList, 
                     new { @class = "form-control"})
-                <span asp-validation-for="AcademicTitleId" class="text-danger"></span>
+                <span asp-validation-for="GenderId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EducationFormId" class="control-label"></label>
+                @Html.DropDownList("EducationFormId", ViewData["EducationFormId"] as SelectList, 
+                    new { @class = "form-control"})
+                <span asp-validation-for="EducationFormId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Group" class="control-label"></label>
+                <input asp-for="Group" name="Group" class="form-control" />
+                <span asp-validation-for="Group" class="text-danger"></span>
             </div>
             <div class="form-group">
 		        <input type="submit" value="Сохранить" class="btn btn-primary" />

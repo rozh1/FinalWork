@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using FinalWork_BD_Test.Data.Models.Base;
 using FinalWork_BD_Test.Data.Models.Data;
 using FinalWork_BD_Test.Data.Models.Profiles;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinalWork_BD_Test.Data.Models
 {
@@ -46,10 +49,48 @@ namespace FinalWork_BD_Test.Data.Models
         public ulong Year { get; set; }
 
         [Required]
-        [Display(Name = "Семестр")]
         public Guid? SemesterId { get; set; }
         [ForeignKey("SemesterId")]
+        [Display(Name = "Семестр")]
         public virtual Semester Semester { get; set; }
+
+        
+        public static SelectList GetSupervisorList(ApplicationDbContext context, UserManager<User> userManager, UserProfile supervisor = null)
+        {
+            var users = userManager.GetUsersInRoleAsync("Supervisor").Result;
+            context.UserProfiles.Load();
+
+            Dictionary<Guid, string> dc = new Dictionary<Guid, string>();
+            foreach (var user in users)
+            {
+                var userProfile = user.UserProfiles?.FirstOrDefault(up => up.UpdatedByObj == null);
+                if (userProfile == null)
+                    continue;
+                dc.Add(userProfile.Id, $"{userProfile.SecondNameIP} {userProfile.FirstNameIP[0]}.{userProfile.MiddleNameIP[0]}.");
+            }
+            if (supervisor != null)
+                return new SelectList(dc, "Key", "Value", supervisor.Id);
+            return new SelectList(dc, "Key", "Value");
+        }
+
+        /// <summary>
+        /// Равны ли обе ВКР
+        /// </summary>
+        /// <param name="beforeVkr"></param>
+        /// <param name="afterVkr"></param>
+        /// <returns></returns>
+        public static bool EqualsVkr(VKR beforeVkr, VKR afterVkr)
+        {
+            if (beforeVkr.Topic.Title == afterVkr.Topic.Title)
+            {
+                afterVkr.Topic = beforeVkr.Topic;
+                if (beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId && beforeVkr.SemesterId == afterVkr.SemesterId &&
+                    beforeVkr.Year == afterVkr.Year)
+                    return true;
+            }
+
+            return false;
+        }
 
     }
 }
