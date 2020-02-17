@@ -108,9 +108,6 @@ namespace FinalWork_BD_Test.Data.Models
         [RegularExpression(@"[1-9 0]+", 
             ErrorMessage = "Номер группы должен содержать только цифры")]
         [MaxLength(5)]
-        public string Group { get; set; } // Думаю стоит хранить в строке, но при этом ограничить её длину
-
-        //место работы(или место предполагаемой работы) после выпуска
-        //public string WorkPlace {get; set;}
+        public string Group { get; set; }
     }
 }

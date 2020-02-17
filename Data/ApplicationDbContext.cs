@@ -16,6 +16,7 @@ namespace FinalWork_BD_Test.Data
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<StudentProfile> StudentProfiles { get; set; }
         public DbSet<LecturerProfile> LecturerProfiles { get; set; }
+        public DbSet<ReviewerProfile> ReviewerProfiles { get; set; }
         public DbSet<Degree> Degrees { get; set; }
         public DbSet<Gender> Genders { get; set; }
         public DbSet<EducationForm> EducationForms { get; set; }
@@ -28,5 +29,7 @@ namespace FinalWork_BD_Test.Data
             : base(options)
         {
         }
+
+        public DbSet<FinalWork_BD_Test.Data.Models.Profiles.ReviewerProfile> ReviewerProfile { get; set; }
     }
 }
