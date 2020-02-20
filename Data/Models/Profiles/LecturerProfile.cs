@@ -11,7 +11,7 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
 {
 
     /// <summary>
-    /// Профиль преподавателя
+    /// Профиль научного руководителя
     /// </summary>
     public class LecturerProfile : HistoricalModelBase<LecturerProfile>
     {
@@ -56,13 +56,6 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
             ErrorMessage = "Имя в дательном падеже должно содержать только русские буквы")]
         public string FirstNameDP { get; set; }
 
-        /// <summary>
-        /// Фамилия в дательном падеже
-        /// </summary>
-        [Required(ErrorMessage = "Введите фамилию в дательном падеже")]
-        [Display(Name = "Фамилия в дательном падеже")]
-        [RegularExpression(@"[А-Яа-яЁё]+",
-            ErrorMessage = "Фамилию в дательном падеже должна содержать только русские буквы")]
         public string SecondNameDP { get; set; }
 
         /// <summary>
@@ -75,18 +68,32 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
         public string MiddleNameDP { get; set; }
 
         /// <summary>
+        /// Место работы
+        /// </summary>
+        [Required(ErrorMessage = "Введите место работы научного руководителя")]
+        [Display(Name = "Место работы научного руководителя")]
+        public string JobPlace { get; set; }
+
+        /// <summary>
+        /// Должность
+        /// </summary>
+        [Required(ErrorMessage = "Введите должность научного руководителя")]
+        [Display(Name = "Должность научного руководителя")]
+        public string JobPost { get; set; }
+        
+        [Display(Name = "Учёная степень")]
+        public Guid? AcademicDegreeId { get; set; }
+        /// <summary>
         /// Учёная степень
         /// </summary>
-        [Display(Name = "Учёная степень")]
-        public Guid AcademicDegreeId { get; set; }
         [ForeignKey("AcademicDegreeId")]
         public virtual AcademicDegree AcademicDegree { get; set; }
-
+        
+        [Display(Name = "Учёное звание")]
+        public Guid? AcademicTitleId { get; set; }
         /// <summary>
         /// Учёное звание
         /// </summary>
-        [Display(Name = "Учёное звание")]
-        public Guid AcademicTitleId { get; set; }
         [ForeignKey("AcademicTitleId")]
         public virtual AcademicTitle AcademicTitle { get; set; }
     }
