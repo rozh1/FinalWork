@@ -56,16 +56,19 @@ namespace FinalWork_BD_Test.Controllers
             {
                 HttpContext.Session.SetString("beforeVkrTitle", vkr.Topic.Title);
                 HttpContext.Session.SetString("beforeVkrSupervisor", vkr.SupervisorUP.Id.ToString());
-                ViewData["UserProfile.Id"] = GetSupervisorList(vkr.SupervisorUP);
+                ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager, vkr.SupervisorUP);
                 ViewData["ReviewerId"] = GetReviewerList(vkr.ReviewerUP);
                 if (vkr.Semester == null)
                     vkr.Semester = _context.Semesters.First();
-                ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", vkr.Semester.Id);
+                ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
+                    "Id", "Name", vkr.Semester.Id);
                 return View(vkr);
             }
-            ViewData["Degree.id"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name");
-            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", CurrentSemester().Id);
-            ViewData["UserProfile.Id"] = GetSupervisorList();
+            ViewData["Degree.id"] = new SelectList(_context.Degrees.AsEnumerable(), 
+                "Id", "Name");
+            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
+                "Id", "Name", Semester.CurrentSemester(_context).Id);
+            ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager);
             ViewData["ReviewerId"] = GetReviewerList();
             return View(new VKR { Year = (ulong)DateTime.Now.Year });
         }
