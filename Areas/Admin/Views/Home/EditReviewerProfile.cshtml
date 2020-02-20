@@ -1,0 +1,52 @@
+@model FinalWork_BD_Test.Data.Models.Profiles.ReviewerProfile
+
+@{
+    ViewData["ActiveView"] = AdminNavBar.AllReviewers;
+}
+
+<h4>Дополнительные сведения</h4>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="Id" name="Id" style="display: none" value="@Model.Id"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstNameIP" class="control-label"></label>
+                <input asp-for="FirstNameIP" name="FirstNameIP" class="form-control"/>
+                <span asp-validation-for="FirstNameIP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondNameIP" class="control-label"></label>
+                <input asp-for="SecondNameIP" name="SecondNameIP" class="form-control"/>
+                <span asp-validation-for="SecondNameIP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleNameIP" class="control-label"></label>
+                <input asp-for="MiddleNameIP" name="MiddleNameIP" class="form-control"/>
+                <span asp-validation-for="MiddleNameIP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcademicDegreeId" class="control-label"></label>
+                @Html.DropDownList("AcademicDegreeId", ViewData["AcademicDegreeId"] as SelectList, 
+                    new { @class = "form-control"})
+                <span asp-validation-for="AcademicDegreeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcademicTitleId" class="control-label"></label>
+                @Html.DropDownList("AcademicTitleId", ViewData["AcademicTitleId"] as SelectList, 
+                    new { @class = "form-control"})
+                <span asp-validation-for="AcademicTitleId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+		        <input type="submit" value="Сохранить" class="btn btn-primary" />
+	        </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

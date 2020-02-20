@@ -62,9 +62,11 @@ namespace FinalWork_BD_Test.Controllers
                     vkr.Semester = _context.Semesters.First();
                 ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
                     "Id", "Name", vkr.Semester.Id);
+                ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
+                    "Id", "Name", vkr.DegreeId);
                 return View(vkr);
             }
-            ViewData["Degree.id"] = new SelectList(_context.Degrees.AsEnumerable(), 
+            ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
                 "Id", "Name");
             ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
                 "Id", "Name", Semester.CurrentSemester(_context).Id);

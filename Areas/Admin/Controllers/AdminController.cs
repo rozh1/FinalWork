@@ -475,5 +475,86 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             
             return result;
         }
+
+        public IActionResult AllReviewers(int page = 1, ReviewerProfile searchData = null)
+        {
+            int pageSize = 7;
+
+            List<ReviewerProfile> source = null;
+
+            if (searchData != null)
+            {
+                // TODO: реализовать поиск профиля рецензента
+                /*var data = CreateSearchExpression(searchData).Select(u => u.User);
+
+                source = data.ToList();*/
+                source = _context.ReviewerProfile.ToList();
+            }
+            else
+            {
+                source = _context.ReviewerProfile.ToList();
+            }
+
+            var count = source.Count();
+            var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+ 
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            ReviewerProfileViewModel viewModel = new ReviewerProfileViewModel
+            {
+                PageViewModel = pageViewModel,
+                Reviewers = items
+            };
+
+            return View(viewModel);
+        }
+        
+        [HttpGet]
+        public IActionResult EditReviewerProfile(Guid id)
+        {
+            var profile = _context.ReviewerProfile
+                .Include(p => p.AcademicDegree)
+                .Include(p => p.AcademicTitle)
+                .FirstOrDefault(p => p.Id == id);
+
+            if (profile != null)
+            {
+                ViewData["AcademicTitleId"] = new SelectList(_context.AcademicTitles.AsEnumerable(), "Id", "Name", profile.AcademicTitle.Id);
+                ViewData["AcademicDegreeId"] = new SelectList(_context.AcademicDegrees.AsEnumerable(), "Id", "Name", profile.AcademicDegree.Id);
+
+                return View(profile);
+            }
+
+            var model = new ReviewerProfile();
+                
+            ViewData["AcademicTitleId"] = new SelectList(_context.AcademicTitles.AsEnumerable(), "Id", "Name");
+            ViewData["AcademicDegreeId"] = new SelectList(_context.AcademicDegrees.AsEnumerable(), "Id", "Name");
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditReviewerProfile([FromForm] ReviewerProfile newProfile)
+        {
+            var oldProfile = _context.ReviewerProfile
+                .Include(u => u.AcademicTitle)
+                .Include(u => u.AcademicDegree)
+                .FirstOrDefault(u => u.Id == newProfile.Id);
+
+            if (oldProfile != null)
+            {
+                // TODO: реализовать обновление профиля
+                _context.ReviewerProfile.Update(newProfile);
+            }
+            else
+            {
+                _context.ReviewerProfile.Add(newProfile);
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("EditReviewerProfile", new {id = newProfile.Id});
+        }
+
+        // TODO: реализовать удаление профиля рецензента
     }
 }

@@ -11,11 +11,14 @@ namespace FinalWork_BD_Test.Areas.Admin.Views.Home
         public static string FindUsers => "FindUsers";
             
         public static string AllRoles => "AllRoles";
+        
+        public static string AllReviewers => "AllReviewers";
 
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
         public static string AllUsersNavClass(ViewContext viewContext) => PageNavClass(viewContext, AllUsers);
         public static string FindUsersNavClass(ViewContext viewContext) => PageNavClass(viewContext, FindUsers);
         public static string AllRolesNavClass(ViewContext viewContext) => PageNavClass(viewContext, AllRoles);
+        public static string AllReviewersNavClass(ViewContext viewContext) => PageNavClass(viewContext, AllReviewers);
         
         private static string PageNavClass(ViewContext viewContext, string page)
         {
