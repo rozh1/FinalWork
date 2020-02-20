@@ -41,18 +41,18 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             int pageSize = 7;
 
-            IEnumerable<User> source = null;
+            List<User> source = null;
 
-            if (searchData != null)
+            if (searchData.User != null)
             {
                 var data = CreateSearchExpression(searchData).Select(u => u.User);
 
-                source = data;
+                source = data.ToList();
             }
             else
             {
                 source = _context.Users
-                    .Include(profile => profile.UserProfiles);
+                    .Include(profile => profile.UserProfiles).ToList();
             }
 
             var count = source.Count();
@@ -449,29 +449,31 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         
         private IQueryable<UserProfile> CreateSearchExpression(UserProfile data)
         {
-            var source = _context.UserProfiles
+            var query = _context.UserProfiles
                 .Include(u => u.User)
                 .Where(u => u.UpdatedByObj == null);
+
+            IQueryable<UserProfile> result = null;
             
             if (data.User.UserName != null)
-                source.Where(u => u.User.UserName == data.User.UserName);
+                result = query.Where(u => u.User.UserName == data.User.UserName);
 
             if (data.User.Email != null)
-                source.Where(u => u.User.Email == data.User.Email);
+                result = query.Where(u => u.User.Email == data.User.Email);
 
             if (data.User.PhoneNumber != null)
-                source.Where(u => u.User.PhoneNumber == data.User.PhoneNumber);
+                result = query.Where(u => u.User.PhoneNumber == data.User.PhoneNumber);
 
             if (data.FirstNameIP != null)
-                source.Where(u => u.FirstNameIP == data.FirstNameIP);
+                result = query.Where(u => u.FirstNameIP == data.FirstNameIP);
 
             if (data.SecondNameIP != null)
-                source.Where(u => u.SecondNameIP == data.SecondNameIP);
+                result = query.Where(u => u.SecondNameIP == data.SecondNameIP);
 
             if (data.MiddleNameIP != null)
-                source.Where(u => u.MiddleNameIP == data.MiddleNameIP);
+                result = query.Where(u => u.MiddleNameIP == data.MiddleNameIP);
             
-            return source;
+            return result;
         }
     }
 }
