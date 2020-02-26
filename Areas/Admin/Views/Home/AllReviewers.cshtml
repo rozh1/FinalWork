@@ -29,14 +29,14 @@
             
             <td>
                 <p><a class="btn-sm btn-primary" asp-action="EditReviewerProfile" asp-route-id="@u.Id">Изменить</a></p>
-                <a class="btn-sm btn-danger" asp-action="" asp-route-id="@u.Id">Удалить</a>
+                <a class="btn-sm btn-danger" asp-action="DeleteReviewer" asp-route-id="@u.Id">Удалить</a>
             </td>
         </tr>
     }
 </table>
 @if (Model.PageViewModel.HasPreviousPage)
 {
-    <a asp-action="AllUsers"
+    <a asp-action="AllReviewers"
        asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
        asp-route-data="@ViewData["data"]"
        class="btn btn-outline-dark">
@@ -46,7 +46,7 @@
 }
 @if (Model.PageViewModel.HasNextPage)
 {
-    <a asp-action="AllUsers"
+    <a asp-action="AllReviewers"
        asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
        asp-route-data="@ViewData["data"]"
        class="btn btn-outline-dark">

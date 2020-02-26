@@ -29,6 +29,16 @@
                 <span asp-validation-for="MiddleNameIP" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="JobPlace" class="control-label"></label>
+                <input asp-for="JobPlace" name="JobPlace" class="form-control"/>
+                <span asp-validation-for="JobPlace" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="JobPost" class="control-label"></label>
+                <input asp-for="JobPost" name="JobPost" class="form-control"/>
+                <span asp-validation-for="JobPost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="AcademicDegreeId" class="control-label"></label>
                 @Html.DropDownList("AcademicDegreeId", ViewData["AcademicDegreeId"] as SelectList, 
                     new { @class = "form-control"})

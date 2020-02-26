@@ -1,0 +1,34 @@
+@model FinalWork_BD_Test.Data.Models.Profiles.ReviewerProfile
+@{
+    ViewData["ActiveView"] = AdminNavBar.FindReviewer;
+}
+
+<div class="row">
+<div class="col-md-8">
+    <form method="post" asp-action="AllReviewers">
+        <div class="form-group">
+            <label asp-for="SecondNameIP" class="control-label"></label>
+            <input asp-for="SecondNameIP" name="SecondNameIP" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="FirstNameIP" class="control-label"></label>
+            <input asp-for="FirstNameIP" name="FirstNameIP" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="MiddleNameIP" class="control-label"></label>
+            <input asp-for="MiddleNameIP" name="MiddleNameIP" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="JobPlace" class="control-label"></label>
+            <input asp-for="JobPlace" name="JobPlace" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="JobPost" class="control-label"></label>
+            <input asp-for="JobPost" name="JobPost" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Найти" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+</div>

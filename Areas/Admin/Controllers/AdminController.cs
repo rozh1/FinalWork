@@ -43,6 +43,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             List<User> source = null;
 
+            // TODO: придумать, как правильно выявлять это результат поиска или нет
             if (searchData.User != null)
             {
                 var data = CreateSearchExpression(searchData).Select(u => u.User);
@@ -476,23 +477,55 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             return result;
         }
 
+        [HttpGet]
+        public IActionResult FindReviewer()
+        {
+            return View();
+        }
+        
+        private IQueryable<ReviewerProfile> CreateSearchExpression(ReviewerProfile data)
+        {
+            var query = _context.ReviewerProfile
+                .Include(p => p.AcademicDegree)
+                .Include(p => p.AcademicTitle);
+
+            IQueryable<ReviewerProfile> result = null;
+            
+            if (data.FirstNameIP != null)
+                result = query.Where(u => u.FirstNameIP == data.FirstNameIP);
+
+            if (data.SecondNameIP != null)
+                result = query.Where(u => u.SecondNameIP == data.SecondNameIP);
+
+            if (data.MiddleNameIP != null)
+                result = query.Where(u => u.MiddleNameIP == data.MiddleNameIP);
+
+            if (data.JobPlace != null)
+                result = query.Where(u => u.JobPlace == data.JobPlace);
+
+            if (data.JobPost != null)
+                result = query.Where(u => u.JobPost == data.JobPost);
+            
+            return result;
+        }
+
+
         public IActionResult AllReviewers(int page = 1, ReviewerProfile searchData = null)
         {
             int pageSize = 7;
 
             List<ReviewerProfile> source = null;
 
-            if (searchData != null)
+            // TODO: придумать, как правильно выявлять это результат поиска или нет
+            if (searchData.AcademicDegree != null)
             {
-                // TODO: реализовать поиск профиля рецензента
-                /*var data = CreateSearchExpression(searchData).Select(u => u.User);
+                var data = CreateSearchExpression(searchData).Where(p => p.IsArchived == false);
 
-                source = data.ToList();*/
-                source = _context.ReviewerProfile.ToList();
+                source = data.ToList();
             }
             else
             {
-                source = _context.ReviewerProfile.ToList();
+                source = _context.ReviewerProfile.Where(p => p.IsArchived == false).ToList();
             }
 
             var count = source.Count();
@@ -543,7 +576,8 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             if (oldProfile != null)
             {
                 // TODO: реализовать обновление профиля
-                _context.ReviewerProfile.Update(newProfile);
+                //_context.ReviewerProfile.Update(newProfile);
+                _context.Update(newProfile);
             }
             else
             {
@@ -555,6 +589,43 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             return RedirectToAction("EditReviewerProfile", new {id = newProfile.Id});
         }
 
-        // TODO: реализовать удаление профиля рецензента
+        public IActionResult DeleteReviewer(Guid id)
+        {
+            var profile = _context.ReviewerProfile.FirstOrDefault(p => p.Id == id);
+            
+            if (profile == null) return RedirectToAction("AllReviewers");
+            
+            profile.IsArchived = true;
+            _context.ReviewerProfile.Update(profile);
+            _context.SaveChanges();
+
+            return RedirectToAction("AllReviewers");
+        }
+
+        public IActionResult AllVkrs(int page = 1)
+        {
+            int pageSize = 7;
+
+            List<VKR> source = _context.VKRs
+                .Include(t => t.StudentUP)
+                .Include(t => t.StudentUP.User)
+                .Include(t => t.SupervisorUP)
+                .Include(t => t.Topic)
+                .Include(t => t.Semester)
+                .Where(t => t.UpdatedByObj == null)
+                .ToList();
+            
+            var count = source.Count();
+            var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+ 
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            AllVkrsViewModel viewModel = new AllVkrsViewModel
+            {
+                PageViewModel = pageViewModel,
+                Vkrs = items
+            };
+
+            return View(viewModel);
+        }
     }
 }
