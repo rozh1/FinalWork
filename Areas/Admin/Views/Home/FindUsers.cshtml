@@ -5,7 +5,7 @@
 
 <div class="row">
 <div class="col-md-8">
-    <form method="post" asp-action="AllUsers">
+    <form method="post" asp-action="AllUsers" asp-route-isSearch="true">
         <div class="form-group">
             <label asp-for="User.UserName" class="control-label">Логин</label>
             <input asp-for="User.UserName" name="User.UserName" class="form-control"/>

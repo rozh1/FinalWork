@@ -5,7 +5,7 @@
 
 <div class="row">
 <div class="col-md-8">
-    <form method="post" asp-action="AllReviewers">
+    <form method="post" asp-action="AllReviewers" asp-route-isSearch="true">
         <div class="form-group">
             <label asp-for="SecondNameIP" class="control-label"></label>
             <input asp-for="SecondNameIP" name="SecondNameIP" class="form-control"/>

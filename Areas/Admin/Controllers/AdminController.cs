@@ -37,14 +37,13 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult AllUsers(int page=1, UserProfile searchData = null)
+        public IActionResult AllUsers(int page=1, UserProfile searchData = null, bool isSearch = false)
         {
             int pageSize = 7;
 
             List<User> source = null;
 
-            // TODO: придумать, как правильно выявлять это результат поиска или нет
-            if (searchData.User != null)
+            if (isSearch)
             {
                 var data = CreateSearchExpression(searchData).Select(u => u.User);
 
@@ -510,14 +509,13 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         }
 
 
-        public IActionResult AllReviewers(int page = 1, ReviewerProfile searchData = null)
+        public IActionResult AllReviewers(int page = 1, ReviewerProfile searchData = null, bool isSearch = false)
         {
             int pageSize = 7;
 
             List<ReviewerProfile> source = null;
 
-            // TODO: придумать, как правильно выявлять это результат поиска или нет
-            if (searchData.AcademicDegree != null)
+            if (isSearch)
             {
                 var data = CreateSearchExpression(searchData).Where(p => p.IsArchived == false);
 
