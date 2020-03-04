@@ -1,0 +1,55 @@
+﻿@model FinalWork_BD_Test.Data.Models.GEC
+@{
+    ViewData["Title"] = "GEC";
+}
+
+<h1>GEC</h1>
+
+<h4>GecMemberProfile</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Gec">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Specialty" class="control-label"></label>
+                <input asp-for="Specialty" class="form-control" />
+                <span asp-validation-for="Specialty" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EducationForm" class="control-label"></label>
+                @Html.DropDownList("EducationFormId", ViewData["EducationFormId"] as SelectList,
+                    new { @class = "form-control" })
+                <span asp-validation-for="EducationForm" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Chief" class="control-label"></label>
+                @Html.DropDownList("Chief.Id", ViewData["MembersId"] as SelectList,
+                    new { @class = "form-control" })
+                <span asp-validation-for="Chief" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Deputy" class="control-label"></label>
+                @Html.DropDownList("Deputy.Id", ViewData["MembersId"] as SelectList,
+                    new { @class = "form-control" })
+                <span asp-validation-for="Deputy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Members" class="control-label"></label>
+                @Html.ListBox("MembersId", ViewData["MembersId"] as SelectList, new { @class = "form-control", @SelectionMode="multiple"})
+                <span asp-validation-for="Members" class="text-danger"></span>
+            </div>
+           
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsArchived" /> @Html.DisplayNameFor(model => model.IsArchived)
+                </label>
+            </div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+

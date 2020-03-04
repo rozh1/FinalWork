@@ -3,15 +3,17 @@ using System;
 using FinalWork_BD_Test.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FinalWork_BD_Test.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200229143708_Added_GEC_and_GecMemberProfiles")]
+    partial class Added_GEC_and_GecMemberProfiles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,13 +114,13 @@ namespace FinalWork_BD_Test.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ChiefId")
+                    b.Property<Guid?>("ChiefId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<Guid>("DeputyId")
+                    b.Property<Guid?>("DeputyId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("EducationFormId")
@@ -158,7 +160,7 @@ namespace FinalWork_BD_Test.Migrations
 
                     b.HasIndex("MemberProfileId");
 
-                    b.ToTable("GecMemberIntermediates");
+                    b.ToTable("GecMemberIntermediate");
                 });
 
             modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Profiles.GecMemberProfile", b =>
@@ -564,9 +566,6 @@ namespace FinalWork_BD_Test.Migrations
                     b.Property<Guid?>("DegreeId")
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean");
-
                     b.Property<Guid?>("ReviewerUPId")
                         .HasColumnType("uuid");
 
@@ -724,15 +723,11 @@ namespace FinalWork_BD_Test.Migrations
                 {
                     b.HasOne("FinalWork_BD_Test.Data.Models.Profiles.GecMemberProfile", "Chief")
                         .WithMany()
-                        .HasForeignKey("ChiefId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChiefId");
 
                     b.HasOne("FinalWork_BD_Test.Data.Models.Profiles.GecMemberProfile", "Deputy")
                         .WithMany()
-                        .HasForeignKey("DeputyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DeputyId");
 
                     b.HasOne("FinalWork_BD_Test.Data.Models.Data.EducationForm", "EducationForm")
                         .WithMany()

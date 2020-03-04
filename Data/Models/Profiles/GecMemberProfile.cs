@@ -7,14 +7,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalWork_BD_Test.Data.Models.Base;
 using FinalWork_BD_Test.Data.Models.Data;
+using FinalWork_BD_Test.Data.Models.Intermidate;
 
 namespace FinalWork_BD_Test.Data.Models.Profiles
 {
-    /// <summary>
-    /// Профиль рецензента
-    /// </summary>
-    public class ReviewerProfile : ModelBase
+    public class GecMemberProfile : HistoricalModelBase<GecMemberProfile>
     {
+        public User User { get; set; }
+
+        public virtual ICollection<GecMemberIntermediate> GECs { get; set; }
+
         [Required(ErrorMessage = "Введите имя в именительном падеже")]
         [Display(Name = "Имя в именительном падеже")]
         [RegularExpression(@"[А-Яа-яЁё]+",
@@ -33,12 +35,12 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
             ErrorMessage = "Отчество в именительном падеже должно содержать только русские буквы")]
         public string MiddleNameIP { get; set; }
 
-        [Required(ErrorMessage = "Введите место работы рецензента")]
-        [Display(Name = "Место работы рецензента")]
+        [Required(ErrorMessage = "Введите место работы члена ГЭК")]
+        [Display(Name = "Место работы члена ГЭК")]
         public string JobPlace { get; set; }
 
-        [Required(ErrorMessage = "Введите должность рецензента")]
-        [Display(Name = "Должность рецензента")]
+        [Required(ErrorMessage = "Введите должность члена ГЭК")]
+        [Display(Name = "Должность члена ГЭК")]
         public string JobPost { get; set; }
 
         [Display(Name = "Учёное звание (при наличии)")]

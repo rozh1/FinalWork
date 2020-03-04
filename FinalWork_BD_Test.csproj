@@ -12,6 +12,10 @@
     <Compile Remove="Data\Migrations\20200210163740_VKR_add_Year_Semester_and_Profiles.Designer.cs" />
     <Compile Remove="Data\Migrations\20200210174901_VKR_add_Year_Semester_and_Profiles.cs" />
     <Compile Remove="Data\Migrations\20200210174901_VKR_add_Year_Semester_and_Profiles.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200229135433_Added_GEC_and_GecMemberProfiles.cs" />
+    <Compile Remove="Data\Migrations\20200229135433_Added_GEC_and_GecMemberProfiles.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200229143319_Added_GEC_and_GecMemberProfiles.cs" />
+    <Compile Remove="Data\Migrations\20200229143319_Added_GEC_and_GecMemberProfiles.Designer.cs" />
   </ItemGroup>
 
 

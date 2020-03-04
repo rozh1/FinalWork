@@ -57,5 +57,8 @@ namespace FinalWork_BD_Test.Data.Models
         [ForeignKey("DegreeId")]
         public virtual Degree Degree { get; set; }
 
+        //ToDo: Change queries to use this field
+        [DefaultValue(false)]
+        public bool IsArchived { get; set; }
     }
 }

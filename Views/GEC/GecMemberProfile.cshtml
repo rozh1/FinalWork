@@ -1,0 +1,69 @@
+﻿@model FinalWork_BD_Test.Data.Models.Profiles.GecMemberProfile
+
+@{
+    ViewData["Title"] = "GecMemberProfile";
+}
+
+<h1>GecMemberProfile</h1>
+
+<h4>GecMemberProfile</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="GecMemberProfile">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstNameIP" class="control-label"></label>
+                <input asp-for="FirstNameIP" class="form-control" />
+                <span asp-validation-for="FirstNameIP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondNameIP" class="control-label"></label>
+                <input asp-for="SecondNameIP" class="form-control" />
+                <span asp-validation-for="SecondNameIP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleNameIP" class="control-label"></label>
+                <input asp-for="MiddleNameIP" class="form-control" />
+                <span asp-validation-for="MiddleNameIP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="JobPlace" class="control-label"></label>
+                <input asp-for="JobPlace" class="form-control" />
+                <span asp-validation-for="JobPlace" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="JobPost" class="control-label"></label>
+                <input asp-for="JobPost" class="form-control" />
+                <span asp-validation-for="JobPost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcademicTitleId" class="control-label"></label>
+                <select asp-for="AcademicTitleId" class="form-control" asp-items="ViewBag.AcademicTitleId"></select>
+                <span asp-validation-for="AcademicTitleId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcademicDegreeId" class="control-label"></label>
+                <select asp-for="AcademicDegreeId" class="form-control" asp-items="ViewBag.AcademicDegreeId"></select>
+                <span asp-validation-for="AcademicDegreeId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsArchived" /> @Html.DisplayNameFor(model => model.IsArchived)
+                </label>
+            </div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
