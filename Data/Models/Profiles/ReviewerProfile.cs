@@ -13,7 +13,7 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
     /// <summary>
     /// Профиль рецензента
     /// </summary>
-    public class ReviewerProfile : ModelBase
+    public class ReviewerProfile : HistoricalModelBase<ReviewerProfile>
     {
         [Required(ErrorMessage = "Введите имя в именительном падеже")]
         [Display(Name = "Имя в именительном падеже")]
@@ -51,7 +51,6 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
         [ForeignKey("AcademicDegreeId")]
         public virtual AcademicDegree AcademicDegree { get; set; }
 
-        //ToDo: Change queries to use this field
         [DefaultValue(false)]
         public bool IsArchived { get; set; }
     }

@@ -260,7 +260,7 @@ namespace FinalWork_BD_Test.Controllers
         private IEnumerable<SelectListItem> GetReviewerList(ReviewerProfile reviewer = null)
         {
             Dictionary<Guid, string> dc = new Dictionary<Guid, string>();
-            foreach (var reviewerProfile in _context.ReviewerProfiles.Include(rp => rp.AcademicTitle).Include(rp => rp.AcademicDegree))
+            foreach (var reviewerProfile in _context.ReviewerProfiles.Include(rp => rp.AcademicTitle).Include(rp => rp.AcademicDegree).Where(rp => rp.UpdatedByObj == null && !rp.IsArchived))
             {
                 dc.Add(reviewerProfile.Id, $"{reviewerProfile.AcademicTitle?.Name} {reviewerProfile.AcademicDegree?.Name} {reviewerProfile.SecondNameIP} {reviewerProfile.FirstNameIP[0]}.{reviewerProfile.MiddleNameIP[0]}.");
             }
