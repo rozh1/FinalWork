@@ -36,9 +36,7 @@ namespace FinalWork_BD_Test.Data.Models
         [ForeignKey("SupervisorLPId")]
         public virtual LecturerProfile SupervisorLP { get; set; }
 
-        /// <summary>
-        /// Рецензент, для магистров
-        /// </summary>
+        /// <summary> Рецензент, для магистров </summary>
         public Guid? ReviewerUPId { get; set; }
         [ForeignKey("ReviewerUPId")]
         public virtual ReviewerProfile ReviewerUP { get; set; }
@@ -53,14 +51,16 @@ namespace FinalWork_BD_Test.Data.Models
         public Guid? SemesterId { get; set; }
         [ForeignKey("SemesterId")]
         public virtual Semester Semester { get; set; }
-
-
+        
         [Display(Name = "Степень высшего образования")]
         public Guid? DegreeId { get; set; }
         [ForeignKey("DegreeId")]
         public virtual Degree Degree { get; set; }
+   
+        //ToDo: Change queries to use this field
+        [DefaultValue(false)]
+        public bool IsArchived { get; set; }
 
-        
         public static SelectList GetSupervisorList(ApplicationDbContext context, UserManager<User> userManager, UserProfile supervisor = null)
         {
             var users = userManager.GetUsersInRoleAsync("Supervisor").Result;
@@ -69,7 +69,7 @@ namespace FinalWork_BD_Test.Data.Models
             Dictionary<Guid, string> dc = new Dictionary<Guid, string>();
             foreach (var user in users)
             {
-                var userProfile = user.UserProfiles?.FirstOrDefault(up => up.UpdatedByObj == null);
+                var userProfile = user.UserProfiles?.FirstOrDefault(up => up.UpdatedByObj == null && up.IsArchived == false);
                 if (userProfile == null)
                     continue;
                 dc.Add(userProfile.Id, $"{userProfile.SecondNameIP} {userProfile.FirstNameIP[0]}.{userProfile.MiddleNameIP[0]}.");
@@ -79,12 +79,7 @@ namespace FinalWork_BD_Test.Data.Models
             return new SelectList(dc, "Key", "Value");
         }
 
-        /// <summary>
-        /// Равны ли обе ВКР
-        /// </summary>
-        /// <param name="beforeVkr"></param>
-        /// <param name="afterVkr"></param>
-        /// <returns></returns>
+        /// <summary> Равны ли обе ВКР </summary>
         public static bool EqualsVkr(VKR beforeVkr, VKR afterVkr)
         {
             if (beforeVkr.Topic.Title == afterVkr.Topic.Title)
@@ -94,12 +89,7 @@ namespace FinalWork_BD_Test.Data.Models
                     beforeVkr.Year == afterVkr.Year)
                     return true;
             }
-
             return false;
         }
-
-        //ToDo: Change queries to use this field
-        [DefaultValue(false)]
-        public bool IsArchived { get; set; }
     }
 }

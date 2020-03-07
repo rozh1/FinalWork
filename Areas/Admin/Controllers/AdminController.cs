@@ -484,7 +484,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         
         private IQueryable<ReviewerProfile> CreateSearchExpression(ReviewerProfile data)
         {
-            var query = _context.ReviewerProfile
+            var query = _context.ReviewerProfiles
                 .Include(p => p.AcademicDegree)
                 .Include(p => p.AcademicTitle);
 
@@ -523,7 +523,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             }
             else
             {
-                source = _context.ReviewerProfile.Where(p => p.IsArchived == false).ToList();
+                source = _context.ReviewerProfiles.Where(p => p.IsArchived == false).ToList();
             }
 
             var count = source.Count();
@@ -542,7 +542,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult EditReviewerProfile(Guid id)
         {
-            var profile = _context.ReviewerProfile
+            var profile = _context.ReviewerProfiles
                 .Include(p => p.AcademicDegree)
                 .Include(p => p.AcademicTitle)
                 .FirstOrDefault(p => p.Id == id);
@@ -566,7 +566,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult EditReviewerProfile([FromForm] ReviewerProfile newProfile)
         {
-            var oldProfile = _context.ReviewerProfile
+            var oldProfile = _context.ReviewerProfiles
                 .Include(u => u.AcademicTitle)
                 .Include(u => u.AcademicDegree)
                 .FirstOrDefault(u => u.Id == newProfile.Id);
@@ -579,7 +579,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             }
             else
             {
-                _context.ReviewerProfile.Add(newProfile);
+                _context.ReviewerProfiles.Add(newProfile);
             }
 
             _context.SaveChanges();
@@ -589,12 +589,12 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
         public IActionResult DeleteReviewer(Guid id)
         {
-            var profile = _context.ReviewerProfile.FirstOrDefault(p => p.Id == id);
+            var profile = _context.ReviewerProfiles.FirstOrDefault(p => p.Id == id);
             
             if (profile == null) return RedirectToAction("AllReviewers");
             
             profile.IsArchived = true;
-            _context.ReviewerProfile.Update(profile);
+            _context.ReviewerProfiles.Update(profile);
             _context.SaveChanges();
 
             return RedirectToAction("AllReviewers");
