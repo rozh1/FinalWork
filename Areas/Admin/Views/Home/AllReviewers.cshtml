@@ -1,0 +1,56 @@
+@using FinalWork_BD_Test.Data.Models
+@using FinalWork_BD_Test.Data.Models.Profiles
+@model FinalWork_BD_Test.Areas.Admin.Models.ReviewerProfileViewModel
+@{
+    ViewData["ActiveView"] = AdminNavBar.AllReviewers;
+}
+
+<p><a class="btn btn-info" asp-action="EditReviewerProfile">Новый рецензент</a></p>
+<br/>
+<table class="table table-hover table-sm table-striped col-md-12">
+    <tr>
+        <th style="display: none">ID</th>
+        <th scope="row">Фамилия</th>
+        <th scope="row">Имя</th>
+        <th scope="row">Отчество</th>
+        <th scope="row">Место работы</th>
+        <th scope="row">Должность</th>
+        <th scope="row"></th>
+    </tr>
+    @foreach (ReviewerProfile u in Model.Reviewers)
+    {
+        <tr>
+            <td style="display: none">@u.Id</td>
+            <td>@u.SecondNameIP</td>
+            <td>@u.FirstNameIP</td>
+            <td>@u.MiddleNameIP</td>
+            <td>@u.JobPlace</td>
+            <td>@u.JobPost</td>
+            
+            <td>
+                <p><a class="btn-sm btn-primary" asp-action="EditReviewerProfile" asp-route-id="@u.Id">Изменить</a></p>
+                <a class="btn-sm btn-danger" asp-action="DeleteReviewer" asp-route-id="@u.Id">Удалить</a>
+            </td>
+        </tr>
+    }
+</table>
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="AllReviewers"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       asp-route-data="@ViewData["data"]"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="AllReviewers"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       asp-route-data="@ViewData["data"]"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

@@ -68,6 +68,11 @@ namespace FinalWork_BD_Test
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapAreaControllerRoute(
+                    name: "AdminPanel",
+                    areaName: "Admin",
+                    pattern: "Admin/{controller=Home}/{action=Index}");
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

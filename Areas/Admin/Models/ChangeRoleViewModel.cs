@@ -10,7 +10,7 @@ namespace FinalWork_BD_Test.Models
     public class ChangeRoleViewModel
     {
         public Guid UserId { get; set; }
-        public string UserEmail { get; set; }
+        public string UserName { get; set; }
         public List<Role> AllRoles { get; set; }
         public IList<string> UserRoles { get; set; }
         public ChangeRoleViewModel()

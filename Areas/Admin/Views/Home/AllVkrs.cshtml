@@ -1,0 +1,57 @@
+@using FinalWork_BD_Test.Data.Models
+@using FinalWork_BD_Test.Data.Models.Profiles
+@model FinalWork_BD_Test.Areas.Admin.Models.AllVkrsViewModel
+@{
+    ViewData["ActiveView"] = AdminNavBar.AllVkrs;
+}
+
+<table class="table table-hover table-sm table-striped col-md-12">
+    <tr>
+        <th style="display: none">ID</th>
+        <th scope="row">Тема</th>
+        <th scope="row">ФИО студента</th>
+        <th scope="row">ФИО руководителя</th>
+        <th scope="row">Год выпуска</th>
+        <th scope="row">Семестр выпуска</th>
+        <th scope="row"></th>
+    </tr>
+    @foreach (VKR v in Model.Vkrs)
+    {
+        <tr>
+            <td style="display: none">@v.Id</td>
+            <td>@v.Topic.Title</td>
+            <td>@v.StudentUP.SecondNameIP
+                @v.StudentUP.FirstNameIP
+                @v.StudentUP.MiddleNameIP</td>
+            <td>@v.SupervisorUP.SecondNameIP
+                @v.SupervisorUP.FirstNameIP
+                @v.SupervisorUP.MiddleNameIP</td>
+            <td>@v.Year</td>
+            <td>@v.Semester.Name</td>
+            
+            <td>
+                <p><a class="btn-sm btn-primary" asp-action="EditVkr" asp-route-id="@v.StudentUP.User.Id">Изменить</a></p>
+            </td>
+        </tr>
+    }
+</table>
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="AllVkrs"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       asp-route-data="@ViewData["data"]"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="AllVkrs"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       asp-route-data="@ViewData["data"]"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

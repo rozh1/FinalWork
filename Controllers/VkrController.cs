@@ -39,6 +39,7 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult Common()
         {
             var currentUser = _userManager.GetUserAsync(this.User).Result;
+            
             var vkr = _context.VKRs
                 .Include(t => t.StudentUP)
                 .Include(t => t.SupervisorUP)
@@ -50,50 +51,30 @@ namespace FinalWork_BD_Test.Controllers
              
             ViewData["ActiveView"] = "Common";
             ViewData["CurrentYear"] = (ulong) DateTime.Now.Year;
+            
             if (vkr != null)
             {
                 HttpContext.Session.SetString("beforeVkrTitle", vkr.Topic.Title);
                 HttpContext.Session.SetString("beforeVkrSupervisor", vkr.SupervisorUP.Id.ToString());
-                ViewData["UserProfile.Id"] = GetSupervisorList(vkr.SupervisorUP);
+                ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager, vkr.SupervisorUP);
                 ViewData["ReviewerId"] = GetReviewerList(vkr.ReviewerUP);
                 if (vkr.Semester == null)
                     vkr.Semester = _context.Semesters.First();
-                ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", vkr.Semester.Id);
-                ViewData["Degree.id"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name", vkr.DegreeId);
+                ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
+                    "Id", "Name", vkr.Semester.Id);
+                ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
+                    "Id", "Name", vkr.DegreeId);
                 return View(vkr);
             }
-            ViewData["Degree.id"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name");
-            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", CurrentSemester().Id);
-            ViewData["UserProfile.Id"] = GetSupervisorList();
+            ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
+                "Id", "Name");
+            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
+                "Id", "Name", Semester.CurrentSemester(_context).Id);
+            ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager);
             ViewData["ReviewerId"] = GetReviewerList();
             return View(new VKR { Year = (ulong)DateTime.Now.Year });
         }
 
-        private SelectList GetSupervisorList(UserProfile supervisor = null)
-        {
-            var users = _userManager.GetUsersInRoleAsync("Supervisor").Result;
-            _context.UserProfiles.Load();
-            _context.LecturerProfiles.Include(lp => lp.AcademicTitle).Include(lp => lp.AcademicDegree).Load();
-
-            Dictionary<Guid, string> dc = new Dictionary<Guid, string>();
-            foreach (var user in users)
-            {
-                var userProfile = user.UserProfiles?.FirstOrDefault(up => up.UpdatedByObj == null);
-                if (userProfile == null)
-                    continue;
-                var lecturerProfile = userProfile.User?.LecturerProfiles?.FirstOrDefault(lp => lp.UpdatedByObj == null);
-
-                string dropdowntext;
-                if (lecturerProfile != null)
-                    dropdowntext = $"{(lecturerProfile.AcademicTitle != null ? lecturerProfile.AcademicTitle.Name : "")} {(lecturerProfile.AcademicDegree != null ? lecturerProfile.AcademicDegree.Name : "")} {userProfile.SecondNameIP} {userProfile.FirstNameIP[0]}.{userProfile.MiddleNameIP[0]}.";
-                else
-                    dropdowntext = $"{userProfile.SecondNameIP} {userProfile.FirstNameIP[0]}.{userProfile.MiddleNameIP[0]}.";
-                dc.Add(userProfile.Id, dropdowntext);
-            }
-            if (supervisor != null)
-                return new SelectList(dc, "Key", "Value", supervisor.Id);
-            return new SelectList(dc, "Key", "Value");
-        }
 
         /// <summary>
         /// Регистрация/редактирование ВКР
@@ -131,7 +112,7 @@ namespace FinalWork_BD_Test.Controllers
             };
             
             if (prvVKR != null)
-                if (EqualsVkr(prvVKR, vkr))
+                if (VKR.EqualsVkr(prvVKR, vkr))
                     return RedirectToAction();
 
             _context.VKRs.Add(vkr);
@@ -143,38 +124,8 @@ namespace FinalWork_BD_Test.Controllers
 
             return RedirectToAction();
         }
-
-        /// <summary>
-        /// Равны ли обе ВКР
-        /// </summary>
-        private bool EqualsVkr(VKR beforeVkr, VKR afterVkr)
-        {
-            if (beforeVkr.Topic.Title == afterVkr.Topic.Title)
-            {
-                afterVkr.Topic = beforeVkr.Topic;
-                if (beforeVkr.StudentUPId == afterVkr.StudentUPId
-                    && beforeVkr.StudentSPId == afterVkr.StudentSPId
-                    && beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId
-                    && beforeVkr.SupervisorLPId == afterVkr.SupervisorLPId
-                    && beforeVkr.ReviewerUPId == afterVkr.ReviewerUPId
-                    && beforeVkr.Year == afterVkr.Year
-                    && beforeVkr.SemesterId == afterVkr.SemesterId
-                    && beforeVkr.DegreeId == afterVkr.DegreeId
-                    )
-                    return true;
-            }
-
-            return false;
-        }
-
-        private Semester CurrentSemester()
-        {
-            int month = DateTime.Today.Month;
-            if (month >= 2 && month <= 8)
-                return _context.Semesters.FirstOrDefault(s => s.Name == "Весна");
-            return _context.Semesters.FirstOrDefault(s => s.Name == "Осень");
-        }
-
+        
+        
         public IActionResult Documents()
         {
             ViewData["ActiveView"] = "Documents";
@@ -190,6 +141,7 @@ namespace FinalWork_BD_Test.Controllers
         /// <summary>
         /// Добавление нового научного руководителя
         /// </summary>
+        /// <returns></returns>
         public IActionResult NewSuperVisor()
         {
             ViewData["Item2.AcademicDegreeId"] = new SelectList(_context.AcademicDegrees.AsNoTracking().AsEnumerable(), "Id", "Name").Append(new SelectListItem("Отсутствует", "null", true));
@@ -228,7 +180,7 @@ namespace FinalWork_BD_Test.Controllers
             /* Создать пользователя без имени можно, но не присвоится роль
              * Создаю пользователя с именем, созданого из guid профиля
              */
-            User supervisor = new User { UserName = userProfile.Id.ToString() };
+            User supervisor = new User { UserName = "null" };
             _userManager.CreateAsync(supervisor).Wait();
 
             userProfile.User = supervisor;

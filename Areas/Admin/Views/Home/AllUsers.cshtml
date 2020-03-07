@@ -1,0 +1,63 @@
+@using FinalWork_BD_Test.Data.Models
+@using FinalWork_BD_Test.Data.Models.Profiles
+@model FinalWork_BD_Test.Areas.Admin.Models.UserProfileViewModel
+
+<p><a class="btn btn-info" asp-action="EditUser">Новый пользователь</a></p>
+<br/>
+<table class="table table-hover table-sm table-striped col-md-12">
+    <tr>
+        <th style="display: none">ID</th>
+        <th scope="col">Логин</th>
+        <th scope="row">Номер телефона</th>
+        <th scope="row">Фамилия</th>
+        <th scope="row">Имя</th>
+        <th scope="row">Отчество</th>
+        <th scope="row"></th>
+    </tr>
+    @foreach (User u in Model.Users)
+    {
+        <tr>
+            <td style="display: none">@u.Id</td>
+            <td>@u.UserName</td>
+            <td>@u.PhoneNumber</td>
+            
+            @if (u.UserProfiles?.FirstOrDefault(u => u.UpdatedByObj == null) != null)
+            {
+                var up = u.UserProfiles.FirstOrDefault(u => u.UpdatedByObj == null);
+                <td>@up.SecondNameIP</td>
+                <td>@up.FirstNameIP</td>
+                <td>@up.MiddleNameIP</td>
+            }
+            else
+            {
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            }
+            <td>
+                <p><a class="btn-sm btn-primary" asp-action="EditUser" asp-route-id="@u.Id">Изменить</a></p>
+                <a class="btn-sm btn-danger" asp-action="DeleteUser" asp-route-id="@u.Id">Удалить</a>
+            </td>
+        </tr>
+    }
+</table>
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="AllUsers"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       asp-route-data="@ViewData["data"]"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="AllUsers"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       asp-route-data="@ViewData["data"]"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

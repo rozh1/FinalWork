@@ -17,5 +17,15 @@ namespace FinalWork_BD_Test.Data.Models.Data
         /// </summary>
         [MaxLength(5)]
         public string Name { get; set; }
+        
+        
+        public static Semester CurrentSemester(ApplicationDbContext context)
+        {
+            int month = DateTime.Today.Month;
+            if (month >= 2 && month <= 8)
+                return context.Semesters.FirstOrDefault(s => s.Name == "Весна");
+            return context.Semesters.FirstOrDefault(s => s.Name == "Осень");
+        }
+
     }
 }
