@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinalWork_BD_Test.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class GecController : Controller
     {
         private ApplicationDbContext _context;

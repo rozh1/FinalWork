@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using FinalWork_BD_Test.Models;
 using FinalWork_BD_Test.Data;
+using FinalWork_BD_Test.Data.ConfigModels;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Data;
 using FinalWork_BD_Test.Data.Models.Profiles;
@@ -16,25 +18,25 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace FinalWork_BD_Test.Controllers
 {
     public class HomeController : Controller
     {
-        //private readonly ILogger<HomeController> _logger;
-
-        //public HomeController(ILogger<HomeController> logger)
-
         private ApplicationDbContext _context;
         private UserManager<User> _userManager;
+        private readonly IOptions<StaticFilesConfig> _config;
 
-        public HomeController(ApplicationDbContext context, UserManager<User> userManager)
+        public HomeController(ApplicationDbContext context, UserManager<User> userManager, IOptions<StaticFilesConfig> config)
         {
             _context = context;
             _userManager = userManager;
+            _config = config;
         }
 
         /// <summary>
@@ -45,8 +47,7 @@ namespace FinalWork_BD_Test.Controllers
         {
             string textToPage = "";
             
-            var file = Path.Combine(Directory.GetCurrentDirectory(), 
-                "Static", "MainPage.txt");
+            var file = Path.Combine(_config.Value.Path, "MainPage.txt");
             
             using (FileStream fl = new FileStream(file, FileMode.Open))
             {
@@ -239,8 +240,7 @@ namespace FinalWork_BD_Test.Controllers
         {
             string result = "";
             
-            var file = Path.Combine(Directory.GetCurrentDirectory(), 
-                "Static", "FaqPage.html");
+            var file = Path.Combine(_config.Value.Path, "FaqPage.html");
             
             using (FileStream fl = new FileStream(file, FileMode.Open))
             {

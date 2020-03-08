@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using FinalWork_BD_Test.Data;
+using FinalWork_BD_Test.Data.ConfigModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,6 +40,8 @@ namespace FinalWork_BD_Test
             services.AddControllersWithViews()
                 .AddSessionStateTempDataProvider();
             services.AddRazorPages();
+            
+            services.Configure<StaticFilesConfig>(Configuration.GetSection("StaticFilesConfig"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
