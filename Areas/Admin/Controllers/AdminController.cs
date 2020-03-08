@@ -52,7 +52,9 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             else
             {
                 source = _context.Users
-                    .Include(profile => profile.UserProfiles).ToList();
+                    .Where(u => u.IsArchived == false)
+                    .Include(profile => profile.UserProfiles)
+                    .ToList();
             }
 
             var count = source.Count();
@@ -143,11 +145,11 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         
         public IActionResult DeleteUser(Guid id)
         {
-            // TODO: реализовать удаление пользователя (желательно просто деактивировать его)
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
-            //_userManager.DeleteAsync(user).Wait();
-            
-            _context.Entry(user).State = EntityState.Detached;
+
+            if (user != null) 
+                user.IsArchived = true;
+
             _context.SaveChanges();
 
             return RedirectToAction("AllUsers");
@@ -451,7 +453,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             var query = _context.UserProfiles
                 .Include(u => u.User)
-                .Where(u => u.UpdatedByObj == null);
+                .Where(u => u.UpdatedByObj == null && u.IsArchived == false);
 
             IQueryable<UserProfile> result = null;
             
@@ -485,6 +487,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         private IQueryable<ReviewerProfile> CreateSearchExpression(ReviewerProfile data)
         {
             var query = _context.ReviewerProfiles
+                .Where(p => p.UpdatedByObj == null)
                 .Include(p => p.AcademicDegree)
                 .Include(p => p.AcademicTitle);
 
@@ -523,7 +526,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             }
             else
             {
-                source = _context.ReviewerProfiles.Where(p => p.IsArchived == false).ToList();
+                source = _context.ReviewerProfiles.Where(p => p.UpdatedByObj == null && p.IsArchived == false).ToList();
             }
 
             var count = source.Count();
@@ -573,12 +576,14 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             if (oldProfile != null)
             {
-                // TODO: реализовать обновление профиля
-                //_context.ReviewerProfile.Update(newProfile);
-                _context.Update(newProfile);
+                oldProfile.UpdatedByObj = newProfile;
+                
+                newProfile.Id = Guid.Empty;
+                newProfile.CreatedDate = DateTime.Now;
             }
             else
             {
+                newProfile.CreatedDate = DateTime.Now;
                 _context.ReviewerProfiles.Add(newProfile);
             }
 
