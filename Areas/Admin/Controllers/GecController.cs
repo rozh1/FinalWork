@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Intermidate;
@@ -12,9 +11,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinalWork_BD_Test.Controllers
+namespace FinalWork_BD_Test.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [Area("Admin")]
     public class GecController : Controller
     {
         private ApplicationDbContext _context;
