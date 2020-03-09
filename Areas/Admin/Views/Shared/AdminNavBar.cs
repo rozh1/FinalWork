@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace FinalWork_BD_Test.Areas.Admin.Views.Home
+namespace FinalWork_BD_Test.Areas.Admin.Views
 {
     public static class AdminNavBar
     {
