@@ -157,6 +157,24 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
                 newProfile.User.UserProfiles.Add(newProfile);
                 _context.UserProfiles.Add(newProfile);
             }
+            else
+            {
+                // если добавление
+                newProfile.CreatedDate = DateTime.Now;
+
+                var newUser = _context.Users
+                    .Include(u => u.UserProfiles)
+                    .FirstOrDefault(u => u.Id == currentUser.Id);
+
+                if (newUser.UserProfiles.Count > 0)
+                    newUser.UserProfiles.Add(newProfile);
+                else
+                    newUser.UserProfiles = new List<UserProfile>()
+                    {
+                        newProfile
+                    };
+            }
+
 
             //await _signInManager.RefreshSignInAsync(user);
             _context.SaveChanges();
