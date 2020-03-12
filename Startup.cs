@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using FinalWork_BD_Test.Data;
+using FinalWork_BD_Test.Data.ConfigModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,13 +29,19 @@ namespace FinalWork_BD_Test
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+            
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<ApplicationDbContext>();
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI().AddDefaultTokenProviders();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddSessionStateTempDataProvider();
             services.AddRazorPages();
+            
+            services.Configure<StaticFilesConfig>(Configuration.GetSection("StaticFilesConfig"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +61,8 @@ namespace FinalWork_BD_Test
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseSession();
+            
             app.UseRouting();
 
             app.UseAuthentication();
@@ -62,6 +71,11 @@ namespace FinalWork_BD_Test
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapAreaControllerRoute(
+                    name: "AdminPanel",
+                    areaName: "Admin",
+                    pattern: "Admin/{controller=Home}/{action=Index}");
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

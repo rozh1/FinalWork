@@ -1,0 +1,11 @@
+@using FinalWork_BD_Test.Areas.Admin.Views
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link @AdminNavBar.IndexNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="Index">Начальная страница</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.AllUsersNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="AllUsers">Все пользователи</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.FindUsersNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="FindUsers">Найти пользователя</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.AllRolesNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="AllRoles">Все роли</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.AllReviewersNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="AllReviewers">Все рецензенты</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.FindReviewerNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="FindReviewer">Найти рецензента</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.AllVkrsNavClass(ViewContext)" asp-area="Admin" asp-controller="Home" asp-action="AllVkrs">Все ВКР</a></li>
+    <li class="nav-item"><a class="nav-link @AdminNavBar.GecNavClass(ViewContext)" asp-area="Admin" asp-controller="Gec" asp-action="Gec">ГЭК</a></li>
+</ul>

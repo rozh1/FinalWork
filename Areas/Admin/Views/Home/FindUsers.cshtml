@@ -1,0 +1,39 @@
+@using FinalWork_BD_Test.Areas.Admin.Views
+@model FinalWork_BD_Test.Data.Models.Profiles.UserProfile
+@{
+    ViewData["ActiveView"] = AdminNavBar.FindUsers;
+}
+
+<div class="row">
+<div class="col-md-8">
+    <form method="post" asp-action="AllUsers" asp-route-isSearch="true">
+        <div class="form-group">
+            <label asp-for="User.UserName" class="control-label">Логин</label>
+            <input asp-for="User.UserName" name="User.UserName" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="User.Email" class="control-label">Электронная почта</label>
+            <input asp-for="User.Email" name="User.Email" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="User.PhoneNumber" class="control-label">Номер телефона</label>
+            <input asp-for="User.PhoneNumber" name="User.PhoneNumber" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="SecondNameIP" class="control-label"></label>
+            <input asp-for="SecondNameIP" name="SecondNameIP" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="FirstNameIP" class="control-label"></label>
+            <input asp-for="FirstNameIP" name="FirstNameIP" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="MiddleNameIP" class="control-label"></label>
+            <input asp-for="MiddleNameIP" name="MiddleNameIP" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Найти" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+</div>

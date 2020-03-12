@@ -1,0 +1,42 @@
+@using FinalWork_BD_Test.Areas.Admin.Views
+@model FinalWork_BD_Test.Data.Models.VKR
+@{
+    ViewData["ActiveView"] = AdminNavBar.AllVkrs;
+}
+<div class="row">
+    <div class="col-md-8">
+        <form id="topic-form" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="StudentUP.User.Id" style="display: none" name="userId"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Topic.Title"></label>
+                <input asp-for="Topic.Title" class="form-control" />
+                <span asp-validation-for="Topic.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SupervisorUP">ФИО научного руководителя</label>
+                @Html.DropDownList("UserProfile.Id", ViewData["UserProfile.Id"] as SelectList,
+                    new { @class = "form-control" })
+                <span asp-validation-for="SupervisorUP" class="text-danger"></span>
+                <p><a asp-area="" asp-controller="Vkr" asp-action="NewSuperVisor">Не нашли научного руководителя?</a></p>
+            </div>
+            <div class="form-group">
+                <label asp-for="Year"></label>
+                <input asp-for="Year" min="@ViewData["CurrentYear"]" class="form-control" />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Semester"></label>
+                @Html.DropDownList("Semester.Id", ViewData["Semester.Id"] as SelectList,
+                    new { @class = "form-control" })
+                <span asp-validation-for="Semester" class="text-danger"></span>
+            </div>
+            <button id="update-topic-button" type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

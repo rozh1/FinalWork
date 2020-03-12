@@ -1,0 +1,68 @@
+﻿@model FinalWork_BD_Test.Data.Models.Profiles.LecturerProfile
+
+@{
+    ViewData["Title"] = "View";
+}
+
+    <h1>LecturerProfile</h1>
+
+<h4>LecturerProfile</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="LecturerProfile">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstNameRP" class="control-label"></label>
+                <input asp-for="FirstNameRP" class="form-control" />
+                <span asp-validation-for="FirstNameRP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondNameRP" class="control-label"></label>
+                <input asp-for="SecondNameRP" class="form-control" />
+                <span asp-validation-for="SecondNameRP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleNameRP" class="control-label"></label>
+                <input asp-for="MiddleNameRP" class="form-control" />
+                <span asp-validation-for="MiddleNameRP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstNameDP" class="control-label"></label>
+                <input asp-for="FirstNameDP" class="form-control" />
+                <span asp-validation-for="FirstNameDP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondNameDP" class="control-label"></label>
+                <input asp-for="SecondNameDP" class="form-control" />
+                <span asp-validation-for="SecondNameDP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleNameDP" class="control-label"></label>
+                <input asp-for="MiddleNameDP" class="form-control" />
+                <span asp-validation-for="MiddleNameDP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcademicDegreeId" class="control-label"></label>
+                @Html.DropDownList("AcademicDegreeId")
+                <span asp-validation-for="AcademicDegreeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcademicTitleId" class="control-label"></label>
+                @Html.DropDownList("AcademicTitleId")
+                <span asp-validation-for="AcademicTitleId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

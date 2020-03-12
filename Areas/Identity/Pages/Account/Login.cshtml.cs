@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using FinalWork_BD_Test.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinalWork_BD_Test.Areas.Identity.Pages.Account
 {
@@ -45,10 +46,12 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account
         {
             [Required]
             [EmailAddress]
+            [Display(Name = "Электронная почта")]
             public string Email { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
+            [Display(Name = "Пароль")]
             public string Password { get; set; }
 
             [Display(Name = "Запомнить?")]
@@ -78,6 +81,14 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                //ToDo: рассмотреть другие варианты
+                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == Input.Email);
+                if (user?.IsArchived == true)
+                {
+                    _logger.LogWarning("Пользователь архивирован");
+                    return RedirectToPage("./Lockout"); // ToDo: Заменить на страницу сообщающую, что пользователь находится в архиве
+                }
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);

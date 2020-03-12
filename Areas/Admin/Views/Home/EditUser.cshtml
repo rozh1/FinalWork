@@ -1,0 +1,82 @@
+@using FinalWork_BD_Test.Areas.Admin.Views
+@model FinalWork_BD_Test.Data.Models.Profiles.UserProfile
+@{
+    ViewData["ActiveView"] = AdminNavBar.AllUsers;
+}
+
+@if (Model != null)
+{
+    <h4>Изменение данных пользователя @Model.User.UserName</h4>
+}
+else
+{
+    <h4>Создание нового пользователя</h4>
+}
+<div class="row">
+    <div class="col-md-8">
+        <form method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @if (Model != null)
+            {
+                <div class="form-group">
+                    <input asp-for="Id" name="Id" style="display: none" class="form-control" value="@Model.Id"/>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="control-label">Пароль</label>
+                    <input name="password" class="form-control"/>
+                </div>
+            }
+            <div class="form-group">
+                <label asp-for="User.UserName" class="control-label">Логин</label>
+                <input asp-for="User.UserName" name="User.UserName" class="form-control"/>
+                <span asp-validation-for="User.UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.Email" class="control-label">Электронная почта</label>
+                <input asp-for="User.Email" name="User.Email" class="form-control"/>
+                <span asp-validation-for="User.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.PhoneNumber" class="control-label">Номер телефона</label>
+                <input asp-for="User.PhoneNumber" name="User.PhoneNumber" class="form-control"/>
+                <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondNameIP" class="control-label"></label>
+                <input asp-for="SecondNameIP" name="SecondNameIP" class="form-control"/>
+                <span asp-validation-for="SecondNameIP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstNameIP" class="control-label"></label>
+                <input asp-for="FirstNameIP" name="FirstNameIP" class="form-control"/>
+                <span asp-validation-for="FirstNameIP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleNameIP" class="control-label"></label>
+                <input asp-for="MiddleNameIP" name="MiddleNameIP" class="form-control"/>
+                <span asp-validation-for="MiddleNameIP" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-primary" />
+            </div>
+        </form>
+        @if (Model != null)
+        {
+            <br/>
+            <p><a class="btn btn-primary" asp-action="EditUserRoles" asp-route-userId="@Model.User.Id">Изменить роли пользователя</a></p>
+
+            <p><a class="btn btn-primary" asp-action="EditLectureProfile" asp-route-id="@Model.User.Id">Добавить/Изменить профиль научного руководителя</a></p>
+            <p><a class="btn btn-primary" asp-action="EditStudentProfile" asp-route-id="@Model.User.Id">Добавить/Изменить профиль студента</a></p>
+            <p><a class="btn btn-primary" asp-action="EditVkr" asp-route-id="@Model.User.Id">Добавить/Изменить ВКР</a></p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+

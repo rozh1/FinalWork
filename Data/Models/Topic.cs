@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
@@ -22,10 +23,7 @@ namespace FinalWork_BD_Test.Data.Models
         [ForeignKey("AuthorId")]
         public virtual User Author { get; set; }
 
-        [HiddenInput]
-        public Guid? SuperVisorId { get; set; }
-
-        [ForeignKey("SuperVisorId")]
-        public virtual User Supervisor { get; set; }
+        [DefaultValue(false)]
+        public bool IsArchived { get; set; }
     }
 }

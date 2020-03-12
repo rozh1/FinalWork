@@ -20,6 +20,8 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
 
         public static string TwoFactorAuthentication => "TwoFactorAuthentication";
 
+        public static string AdditionalInformation => "AdditionalInformation";
+
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
         public static string EmailNavClass(ViewContext viewContext) => PageNavClass(viewContext, Email);
@@ -32,6 +34,9 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
 
         public static string TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
 
+        public static string AdditionalInformationNavClass(ViewContext viewContext) =>
+            PageNavClass(viewContext, AdditionalInformation);
+        
         private static string PageNavClass(ViewContext viewContext, string page)
         {
             var activePage = viewContext.ViewData["ActivePage"] as string
