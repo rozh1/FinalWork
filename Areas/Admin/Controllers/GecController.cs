@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FinalWork_BD_Test.Areas.Admin.Models;
 using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Intermidate;
@@ -26,12 +27,38 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             _userManager = u;
         }
 
+        public ActionResult Index(int page = 1)
+        {
+            int pageSize = 7;
+
+            List<GEC> source = _context.GECs
+                .Include(t => t.EducationForm)
+                .Include(t => t.Chief)
+                .Include(t => t.Deputy)
+                .Where(t => t.UpdatedByObj == null && t.IsArchived == false)
+                .ToList();
+            
+            var count = source.Count();
+            var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+ 
+            var pageViewModel = new PageViewModel(count, page, pageSize);
+            var viewModel = new GecViewModel
+            {
+                PageViewModel = pageViewModel,
+                Gecs = items
+            };
+
+            return View(viewModel);
+        }
+
         [HttpGet]
-        public IActionResult GecMemberProfile()
+        public IActionResult GecMemberProfile(Guid gecId)
         {
             ViewData["AcademicDegreeId"] = new SelectList(_context.AcademicDegrees.AsNoTracking().AsEnumerable(), "Id", "Name");//.Append(new SelectListItem("Отсутствует", "null", true));
             ViewData["AcademicTitleId"] = new SelectList(_context.AcademicTitles.AsNoTracking().AsEnumerable(), "Id", "Name");//.Append(new SelectListItem("Отсутствует", "null", true));
 
+            ViewData["GecId"] = gecId;
+            
             return View();
         }
 
@@ -57,13 +84,15 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         //}
 
         [HttpGet]
-        public IActionResult Gec(Guid gecId)
+        public IActionResult Gec(Guid gecId = default)
         {
             GEC gec = _context.GECs.FirstOrDefault(g => g.Id == gecId);
             _context.GecMemberProfiles.Load();
             _context.GecMemberIntermediates.Load();
 
-            SelectList MembersProfiles = new SelectList(_context.GecMemberProfiles.Where(mp => mp.UpdatedByObj == null), "Id", "FirstNameIP");
+            var membersProfiles = new SelectList(_context.GecMemberProfiles
+                .Where(mp => mp.UpdatedByObj == null && mp.IsArchived == false), 
+                "Id", "FirstNameIP");
             ViewData["EducationFormId"] = new SelectList(_context.EducationForms, "Id", "Name");
 
             if (gec != null)
@@ -71,16 +100,23 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 if (gec.Members != null)
                     foreach (var member in gec.Members)
                     {
-                        var memberListItem = MembersProfiles.FirstOrDefault(mp => mp.Value == member.MemberProfileId.ToString());
+                        var memberListItem = membersProfiles.FirstOrDefault(mp => mp.Value == member.MemberProfileId.ToString());
                         if (memberListItem != null)
                             memberListItem.Selected = true;
                     }
+                
+                ViewData["MembersId"] = membersProfiles;
+
+                //return View("Gec", gec);
+                return View(gec);
+            }
+            else
+            {            
+                ViewData["MembersId"] = membersProfiles;
+
+                return View();
             }
 
-            ViewData["MembersId"] = MembersProfiles;
-
-            //return View("Gec", gec);
-            return View(gec);
         }
 
         [HttpPost]
