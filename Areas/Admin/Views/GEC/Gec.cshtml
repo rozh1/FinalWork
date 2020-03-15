@@ -3,6 +3,17 @@
     ViewData["ActiveView"] = "Gec";
 }
 
+@* TODO: реализовать обработчик кнопок "Изменить" и "Удалить", т.е. из ListBox получать выбранный элемент и отправлять на сервер *@
+<script language="C#" runat="server">
+
+      void EditMemberBtn(Object sender, EventArgs e) 
+      {
+         if (MembersId.SelectedIndex > -1)
+            MembersId.Text="You chose: " + MembersId.SelectedItem.Text;
+      }
+
+</script>
+
 <h1>Государственная экзаменационная комиссия</h1>
 
 <hr />
@@ -47,9 +58,19 @@
             </div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <a class="btn btn-info" asp-controller="Gec" 
-                   asp-action="GecMemberProfile" asp-route-gecId="@Model.Id">Добавить члена комиссии</a>
-                <input type="submit" value="Сохранить" class="btn btn-primary" />
+                <p>
+                    <a class="btn btn-info" asp-controller="Gec" 
+                       asp-action="GecMemberProfile" asp-route-gecId="@Model.Id">Добавить члена комиссии</a>
+                </p>
+                <p>
+                    <button class="btn btn-info" onClick="EditMemberBtn_Click" >Изменить члена комиссии</button>
+                </p>
+                <p>
+                    <button class="btn btn-danger">Удалить члена комиссии</button>
+                </p>
+                <p>
+                    <input type="submit" value="Сохранить" class="btn btn-primary" />
+                </p>
             </div>
         </form>
     </div>

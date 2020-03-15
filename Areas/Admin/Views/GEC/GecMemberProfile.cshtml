@@ -60,8 +60,16 @@
 </div>
 
 <div>
-    <a class="btn btn-info" asp-area="Admin" asp-controller="Gec" 
-       asp-action="Gec" asp-route-gecId="@ViewData["GecId"]">Back to List</a>
+    @if ((Guid)ViewData["GecId"] != Guid.Empty)
+    {
+        <a class="btn btn-info" asp-area="Admin" asp-controller="Gec"
+           asp-action="Gec" asp-route-gecId="@ViewData["GecId"]">Вернуться к ГЭК</a>
+    }
+    else
+    {
+        <a class="btn btn-info" asp-area="Admin" asp-controller="Gec"
+           asp-action="Index">Вернуться к списку ГЭК</a>
+    }
 </div>
 
 @section Scripts {

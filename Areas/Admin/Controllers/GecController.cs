@@ -52,20 +52,51 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult GecMemberProfile(Guid gecId)
+        public IActionResult GecMemberProfile(Guid gecMemberId = default, Guid gecId = default)
         {
-            ViewData["AcademicDegreeId"] = new SelectList(_context.AcademicDegrees.AsNoTracking().AsEnumerable(), "Id", "Name");//.Append(new SelectListItem("Отсутствует", "null", true));
-            ViewData["AcademicTitleId"] = new SelectList(_context.AcademicTitles.AsNoTracking().AsEnumerable(), "Id", "Name");//.Append(new SelectListItem("Отсутствует", "null", true));
+            GecMemberProfile memberProfile = null;
+            
+            if (gecMemberId == Guid.Empty)
+            {
+                ViewData["AcademicDegreeId"] =
+                    new SelectList(_context.AcademicDegrees.AsNoTracking().AsEnumerable(), "Id",
+                        "Name"); //.Append(new SelectListItem("Отсутствует", "null", true));
+
+                ViewData["AcademicTitleId"] =
+                    new SelectList(_context.AcademicTitles.AsNoTracking().AsEnumerable(), "Id",
+                        "Name"); //.Append(new SelectListItem("Отсутствует", "null", true));
+            }
+            else
+            {
+                memberProfile = _context.GecMemberProfiles
+                    .Include(g => g.AcademicDegree)
+                    .Include(g => g.AcademicTitle)
+                    .FirstOrDefault(g => g.Id == gecMemberId && g.UpdatedByObj == null && g.IsArchived == false);
+
+                ViewData["AcademicDegreeId"] = new SelectList(_context.AcademicDegrees.AsNoTracking().AsEnumerable(),
+                    "Id", "Name", memberProfile.AcademicDegree.Id);
+
+                ViewData["AcademicTitleId"] = new SelectList(_context.AcademicTitles.AsNoTracking().AsEnumerable(),
+                    "Id", "Name", memberProfile.AcademicTitle.Id);
+            }
 
             ViewData["GecId"] = gecId;
             
-            return View();
+            return View(memberProfile);
         }
 
         [HttpPost]
         public IActionResult GecMemberProfile(GecMemberProfile profile)
         {
-            profile.UpdatedByObj = null;
+            var oldProfile = _context.GecMemberProfiles
+                .Include(m => m.AcademicDegree)
+                .Include(m => m.AcademicTitle)
+                .FirstOrDefault(m => m.Id == profile.Id && m.UpdatedByObj == null && m.IsArchived == false);
+
+            if (oldProfile != null) 
+                oldProfile.UpdatedByObj = profile;
+            
+            profile.Id = Guid.Empty;
             profile.CreatedDate = DateTime.Now;
 
             _context.GecMemberProfiles.Add(profile);
@@ -122,7 +153,11 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult GEC(GEC gec, ICollection<Guid> membersid)
         {
-            gec.UpdatedByObj = null;
+            var oldGec = _context.GECs.FirstOrDefault(g => g.Id == gec.Id && g.UpdatedByObj == null && g.IsArchived == false);
+            if (oldGec != null)
+                oldGec.UpdatedByObj = gec;
+
+            gec.Id = Guid.Empty;
             gec.CreatedDate = DateTime.Now;
 
             //TEMP
