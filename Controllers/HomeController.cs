@@ -77,20 +77,17 @@ namespace FinalWork_BD_Test.Controllers
 
             // Явная загрузка связанных данных, т.к они не подгружались неявно. 
             StudentProfile profile = _context.StudentProfiles
-                .Include(profile => profile.Degree)
                 .Include(profile => profile.Gender)
                 .Include(profile => profile.EducationForm)
                 .FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
 
             if (profile == null)
             {
-                ViewBag.Degree = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name");
                 ViewBag.Gender = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name");
                 ViewBag.EducationForm = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name");
                 return View();
             }
 
-            ViewBag.Degree = new SelectList(_context.Degrees.AsEnumerable(), "Name", "Name", profile.Degree.Name);
             ViewBag.Gender = new SelectList(_context.Genders.AsEnumerable(), "Name", "Name", profile.Gender.Name);
             ViewBag.EducationForm = new SelectList(_context.EducationForms.AsEnumerable(), "Name", "Name", profile.EducationForm.Name);
             return View(profile);
@@ -135,7 +132,6 @@ namespace FinalWork_BD_Test.Controllers
                 SecondNameDP = form.SecondNameDP,
                 MiddleNameDP = form.MiddleNameDP,
 
-                Degree = _context.Degrees.FirstOrDefault(d => d.Name == form.Degree),
                 Gender = _context.Genders.FirstOrDefault(d => d.Name == form.Gender),
                 EducationForm = _context.EducationForms.FirstOrDefault(d => d.Name == form.EducationForm),
                 Group = form.Group,

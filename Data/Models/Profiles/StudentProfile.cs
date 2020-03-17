@@ -71,14 +71,6 @@ namespace FinalWork_BD_Test.Data.Models
             ErrorMessage = "Отчество в дательном падеже должно содержать только русские буквы")]
         public string MiddleNameDP { get; set; }
 
-        /// <summary>
-        /// Степень образования
-        /// </summary>
-        [Required(ErrorMessage = "Выберите степень высшего образования")]
-        [Display(Name = "Степень высшего образования")]
-        public Guid DegreeId { get; set; }
-        [ForeignKey("DegreeId")]
-        public virtual Degree Degree { get; set; }
 
         /// <summary>
         /// Пол

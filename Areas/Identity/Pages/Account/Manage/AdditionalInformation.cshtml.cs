@@ -35,21 +35,18 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
 
             // Жадная загрузка связанных данных
             StudentProfile profile = _context.StudentProfiles
-                .Include(profile => profile.Degree)
                 .Include(profile => profile.Gender)
                 .Include(profile => profile.EducationForm)
                 .FirstOrDefault(t => t.User == currentUser && t.UpdatedByObj == null);
 
             if (profile == null)
             {
-                ViewData["DegreeId"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name");
                 ViewData["GenderId"] = new SelectList(_context.Genders.AsEnumerable(), "Id", "Name");
                 ViewData["EducationFormId"] = new SelectList(_context.EducationForms.AsEnumerable(), "Id", "Name");
 
                 return Page();
             }
 
-            ViewData["DegreeId"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name", profile.Degree.Id);
             ViewData["GenderId"] = new SelectList(_context.Genders.AsEnumerable(), "Id", "Name", profile.Gender.Id);
             ViewData["EducationFormId"] = new SelectList(_context.EducationForms.AsEnumerable(), "Id", "Name", profile.EducationForm.Id);
 
@@ -95,7 +92,6 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account.Manage
                 && previous.FirstNameRP == current.FirstNameRP
                 && previous.SecondNameRP == current.SecondNameRP
                 && previous.MiddleNameRP == current.MiddleNameRP
-                && previous.DegreeId == current.DegreeId
                 && previous.EducationFormId == current.EducationFormId
                 && previous.GenderId == current.GenderId
                 && previous.Group == current.Group)
