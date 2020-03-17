@@ -85,8 +85,11 @@ namespace FinalWork_BD_Test.Data.Models
             if (beforeVkr.Topic.Title == afterVkr.Topic.Title)
             {
                 afterVkr.Topic = beforeVkr.Topic;
-                if (beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId && beforeVkr.SemesterId == afterVkr.SemesterId &&
-                    beforeVkr.Year == afterVkr.Year)
+                if (beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId && 
+                    beforeVkr.SemesterId == afterVkr.SemesterId &&
+                    beforeVkr.Year == afterVkr.Year && 
+                    beforeVkr.DegreeId == afterVkr.DegreeId &&
+                    beforeVkr.ReviewerUPId == afterVkr.ReviewerUPId)
                     return true;
             }
             return false;
