@@ -26,8 +26,8 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
         /// </summary>
         [Required(ErrorMessage = "Введите имя в родительном падеже")]
         [Display(Name = "Имя в родительном падеже")]
-        [RegularExpression(@"[А-Яа-яЁё]+( [А-Яа-яЁё]+)*(-[А-Яа-яЁё]+)*",
-            ErrorMessage = "Имя в родительном падеже должно содержать только русские буквы, пробел или дефис")]
+        [RegularExpression(@"[А-Яа-яЁё]+( [А-Яа-яЁё]+)*(-[А-Яа-яЁё]+)*(`[А-Яа-яЁё]+)*('[А-Яа-яЁё]+)*",
+            ErrorMessage = "Имя в родительном падеже может содержать русские буквы, пробел, а также спец символы: -, `, '")]
         public string FirstNameRP { get; set; }
 
         /// <summary>
@@ -35,8 +35,8 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
         /// </summary>
         [Required(ErrorMessage = "Введите фамилию в родительном падеже")]
         [Display(Name = "Фамилия в родительном падеже")]
-        [RegularExpression(@"[А-Яа-яЁё]+( [А-Яа-яЁё]+)*(-[А-Яа-яЁё]+)*",
-            ErrorMessage = "Фамилия в родительном падеже должна содержать только русские буквы, пробел или дефис")]
+        [RegularExpression(@"[А-Яа-яЁё]+( [А-Яа-яЁё]+)*(-[А-Яа-яЁё]+)*(`[А-Яа-яЁё]+)*('[А-Яа-яЁё]+)*",
+            ErrorMessage = "Фамилия в родительном падеже может содержать русские буквы, пробел, а также спец символы: -, `, '")]
         public string SecondNameRP { get; set; }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
         /// </summary>
         [Required(ErrorMessage = "Введите имя в дательном падеже")]
         [Display(Name = "Имя в дательном падеже")]
-        [RegularExpression(@"[А-Яа-яЁё]+",
-            ErrorMessage = "Имя в дательном падеже должно содержать только русские буквы, пробел или дефис")]
+        [RegularExpression(@"[А-Яа-яЁё]+( [А-Яа-яЁё]+)*(-[А-Яа-яЁё]+)*(`[А-Яа-яЁё]+)*('[А-Яа-яЁё]+)*",
+            ErrorMessage = "Имя в дательном падеже может содержать русские буквы, пробел, а также спец символы: -, `, '")]
         public string FirstNameDP { get; set; }
 
         public string SecondNameDP { get; set; }
@@ -63,8 +63,8 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
         /// </summary>
         [Required(ErrorMessage = "Введите отчество в дательном падеже")]
         [Display(Name = "Отчество в дательном падеже")]
-        [RegularExpression(@"[А-Яа-яЁё]+",
-            ErrorMessage = "Отчество в дательном падеже должно содержать только русские буквы, пробел или дефис")]
+        [RegularExpression(@"[А-Яа-яЁё]+( [А-Яа-яЁё]+)*(-[А-Яа-яЁё]+)*(`[А-Яа-яЁё]+)*('[А-Яа-яЁё]+)*",
+            ErrorMessage = "Отчество в дательном падеже может содержать русские буквы, пробел, а также спец символы: -, `, '")]
         public string MiddleNameDP { get; set; }
 
         /// <summary>
