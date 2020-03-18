@@ -72,7 +72,7 @@ namespace FinalWork_BD_Test.Data.Models
                 var userProfile = user.UserProfiles?.FirstOrDefault(up => up.UpdatedByObj == null && up.IsArchived == false);
                 if (userProfile == null)
                     continue;
-                dc.Add(userProfile.Id, $"{userProfile.SecondNameIP} {userProfile.FirstNameIP[0]}.{userProfile.MiddleNameIP[0]}.");
+                dc.Add(userProfile.Id, $"{userProfile.SecondNameIP} {userProfile.FirstNameIP[0]}.{userProfile.MiddleNameIP?[0]}.");
             }
             if (supervisor != null)
                 return new SelectList(dc, "Key", "Value", supervisor.Id);
@@ -85,8 +85,11 @@ namespace FinalWork_BD_Test.Data.Models
             if (beforeVkr.Topic.Title == afterVkr.Topic.Title)
             {
                 afterVkr.Topic = beforeVkr.Topic;
-                if (beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId && beforeVkr.SemesterId == afterVkr.SemesterId &&
-                    beforeVkr.Year == afterVkr.Year)
+                if (beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId && 
+                    beforeVkr.SemesterId == afterVkr.SemesterId &&
+                    beforeVkr.Year == afterVkr.Year && 
+                    beforeVkr.DegreeId == afterVkr.DegreeId &&
+                    beforeVkr.ReviewerUPId == afterVkr.ReviewerUPId)
                     return true;
             }
             return false;

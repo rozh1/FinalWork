@@ -17,17 +17,16 @@ namespace FinalWork_BD_Test.Data.Models.Profiles
     {
         [Required(ErrorMessage = "Введите имя в именительном падеже")]
         [Display(Name = "Имя в именительном падеже")]
-        [RegularExpression(@"[А-Яа-яЁё]+",
-            ErrorMessage = "Имя в именительном падеже должно содержать только русские буквы")]
+        [RegularExpression(@"[А-Яа-яЁё]+( [А-Яа-яЁё]+)*(-[А-Яа-яЁё]+)*",
+            ErrorMessage = "Имя в именительном падеже должно содержать только русские буквы, пробел или дефис")]
         public string FirstNameIP { get; set; }
 
         [Required(ErrorMessage = "Введите фамилию в именительном падеже")]
         [Display(Name = "Фамилия в именительном падеже")]
-        [RegularExpression(@"[А-Яа-яЁё]+",
-            ErrorMessage = "Фамилия в именительном падеже должна содержать только русские буквы")]
+        [RegularExpression(@"[А-Яа-яЁё]+( [А-Яа-яЁё]+)*(-[А-Яа-яЁё]+)*",
+            ErrorMessage = "Фамилия в именительном падеже должна содержать только русские буквы, пробел или дефис")]
         public string SecondNameIP { get; set; }
 
-        [Required(ErrorMessage = "Введите отчество в именительном падеже")]
         [Display(Name = "Отчество в именительном падеже")]
         [RegularExpression(@"[А-Яа-яЁё]+",
             ErrorMessage = "Отчество в именительном падеже должно содержать только русские буквы")]

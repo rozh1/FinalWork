@@ -384,14 +384,12 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             var profile = _context.StudentProfiles
                 .Include(p => p.User)
-                .Include(p => p.Degree)
                 .Include(p => p.Gender)
                 .Include(p => p.EducationForm)
                 .FirstOrDefault(t => t.User.Id == id && t.UpdatedByObj == null);
 
             if (profile != null)
             {
-                ViewData["DegreeId"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name", profile.Degree.Id);
                 ViewData["GenderId"] = new SelectList(_context.Genders.AsEnumerable(), "Id", "Name", profile.Gender.Id);
                 ViewData["EducationFormId"] = new SelectList(_context.EducationForms.AsEnumerable(), "Id", "Name", profile.EducationForm.Id);
 
@@ -404,7 +402,6 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                     User = new User(){ Id = id}
                 };
                 
-                ViewData["DegreeId"] = new SelectList(_context.Degrees.AsEnumerable(), "Id", "Name");
                 ViewData["GenderId"] = new SelectList(_context.Genders.AsEnumerable(), "Id", "Name");
                 ViewData["EducationFormId"] = new SelectList(_context.EducationForms.AsEnumerable(), "Id", "Name");
 

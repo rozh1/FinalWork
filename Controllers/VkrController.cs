@@ -43,6 +43,7 @@ namespace FinalWork_BD_Test.Controllers
             var vkr = _context.VKRs
                 .Include(t => t.StudentUP)
                 .Include(t => t.SupervisorUP)
+                .Include(t => t.Degree)
                 .Include(t => t.Topic)
                 .Include(t => t.Semester)
                 .Include(t => t.ReviewerUP)
@@ -54,16 +55,19 @@ namespace FinalWork_BD_Test.Controllers
             
             if (vkr != null)
             {
-                HttpContext.Session.SetString("beforeVkrTitle", vkr.Topic.Title);
-                HttpContext.Session.SetString("beforeVkrSupervisor", vkr.SupervisorUP.Id.ToString());
                 ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager, vkr.SupervisorUP);
-                ViewData["ReviewerId"] = GetReviewerList(vkr.ReviewerUP);
+                
                 if (vkr.Semester == null)
                     vkr.Semester = _context.Semesters.First();
+                
                 ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
                     "Id", "Name", vkr.Semester.Id);
+                
                 ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
                     "Id", "Name", vkr.DegreeId);
+                
+                ViewData["ReviewerId"] = GetReviewerList(vkr.ReviewerUP);
+
                 return View(vkr);
             }
             ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
@@ -83,7 +87,8 @@ namespace FinalWork_BD_Test.Controllers
         /// <param name="userProfile"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Common([FromForm] Topic topic, [FromForm] UserProfile userProfile, [FromForm] ulong year, [FromForm] Semester semester, [FromForm] Guid? reviewerId, [FromForm] Degree degree)
+        public IActionResult Common([FromForm] Topic topic, [FromForm] UserProfile userProfile, [FromForm] ulong year, 
+            [FromForm] Semester semester, [FromForm] Guid? reviewerId, [FromForm] Degree degree)
         {
             var currentUser = _userManager.GetUserAsync(this.User).Result;
 
@@ -214,7 +219,7 @@ namespace FinalWork_BD_Test.Controllers
             Dictionary<Guid, string> dc = new Dictionary<Guid, string>();
             foreach (var reviewerProfile in _context.ReviewerProfiles.Include(rp => rp.AcademicTitle).Include(rp => rp.AcademicDegree).Where(rp => rp.UpdatedByObj == null && !rp.IsArchived))
             {
-                dc.Add(reviewerProfile.Id, $"{reviewerProfile.AcademicTitle?.Name} {reviewerProfile.AcademicDegree?.Name} {reviewerProfile.SecondNameIP} {reviewerProfile.FirstNameIP[0]}.{reviewerProfile.MiddleNameIP[0]}.");
+                dc.Add(reviewerProfile.Id, $"{reviewerProfile.AcademicTitle?.Name} {reviewerProfile.AcademicDegree?.Name} {reviewerProfile.SecondNameIP} {reviewerProfile.FirstNameIP[0]}.{reviewerProfile.MiddleNameIP?[0]}.");
             }
 
             return new SelectList(dc, "Key", "Value", reviewer?.Id).Append(new SelectListItem("", "null", reviewer == null));

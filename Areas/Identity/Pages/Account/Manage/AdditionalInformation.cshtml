@@ -43,12 +43,6 @@
                 <span asp-validation-for="Input.MiddleNameDP" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Input.DegreeId" class="control-label"></label>
-                @Html.DropDownList("DegreeId", ViewData["DegreeId"] as SelectList, 
-                    new { @class = "form-control"})
-                <span asp-validation-for="Input.DegreeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Input.GenderId" class="control-label"></label>
                 @Html.DropDownList("GenderId", ViewData["GenderId"] as SelectList, 
                     new { @class = "form-control"})
