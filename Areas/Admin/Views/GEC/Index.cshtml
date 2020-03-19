@@ -1,0 +1,60 @@
+@using FinalWork_BD_Test.Areas.Admin.Views
+@using FinalWork_BD_Test.Data.Models
+@using FinalWork_BD_Test.Data.Models.Profiles
+@model FinalWork_BD_Test.Areas.Admin.Models.GecViewModel
+@{
+    ViewData["ActiveView"] = AdminNavBar.Gec;
+}
+
+<p><a class="btn btn-info" asp-controller="Gec" asp-action="Gec">Новая ГЭК</a></p>
+<br/>
+
+<table class="table table-hover table-sm table-striped col-md-12">
+    <tr>
+        <th style="display: none">ID</th>
+        <th scope="row">Специальность</th>
+        <th scope="row">Форма обучения</th>
+        <th scope="row">Председатель</th>
+        <th scope="row">Заместитель председателя</th>
+        <th scope="row"></th>
+    </tr>
+    @foreach (var v in Model.Gecs)
+    {
+        <tr>
+            <td style="display: none">@v.Id</td>
+            <td>@v.Specialty</td>
+            <td>@v.EducationForm.Name</td>
+            <td>@v.Chief.SecondNameIP
+                @v.Chief.FirstNameIP
+                @v.Chief.MiddleNameIP</td>
+            <td>@v.Deputy.SecondNameIP
+                @v.Deputy.FirstNameIP
+                @v.Deputy.MiddleNameIP</td>
+            
+            <td>
+                <p><a class="btn-sm btn-primary" asp-area="Admin" asp-controller="Gec" asp-action="Gec" 
+                asp-route-gecId="@v.Id">Изменить</a></p>
+            </td>
+        </tr>
+    }
+</table>
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-controller="Gec" asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       asp-route-data="@ViewData["data"]"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-controller="Gec" asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       asp-route-data="@ViewData["data"]"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

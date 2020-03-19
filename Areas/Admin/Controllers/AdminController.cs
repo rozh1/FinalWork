@@ -629,7 +629,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .Include(t => t.SupervisorUP)
                 .Include(t => t.Topic)
                 .Include(t => t.Semester)
-                .Where(t => t.UpdatedByObj == null)
+                .Where(t => t.UpdatedByObj == null && t.IsArchived == false)
                 .ToList();
             
             var count = source.Count();

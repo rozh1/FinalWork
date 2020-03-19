@@ -3,9 +3,19 @@
     ViewData["ActiveView"] = "Gec";
 }
 
-<h1>GEC</h1>
+@* TODO: реализовать обработчик кнопок "Изменить" и "Удалить", т.е. из ListBox получать выбранный элемент и отправлять на сервер *@
+<script language="C#" runat="server">
 
-<h4>GecMemberProfile</h4>
+      void EditMemberBtn(Object sender, EventArgs e) 
+      {
+         if (MembersId.SelectedIndex > -1)
+            MembersId.Text="You chose: " + MembersId.SelectedItem.Text;
+      }
+
+</script>
+
+<h1>Государственная экзаменационная комиссия</h1>
+
 <hr />
 <div class="row">
     <div class="col-md-8">
@@ -36,7 +46,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Members" class="control-label"></label>
-                @Html.ListBox("MembersId", ViewData["MembersId"] as SelectList, new { @class = "form-control", @SelectionMode="multiple"})
+                @Html.ListBox("MembersId", ViewData["MembersId"] as SelectList, 
+                    new { @class = "form-control", SelectionMode="multiple"})
                 <span asp-validation-for="Members" class="text-danger"></span>
             </div>
            
@@ -47,7 +58,19 @@
             </div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <p>
+                    <a class="btn btn-info" asp-controller="Gec" 
+                       asp-action="GecMemberProfile" asp-route-gecId="@Model.Id">Добавить члена комиссии</a>
+                </p>
+                <p>
+                    <button class="btn btn-info" onClick="EditMemberBtn_Click" >Изменить члена комиссии</button>
+                </p>
+                <p>
+                    <button class="btn btn-danger">Удалить члена комиссии</button>
+                </p>
+                <p>
+                    <input type="submit" value="Сохранить" class="btn btn-primary" />
+                </p>
             </div>
         </form>
     </div>
