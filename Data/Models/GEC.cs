@@ -16,14 +16,14 @@ namespace FinalWork_BD_Test.Data.Models
     {
         // ToDo: move to separete table
         [Required(ErrorMessage = "Введите номер специальности")]
-        [Display(Name = "Специалность")]
+        [Display(Name = "Специальность")]
         public string Specialty { get; set; }
 
         public Guid EducationFormId { get; set; }
         [ForeignKey("EducationFormId")]
         [Required(ErrorMessage = "Выберите форму обучения")]
         [Display(Name = "Форма обучения")]
-        public EducationForm EducationForm { get; set; }
+        public virtual EducationForm EducationForm { get; set; }
 
         /// <summary>Председатель</summary>
         public Guid ChiefId { get; set; }
@@ -37,7 +37,7 @@ namespace FinalWork_BD_Test.Data.Models
         [ForeignKey("DeputyId")]
         [Required(ErrorMessage = "Выберите заместителя председателя")]
         [Display(Name = "Заместитель председателя")]
-        public GecMemberProfile Deputy { get; set; }
+        public virtual GecMemberProfile Deputy { get; set; }
 
         public virtual ICollection<GecMemberIntermediate> Members { get; set; }
 
