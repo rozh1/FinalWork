@@ -102,7 +102,10 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             _context.GecMemberProfiles.Add(profile);
             _context.SaveChanges();
 
-            return View();
+            //ViewData["GecId"] = Guid.Empty;
+
+            //return View(profile);
+            return RedirectToAction("GecMemberProfile", new {gecMemberId = profile.Id});
         }
 
         //[HttpGet]
@@ -176,7 +179,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             _context.SaveChanges();
 
-            return RedirectToAction();
+            return RedirectToAction("Gec", new {gecId = gec.Id});
         }
     }
 }
