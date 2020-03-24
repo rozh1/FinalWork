@@ -23,6 +23,19 @@
                 <p><a asp-area="" asp-controller="Vkr" asp-action="NewSuperVisor">Не нашли научного руководителя?</a></p>
             </div>
             <div class="form-group">
+                <label asp-for="DegreeId"></label>
+                @Html.DropDownList("Degree.Id", ViewData["Deegree.Id"] as SelectList,
+                    new { @class = "form-control" })
+                <span asp-validation-for="DegreeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReviewerUPId">ФИО рецензента</label>
+                @Html.DropDownList("ReviewerId", ViewData["ReviewerId"] as SelectList,
+                    new { @class = "form-control" })
+                <span asp-validation-for="ReviewerUPId" class="text-danger"></span>
+                <p><a asp-controller="Vkr" asp-action="NewReviewer">Не нашли рецензента?</a></p>
+            </div>
+            <div class="form-group">
                 <label asp-for="Year"></label>
                 <input asp-for="Year" min="@ViewData["CurrentYear"]" class="form-control" />
                 <span asp-validation-for="Year" class="text-danger"></span>
@@ -39,4 +52,19 @@
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+        <script>
+            $(document).ready(function () {
+                checkDegree();
+                $("#Degree_Id").change(checkDegree)
+            })
+    
+            function checkDegree() {
+                if ($("#Degree_Id option:selected").text() == "Магистр") {
+                    $('#ReviewerId').parent().eq(0).show()
+                } else {
+                    $('#ReviewerId').parent().eq(0).hide()
+                }
+            }
+        </script>
+
 }

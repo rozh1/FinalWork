@@ -309,6 +309,8 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .Include(t => t.StudentUP)
                 .Include(t => t.StudentUP.User)
                 .Include(t => t.SupervisorUP)
+                .Include(t => t.Degree)
+                .Include(t => t.ReviewerUP)
                 .Include(t => t.Topic)
                 .Include(t => t.Semester)
                 .FirstOrDefault(t => t.StudentUP.User.Id == id && t.UpdatedByObj == null);
@@ -322,28 +324,38 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 if (vkr.Semester == null)
                     vkr.Semester = _context.Semesters.First();
                 
-                ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), "Id", "Name", vkr.Semester.Id);
+                ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
+                    "Id", "Name", vkr.Semester.Id);
+                
+                ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
+                    "Id", "Name", vkr.DegreeId);
+                
+                ViewData["ReviewerId"] = ReviewerProfile.GetReviewerList(_context, vkr.ReviewerUP);
 
                 return View(vkr);
             }
-            else
+
+            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
+                "Id", "Name", Semester.CurrentSemester(_context).Id);
+                
+            ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager);
+            
+            ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
+                "Id", "Name");
+
+            ViewData["ReviewerId"] = ReviewerProfile.GetReviewerList(_context);
+
+            var studentUp = new UserProfile()
             {
-                ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
-                    "Id", "Name", Semester.CurrentSemester(_context).Id);
-                
-                ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager);
-                
-                var studentUp = new UserProfile()
-                {
-                    User = new User(){Id = id}
-                };
-                return View(new VKR { Year = (ulong)DateTime.Now.Year, StudentUP = studentUp});
-            }
+                User = new User(){Id = id}
+            };
+            return View(new VKR { Year = (ulong)DateTime.Now.Year, StudentUP = studentUp});
         }
 
         [HttpPost]
         public IActionResult EditVkr([FromForm] Topic topic, [FromForm] UserProfile userProfile,
-            [FromForm] ulong year, [FromForm] Semester semester, [FromForm] Guid userId)
+            [FromForm] ulong year, [FromForm] Semester semester, [FromForm] Guid userId, 
+            [FromForm] Guid? reviewerId, [FromForm] Degree degree)
         {
             var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 
@@ -355,6 +367,9 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .Include(t => t.Topic)
                 .FirstOrDefault(t => t.UpdatedByObj == null && t.StudentUP.User == user);
 
+            if (_context.Degrees.FirstOrDefault(d => d.Id == degree.Id)?.Name != "Магистр")
+                reviewerId = null;
+            
             var vkr = new VKR()
             {
                 Topic = topic,
@@ -362,7 +377,9 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 SupervisorUPId = userProfile.Id,
                 StudentUP = user.UserProfiles.FirstOrDefault(t => t.UpdatedByObj == null),
                 Year = year,
-                SemesterId = semester.Id
+                SemesterId = semester.Id,
+                ReviewerUPId = reviewerId,
+                DegreeId = degree.Id
             };
 
             if (prvVKR != null)
@@ -612,7 +629,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .Include(t => t.SupervisorUP)
                 .Include(t => t.Topic)
                 .Include(t => t.Semester)
-                .Where(t => t.UpdatedByObj == null)
+                .Where(t => t.UpdatedByObj == null && t.IsArchived == false)
                 .ToList();
             
             var count = source.Count();

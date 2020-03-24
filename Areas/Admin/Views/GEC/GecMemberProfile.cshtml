@@ -4,9 +4,8 @@
     ViewData["ActiveView"] = "Gec";
 }
 
-<h1>GecMemberProfile</h1>
+<h1>Член ГЭК</h1>
 
-<h4>GecMemberProfile</h4>
 <hr />
 <div class="row">
     <div class="col-md-8">
@@ -61,7 +60,16 @@
 </div>
 
 <div>
-    <a asp-area="Admin" asp-controller="Home" asp-action="Index">Back to List</a>
+    @if ((Guid)ViewData["GecId"] != Guid.Empty)
+    {
+        <a class="btn btn-info" asp-area="Admin" asp-controller="Gec"
+           asp-action="Gec" asp-route-gecId="@ViewData["GecId"]">Вернуться к ГЭК</a>
+    }
+    else
+    {
+        <a class="btn btn-info" asp-area="Admin" asp-controller="Gec"
+           asp-action="Index">Вернуться к списку ГЭК</a>
+    }
 </div>
 
 @section Scripts {
