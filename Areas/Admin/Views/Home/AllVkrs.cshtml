@@ -21,17 +21,20 @@
         <tr>
             <td style="display: none">@v.Id</td>
             <td>@v.Topic.Title</td>
-            <td>@v.StudentUP.SecondNameIP
-                @v.StudentUP.FirstNameIP
-                @v.StudentUP.MiddleNameIP</td>
-            <td>@v.SupervisorUP.SecondNameIP
-                @v.SupervisorUP.FirstNameIP
-                @v.SupervisorUP.MiddleNameIP</td>
+            <td>@v.StudentUP?.SecondNameIP
+                @v.StudentUP?.FirstNameIP
+                @v.StudentUP?.MiddleNameIP</td>
+            <td>@v.SupervisorUP?.SecondNameIP
+                @v.SupervisorUP?.FirstNameIP
+                @v.SupervisorUP?.MiddleNameIP</td>
             <td>@v.Year</td>
             <td>@v.Semester.Name</td>
             
             <td>
-                <p><a class="btn-sm btn-primary" asp-action="EditVkr" asp-route-id="@v.StudentUP.User.Id">Изменить</a></p>
+                @if (v.StudentUP != null)
+                {
+                    <p><a class="btn-sm btn-primary" asp-action="EditVkr" asp-route-id="@v.StudentUP.User.Id">Изменить</a></p>
+                }
             </td>
         </tr>
     }

@@ -108,8 +108,7 @@ namespace FinalWork_BD_Test.Data.Migrations
                 userManager.CreateAsync(adminUser, pass).Wait();
                 userManager.AddToRoleAsync(adminUser, "Admin").Wait();
                 
-                appContext.Users.FirstOrDefault(u => u.Id == adminUser.Id)?
-                    .UserProfiles.Add(new UserProfile());
+                adminUser.UserProfiles = new List<UserProfile>(){ new UserProfile(){CreatedDate = DateTime.Now, FirstNameIP = "Админ", SecondNameIP = "Админ"} };
                 _changed = true;
             }
 
