@@ -185,12 +185,12 @@ namespace FinalWork_BD_Test.Controllers
             lecturerProfile.MiddleNameRP = "";
 
             _context.LecturerProfiles.Add(lecturerProfile);
-            
+
 
             /* Создать пользователя без имени можно, но не присвоится роль
              * Создаю пользователя с именем, созданого из guid профиля
              */
-            User supervisor = new User { UserName = "null" };
+            User supervisor = new User { UserName = userProfile.Id.ToString() };
             _userManager.CreateAsync(supervisor).Wait();
 
             userProfile.User = supervisor;
