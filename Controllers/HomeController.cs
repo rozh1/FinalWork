@@ -232,22 +232,28 @@ namespace FinalWork_BD_Test.Controllers
             return RedirectToAction("UserProfile", "Home");
         }
 
-        public string Faq()
+        public IActionResult Faq()
         {
-            string result = "";
-            
+            /* // 1 option - using FileStreamResult
             var file = Path.Combine(_config.Value.Path, "FaqPage.html");
-            
+            return new FileStreamResult(new FileStream(file, FileMode.Open), "text/html");
+            */
+
+            // 2 option - using Html.Raw in View
+            string result;
+
+            var file = Path.Combine(_config.Value.Path, "FaqPage.html");
+
             using (FileStream fl = new FileStream(file, FileMode.Open))
             {
                 byte[] array = new byte[fl.Length];
-
                 fl.Read(array, 0, array.Length);
-
                 result = System.Text.Encoding.Default.GetString(array);
             }
-            
-            return result;
+
+            ViewData["page"] = result;
+
+            return View();
         }
     }
 }
