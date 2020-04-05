@@ -234,14 +234,7 @@ namespace FinalWork_BD_Test.Controllers
 
         public IActionResult Faq()
         {
-            /* // 1 option - using FileStreamResult
-            var file = Path.Combine(_config.Value.Path, "FaqPage.html");
-            return new FileStreamResult(new FileStream(file, FileMode.Open), "text/html");
-            */
-
-            // 2 option - using Html.Raw in View
             string result;
-
             var file = Path.Combine(_config.Value.Path, "FaqPage.html");
 
             using (FileStream fl = new FileStream(file, FileMode.Open))
@@ -252,7 +245,6 @@ namespace FinalWork_BD_Test.Controllers
             }
 
             ViewData["page"] = result;
-
             return View();
         }
     }
