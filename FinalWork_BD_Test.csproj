@@ -30,6 +30,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+    <PackageReference Include="TemplateEngine.Docx" Version="1.1.5" />
   </ItemGroup>
 
 
@@ -43,6 +44,11 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewImports.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewStart.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Admin\AllUsers.cshtml" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Documents\Results\" />
   </ItemGroup>
 
 </Project>

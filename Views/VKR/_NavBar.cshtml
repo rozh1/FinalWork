@@ -1,6 +1,9 @@
 @using FinalWork_BD_Test.Views.VKR
-<ul class="nav nav-pills flex-column">
-    <li class="nav-item"><a class="nav-link @NavBarViews.CommonNavClass(ViewContext)" asp-action="Common">Общее</a></li>
-    <li class="nav-item"><a class="nav-link disabled @NavBarViews.DocumentsNavClass(ViewContext)" asp-action="Documents">Документы</a></li>
-    <li class="nav-item"><a class="nav-link disabled @NavBarViews.BuildVkrNavClass(ViewContext)" asp-action="BuildVkr">Сборка ВКР</a></li>
-</ul>
+    <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a class="nav-link @NavBarViews.CommonNavClass(ViewContext)" asp-action="Common">Общее</a></li>
+        <li class="nav-item"><a class="nav-link disabled @NavBarViews.DocumentsNavClass(ViewContext)" asp-action="Documents">Документы</a></li>
+        <li class="nav-item" style="margin-left: 15%"><a class="nav-link  @NavBarViews.DocumentsFormsNavClass(ViewContext)" asp-action="DocumentsForms">Формы документов</a>
+        <li class="nav-item"><a class="nav-link disabled @NavBarViews.BuildVkrNavClass(ViewContext)" asp-action="BuildVkr">Сборка ВКР</a></li>
+        <li class="nav-item" style="margin-left: 15%"><a class="nav-link @NavBarViews.MainDocumentsNavClass(ViewContext)" asp-action="MainDocuments">Основные документы</a>
+        <li class="nav-item" style="margin-left: 15%"><a class="nav-link @NavBarViews.OtherDocumentsNavClass(ViewContext)" asp-action="OtherDocuments">Дополнительные документы</a>
+    </ul>

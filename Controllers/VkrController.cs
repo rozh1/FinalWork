@@ -7,6 +7,7 @@ using FinalWork_BD_Test.Data;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Data;
 using FinalWork_BD_Test.Data.Models.Profiles;
+using FinalWork_BD_Test.Documents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -135,16 +136,37 @@ namespace FinalWork_BD_Test.Controllers
             return RedirectToAction();
         }
         
-        
-        public IActionResult Documents()
+        public IActionResult DocumentsForms()
         {
-            ViewData["ActiveView"] = "Documents";
+            ViewData["ActiveView"] = "DocumentsForms";
+
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+
+            //ViewData["DocumentsFormsList"] = new List
+            return Generator.Generate("Test", _context, currentUser);
+
+            return View();
+        }
+        public IActionResult MainDocuments()
+        {
+            ViewData["ActiveView"] = "MainDocuments";
+            return View();
+        }
+        public IActionResult OtherDocuments()
+        {
+            ViewData["ActiveView"] = "OtherDocuments";
             return View();
         }
 
         public IActionResult BuildVkr()
         {
             ViewData["ActiveView"] = "BuildVkr";
+            return View();
+        }
+
+        public IActionResult Documents()
+        {
+            ViewData["ActiveView"] = "Documents";
             return View();
         }
 
