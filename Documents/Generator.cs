@@ -27,6 +27,8 @@ namespace FinalWork_BD_Test.Documents
         {
             Console.WriteLine("Invoked GenerateTest " + user.UserName);
 
+            //TODO make check if file exist so return it instead generation
+
             foreach (var collection in _context.Entry(user).Collections)
             {
                 collection.Load();
@@ -47,6 +49,7 @@ namespace FinalWork_BD_Test.Documents
                 );
 
             File.Copy("Documents/Templates/Test.docx", $"Documents/Results/Test_{userProfile.SecondNameIP}_{userProfile.Id}.docx", true);
+
             using (var outputDocument = new TemplateProcessor($"Documents/Results/Test_{userProfile.SecondNameIP}_{userProfile.Id}.docx")
                 .SetRemoveContentControls(true))
             {
@@ -54,7 +57,12 @@ namespace FinalWork_BD_Test.Documents
                 outputDocument.SaveChanges();
             }
 
-            return new PhysicalFileResult($"C:\\Users\\Titan\\source\\repos\\FinalWork\\Documents\\Results\\Test_{userProfile.SecondNameIP}_{userProfile.Id}.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            var fileResult = new PhysicalFileResult($"C:\\Users\\Titan\\source\\repos\\FinalWork\\Documents\\Results\\Test_{userProfile.SecondNameIP}_{userProfile.Id}.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            {
+                FileDownloadName = "TestFilled.docx" // Имя файла при загрузке пользователем.
+            };
+
+            return fileResult;
         }
     }
 }

@@ -139,12 +139,7 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult DocumentsForms()
         {
             ViewData["ActiveView"] = "DocumentsForms";
-
-            var currentUser = _userManager.GetUserAsync(this.User).Result;
-
             //ViewData["DocumentsFormsList"] = new List
-            return Generator.Generate("Test", _context, currentUser);
-
             return View();
         }
         public IActionResult MainDocuments()
@@ -168,6 +163,12 @@ namespace FinalWork_BD_Test.Controllers
         {
             ViewData["ActiveView"] = "Documents";
             return View();
+        }
+
+        public FileResult Generate(string templateName)
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            return Generator.Generate(templateName, _context, currentUser);
         }
 
         /// <summary>
