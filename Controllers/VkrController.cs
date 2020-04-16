@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using FinalWork_BD_Test.Data;
@@ -169,6 +170,32 @@ namespace FinalWork_BD_Test.Controllers
         {
             var currentUser = _userManager.GetUserAsync(this.User).Result;
             return Generator.Generate(templateName, _context, currentUser);
+        }
+
+        public IActionResult UploadDocument(IFormFile uploadedDocument)
+        {
+            if (uploadedDocument != null)
+            {
+                //Todo Заменить путь из конфига
+                string path = "Documents/Uploads/" + uploadedDocument.FileName;
+                using (var fileStream = new FileStream(path, FileMode.Create))
+                {
+                    uploadedDocument.CopyTo(fileStream);
+                }
+
+                UploadableDocument uploadableDocument = new UploadableDocument
+                {
+                    OriginalName = uploadedDocument.FileName, 
+                    Path = path, 
+                    Length = uploadedDocument.Length, 
+                    Status = DocumentStatus.Verification, 
+                    CreatedDate = DateTime.Now
+                };
+                _context.UploadableDocuments.Add(uploadableDocument);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("MainDocuments");
         }
 
         /// <summary>

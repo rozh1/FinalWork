@@ -28,6 +28,7 @@ namespace FinalWork_BD_Test.Data
         public DbSet<VKR> VKRs { get; set; }
         public DbSet<GEC> GECs { get; set; }
         public DbSet<GecMemberIntermediate> GecMemberIntermediates { get; set; }
+        public DbSet<UploadableDocument> UploadableDocuments { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

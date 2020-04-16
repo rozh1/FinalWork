@@ -57,6 +57,7 @@ namespace FinalWork_BD_Test.Documents
                 outputDocument.SaveChanges();
             }
 
+            //Todo Требуется абсолютный путь до файла. Заменить на путь из конфигурационного файла
             var fileResult = new PhysicalFileResult($"C:\\Users\\Titan\\source\\repos\\FinalWork\\Documents\\Results\\Test_{userProfile.SecondNameIP}_{userProfile.Id}.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
                 FileDownloadName = "TestFilled.docx" // Имя файла при загрузке пользователем.
