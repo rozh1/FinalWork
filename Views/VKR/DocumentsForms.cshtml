@@ -1,3 +1,7 @@
 ﻿<h1>DocumentsForms</h1>
 
-<a asp-controller="Vkr" asp-action="Generate" asp-route-templateName="Test">Тестовая форма</a>
+
+@foreach (var documentForm in ViewData["DocumentsFormsDictionary"] as Dictionary<string, string>)
+{
+    <a asp-controller="Vkr" asp-action="Generate" asp-route-templateName="@documentForm.Value">@documentForm.Key</a><br/>
+}

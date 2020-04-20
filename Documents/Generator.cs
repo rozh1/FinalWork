@@ -48,9 +48,15 @@ namespace FinalWork_BD_Test.Documents
                 new FieldContent("student", $"{studentProfile?.SecondNameRP} {studentProfile?.FirstNameRP} {studentProfile?.MiddleNameRP}")
                 );
 
-            File.Copy("Documents/Templates/Test.docx", $"Documents/Results/Test_{userProfile.SecondNameIP}_{userProfile.Id}.docx", true);
+            string templateName = "Test";
+            string fileName = $"{templateName}_{userProfile.SecondNameIP}_{userProfile.Id}.docx";
+            // ToDo use config path
+            string templatePath = $"Documents\\Templates\\{templateName}.docx";
+            string resultsPath = $"Documents\\Results\\{fileName}";
 
-            using (var outputDocument = new TemplateProcessor($"Documents/Results/Test_{userProfile.SecondNameIP}_{userProfile.Id}.docx")
+            File.Copy(templatePath, resultsPath, true);
+
+            using (var outputDocument = new TemplateProcessor(resultsPath)
                 .SetRemoveContentControls(true))
             {
                 outputDocument.FillContent(content);
@@ -58,7 +64,7 @@ namespace FinalWork_BD_Test.Documents
             }
 
             //Todo Требуется абсолютный путь до файла. Заменить на путь из конфигурационного файла
-            var fileResult = new PhysicalFileResult($"C:\\Users\\Titan\\source\\repos\\FinalWork\\Documents\\Results\\Test_{userProfile.SecondNameIP}_{userProfile.Id}.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            var fileResult = new PhysicalFileResult($"C:\\Users\\Titan\\source\\repos\\FinalWork\\{resultsPath}", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
                 FileDownloadName = "TestFilled.docx" // Имя файла при загрузке пользователем.
             };

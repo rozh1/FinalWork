@@ -140,7 +140,12 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult DocumentsForms()
         {
             ViewData["ActiveView"] = "DocumentsForms";
-            //ViewData["DocumentsFormsList"] = new List
+            ViewData["DocumentsFormsDictionary"] = new Dictionary<string, string>
+            {
+                //Название шаблона, имя файла шаблона
+                { "Титул ВКР", "Test"},
+                { "Титул ВКР на английском", "Test"}
+            };
             return View();
         }
         public IActionResult MainDocuments()
@@ -172,12 +177,17 @@ namespace FinalWork_BD_Test.Controllers
             return Generator.Generate(templateName, _context, currentUser);
         }
 
-        public IActionResult UploadDocument(IFormFile uploadedDocument)
+        public IActionResult UploadDocument(IFormFile uploadedDocument, string type)
         {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            var currentVkr = _context.VKRs.FirstOrDefault(vkr =>
+                vkr.IsArchived == false && vkr.UpdatedBy == null && vkr.StudentUP.User == currentUser);
+
             if (uploadedDocument != null)
             {
                 //Todo Заменить путь из конфига
                 string path = "Documents/Uploads/" + uploadedDocument.FileName;
+
                 using (var fileStream = new FileStream(path, FileMode.Create))
                 {
                     uploadedDocument.CopyTo(fileStream);
@@ -185,11 +195,13 @@ namespace FinalWork_BD_Test.Controllers
 
                 UploadableDocument uploadableDocument = new UploadableDocument
                 {
+                    Type = type,
                     OriginalName = uploadedDocument.FileName, 
                     Path = path, 
                     Length = uploadedDocument.Length, 
                     Status = DocumentStatus.Verification, 
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    Vkr = currentVkr
                 };
                 _context.UploadableDocuments.Add(uploadableDocument);
                 _context.SaveChanges();
