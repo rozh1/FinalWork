@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using FinalWork_BD_Test.Data;
+using FinalWork_BD_Test.Data.ConfigModels;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Data;
 using FinalWork_BD_Test.Data.Models.Profiles;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace FinalWork_BD_Test.Controllers
 {
@@ -25,12 +27,14 @@ namespace FinalWork_BD_Test.Controllers
         private ApplicationDbContext _context;
         private UserManager<User> _userManager;
         private RoleManager<Role> _roleManager;
+        private IOptions<DocumentsConfig> _documentsConfig;
 
-        public VkrController(ApplicationDbContext c, UserManager<User> u, RoleManager<Role> rm)
+        public VkrController(ApplicationDbContext c, UserManager<User> u, RoleManager<Role> rm, IOptions<DocumentsConfig> documentsConfig)
         {
             _roleManager = rm;
             _context = c;
             _userManager = u;
+            _documentsConfig = documentsConfig;
         }
 
         /// <summary>
@@ -174,7 +178,7 @@ namespace FinalWork_BD_Test.Controllers
         public FileResult Generate(string templateName)
         {
             var currentUser = _userManager.GetUserAsync(this.User).Result;
-            return Generator.Generate(templateName, _context, currentUser);
+            return Generator.Generate(templateName, _context, currentUser, _documentsConfig);
         }
 
         public IActionResult UploadDocument(IFormFile uploadedDocument, string type)
@@ -185,8 +189,7 @@ namespace FinalWork_BD_Test.Controllers
 
             if (uploadedDocument != null)
             {
-                //Todo Заменить путь из конфига
-                string path = "Documents/Uploads/" + uploadedDocument.FileName;
+                string path = $"{_documentsConfig.Value.UploadsPath}\\{uploadedDocument.FileName}";
 
                 using (var fileStream = new FileStream(path, FileMode.Create))
                 {
