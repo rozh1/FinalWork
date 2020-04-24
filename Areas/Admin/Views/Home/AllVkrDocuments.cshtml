@@ -1,0 +1,32 @@
+﻿@using System.Collections
+@using FinalWork_BD_Test.Data.Models
+
+@{
+    ViewData["Title"] = "AllVkrDocuments";
+}
+
+<table class="table table-hover table-sm table-striped col-md-12">
+    <tr>
+        <th style="display: none">ID</th>
+        <th scope="col">Тип</th>
+        <th scope="row">Статус</th>
+        <th scope="row">Комментарий</th>
+        <th scope="row"></th>
+    </tr>
+    @foreach (var document in ViewData["Documents"] as IEnumerable<UploadableDocument>)
+    {
+        <tr>
+            <td style="display: none">@document.Id</td>
+            <td>@document.Type</td>
+            <td>@document.Status.ToString()</td>
+            <td>@document.RejectReason</td>
+            <td>
+                <p><a class="btn-sm btn-primary" asp-action="ApproveDocument" asp-route-id="@document.Id">Утвердить</a></p>
+                <a class="btn-sm btn-danger" asp-action="RejectDocument"  asp-route-id="@document.Id">Отклонить</a>
+                <a class="btn-sm btn-primary" asp-route-id="@document.Id">Просмотреть</a>
+            </td>
+        </tr>
+    }
+</table>
+
+

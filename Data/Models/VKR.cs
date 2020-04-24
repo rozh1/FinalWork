@@ -61,6 +61,9 @@ namespace FinalWork_BD_Test.Data.Models
         [DefaultValue(false)]
         public bool IsArchived { get; set; }
 
+
+        public virtual ICollection<UploadableDocument> UploadableDocuments { get; set; }
+
         public static SelectList GetSupervisorList(ApplicationDbContext context, UserManager<User> userManager, UserProfile supervisor = null)
         {
             var users = userManager.GetUsersInRoleAsync("Supervisor").Result;

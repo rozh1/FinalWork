@@ -21,7 +21,7 @@ namespace FinalWork_BD_Test.Data.Models
     public enum DocumentStatus
     {
         Rejected,
-        Accepted,
+        Approve,
         Verification
     }
 }

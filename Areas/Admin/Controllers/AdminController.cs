@@ -644,5 +644,42 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             return View(viewModel);
         }
+
+        public IActionResult AllVkrDocuments(Guid vkrId)
+        {
+            var vkr = _context.VKRs
+                .Include(vkr => vkr.UploadableDocuments)
+                .FirstOrDefault(vkr => vkr.Id == vkrId);
+
+            var documents = vkr.UploadableDocuments.Where(ud => ud.UpdatedByObj == null);
+
+            ViewData["Documents"] = documents;
+
+            return View();
+        }
+
+        public IActionResult ApproveDocument(Guid id)
+        {
+            var document = _context.UploadableDocuments
+                .Include(up => up.Vkr)
+                .FirstOrDefault(up => up.Id == id);
+
+            document.Status = DocumentStatus.Approve;
+            _context.SaveChanges();
+
+            return RedirectToAction("AllVkrDocuments", new { vkrId = document.Vkr.Id});
+        }
+
+        public IActionResult RejectDocument(Guid id)
+        {
+            var document = _context.UploadableDocuments
+                .Include(up => up.Vkr)
+                .FirstOrDefault(up => up.Id == id);
+
+            document.Status = DocumentStatus.Rejected;
+            _context.SaveChanges();
+
+            return RedirectToAction("AllVkrDocuments", new { vkrId = document.Vkr.Id });
+        }
     }
 }
