@@ -107,19 +107,24 @@ namespace FinalWork_BD_Test.Controllers
             topic.Author = currentUser;
 
             _context.Entry(currentUser).Collection(cu => cu.UserProfiles).Load();
+            
+            //var superVisorLp = userProfile.User.LecturerProfiles.FirstOrDefault(l => l.UpdatedByObj == null);
+            var superVisorLp = _context.LecturerProfiles.FirstOrDefault(l =>
+                l.User.UserProfiles.FirstOrDefault(u => u.UpdatedByObj == null).Id == userProfile.Id);
 
-            VKR prvVKR = _context.VKRs
+            var prvVkr = _context.VKRs
                 .Include(t => t.Topic)
                 .FirstOrDefault(t => t.UpdatedByObj == null && t.StudentUP.User == currentUser);
 
             if (_context.Degrees.FirstOrDefault(d => d.Id == degree.Id)?.Name != "Магистр")
                 reviewerId = null;
 
-            VKR vkr = new VKR()
+            var vkr = new VKR()
             {
                 Topic = topic,
                 CreatedDate = DateTime.Now,
                 SupervisorUPId = userProfile.Id,
+                SupervisorLPId = superVisorLp?.Id,
                 StudentUP = currentUser.UserProfiles.FirstOrDefault(t => t.UpdatedByObj == null),
                 Year = year,
                 SemesterId = semester.Id,
@@ -127,14 +132,14 @@ namespace FinalWork_BD_Test.Controllers
                 DegreeId = degree.Id
             };
             
-            if (prvVKR != null)
-                if (VKR.EqualsVkr(prvVKR, vkr))
+            if (prvVkr != null)
+                if (VKR.EqualsVkr(prvVkr, vkr))
                     return RedirectToAction();
 
             _context.VKRs.Add(vkr);
 
-            if (prvVKR != null)
-                prvVKR.UpdatedByObj = vkr;
+            if (prvVkr != null)
+                prvVkr.UpdatedByObj = vkr;
 
             _context.SaveChanges();
 
@@ -147,8 +152,9 @@ namespace FinalWork_BD_Test.Controllers
             ViewData["DocumentsFormsDictionary"] = new Dictionary<string, string>
             {
                 //Название шаблона, имя файла шаблона
-                { "Титул ВКР", "Test"},
-                { "Титул ВКР на английском", "Test"}
+                { "Титул ВКР", "TitlePageRussian"},
+                { "Титул ВКР на английском", "TitlePageEnglish"},
+                { "Бланк задания", "Task"}
             };
             return View();
         }
