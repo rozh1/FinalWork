@@ -191,7 +191,7 @@ namespace FinalWork_BD_Test.Controllers
             var currentUser = _userManager.GetUserAsync(this.User).Result;
             var document = _context.UploadableDocuments.FirstOrDefault(ud => ud.Id == id);
 
-            var fileResult = new PhysicalFileResult( $"{_documentsConfig.Value.UploadsPath}\\{currentUser.Id}_{document.OriginalName}", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            var fileResult = new PhysicalFileResult( document.Path, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
                 FileDownloadName = $"{document.OriginalName}"
             };

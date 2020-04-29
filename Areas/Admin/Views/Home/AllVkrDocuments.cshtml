@@ -21,9 +21,21 @@
             <td>@document.Status.ToString()</td>
             <td>@document.RejectReason</td>
             <td>
-                <p><a class="btn-sm btn-primary" asp-action="ApproveDocument" asp-route-id="@document.Id">Утвердить</a></p>
-                <a class="btn-sm btn-danger" asp-action="RejectDocument"  asp-route-id="@document.Id">Отклонить</a>
-                <a class="btn-sm btn-primary" asp-route-id="@document.Id">Просмотреть</a>
+                @if (document.Status != DocumentStatus.Approve)
+                {
+                    <p><a class="btn-sm btn-primary" asp-action="SetDocumentStatus" asp-route-status="Approve" asp-route-id="@document.Id">Утвердить</a></p>
+                }
+                @if (document.Status != DocumentStatus.Rejected)
+                {
+                    <a class="btn-sm btn-danger" asp-action="SetDocumentStatus" asp-route-status="Rejected" asp-route-id="@document.Id">Отклонить</a>
+                }
+
+                @if (document.Status != DocumentStatus.Verification)
+                {
+                    <a class="btn-sm btn-danger" asp-action="SetDocumentStatus" asp-route-status="Verification" asp-route-id="@document.Id">На проверку</a>
+                }
+
+                <a class="btn-sm btn-primary" asp-action="DownloadMainDocument" asp-route-id="@document.Id">Просмотреть</a>
             </td>
         </tr>
     }
