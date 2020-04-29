@@ -161,8 +161,44 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult MainDocuments()
         {
             ViewData["ActiveView"] = "MainDocuments";
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            VKR vkr = _context.VKRs
+                .Include(vkr => vkr.StudentUP)
+                .Include(vkr => vkr.UploadableDocuments)
+                .FirstOrDefault(vkr => vkr.StudentUP.User == currentUser && vkr.UpdatedBy == null);
+
+            var documentsList = new List<string>
+            {
+                "Полностью собранная ВКР",
+                "Отзыв научного руководителя",
+            };
+
+            var documents = new Dictionary<string, UploadableDocument>();
+
+            foreach (var document in documentsList)
+            {
+                documents.Add(document, vkr?.UploadableDocuments.FirstOrDefault(ud => ud.Type == document));
+            }
+
+            ViewData["MainDocumentsDictionary"] = documents;
+            
+
             return View();
         }
+
+        public FileResult DownloadMainDocument(Guid id)
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            var document = _context.UploadableDocuments.FirstOrDefault(ud => ud.Id == id);
+
+            var fileResult = new PhysicalFileResult( $"{_documentsConfig.Value.UploadsPath}\\{currentUser.Id}_{document.OriginalName}", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            {
+                FileDownloadName = $"{document.OriginalName}"
+            };
+
+            return fileResult;
+        }
+
         public IActionResult OtherDocuments()
         {
             ViewData["ActiveView"] = "OtherDocuments";
@@ -195,7 +231,7 @@ namespace FinalWork_BD_Test.Controllers
 
             if (uploadedDocument != null)
             {
-                string path = $"{_documentsConfig.Value.UploadsPath}\\{uploadedDocument.FileName}";
+                string path = $"{_documentsConfig.Value.UploadsPath}\\{currentUser.Id}_{uploadedDocument.FileName}";
 
                 using (var fileStream = new FileStream(path, FileMode.Create))
                 {

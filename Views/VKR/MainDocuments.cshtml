@@ -1,8 +1,30 @@
-﻿<h1>MainDocuments</h1>
+﻿@using FinalWork_BD_Test.Data.Models
+<h1>MainDocuments</h1>
 
-<form asp-action="UploadDocument" asp-controller="Vkr" method="post" enctype="multipart/form-data">
-    Полностью собранная ВКР
-    <input type="hidden" name="type" value="Полностью собранная ВКР">
-    <input type="file" name="uploadedDocument" />
-    <input type="submit" value="Загрузить" />
-</form>
+@foreach (var document in ViewData["MainDocumentsDictionary"] as Dictionary<string, UploadableDocument>)
+{
+    <form asp-action="UploadDocument" asp-controller="Vkr" method="post" enctype="multipart/form-data">
+        <div class="input-group">
+            @document.Key
+            -
+            <input type="hidden" name="type" value="@document.Key">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" name="uploadedDocument">
+                <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
+            </div>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04">Загрузить</button>
+            </div>
+        </div>
+        @if (document.Value != null)
+        {
+            @document.Value.Status.ToString();
+            
+            @document.Value.RejectReason;
+            <a class="btn btn-primary btn-sm" class="align-self-end"asp-action="DownloadMainDocument" asp-route-id="@document.Value.Id" role="button">Просмотреть документ</a>
+        }
+    </form>
+    <hr/>
+}
+
+
