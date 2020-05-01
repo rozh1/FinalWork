@@ -48,6 +48,7 @@
 
 
   <ItemGroup>
+    <Folder Include="Documents\Results" />
     <Folder Include="Documents\Results\" />
     <Folder Include="Documents\Uploads\" />
   </ItemGroup>

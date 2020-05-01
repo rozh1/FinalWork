@@ -1,7 +1,5 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using FinalWork_BD_Test.Data.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TemplateEngine.Docx;
 
@@ -9,7 +7,7 @@ namespace FinalWork_BD_Test.Documents
 {
     public static partial class Generator
     {
-        private static Content GenerateTitlePageRussianContent(User user)
+        private static Content GenerateTaskContent(User user)
         {
             foreach (var collection in _context.Entry(user).Collections)
             {
@@ -29,24 +27,26 @@ namespace FinalWork_BD_Test.Documents
                     vkr.UpdatedByObj == null &&
                     vkr.StudentUPId == userProfile.Id);
 
+            var studentProf = user.StudentProfiles.FirstOrDefault(up => up.UpdatedBy == null);
+
             var content = new Content(
-                new FieldContent("direction", "ТЕСТ"),
                 new FieldContent("topic", vkr?.Topic.Title),
-                new FieldContent("student", $" {userProfile.FirstNameIP} {userProfile.MiddleNameIP} " +
-                                            $"{userProfile.SecondNameIP}"),
-                new FieldContent("lecture", $"{vkr?.SupervisorLP?.AcademicDegree.Name} " +
+                new FieldContent("student", $"{studentProf.SecondNameRP} " +
+                                            $"{studentProf.FirstNameRP} " +
+                                            $"{studentProf.MiddleNameRP} "
+                                            ),
+                new FieldContent("supervisor", $"{vkr?.SupervisorLP?.AcademicDegree.Name} " +
                                             $"{vkr?.SupervisorLP?.AcademicTitle.Name} " +
                                             $"{vkr?.SupervisorUP.FirstNameIP} " +
                                             $"{vkr?.SupervisorUP.MiddleNameIP} " +
                                             $"{vkr?.SupervisorUP.SecondNameIP}"),
                 new FieldContent("year", vkr?.Year.ToString())
-            );
-
-            _fileName = $"TitlePageRussian_{userProfile.SecondNameIP}_{userProfile.Id}.docx";
+            ); 
+            
+            
+            _fileName = $"Task_{userProfile.SecondNameIP}_{userProfile.Id}.docx";
 
             return content;
         }
     }
 }
-
-
