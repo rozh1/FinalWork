@@ -50,7 +50,7 @@ namespace FinalWork_BD_Test.Documents
             Directory.CreateDirectory($"{_documentsConfig.Value.ResultsPath}\\{templateName}\\");
 
             MethodInfo methodInfo = typeof(Generator).GetMethod($"Generate{_contentNames[templateName]}Content", BindingFlags.NonPublic | BindingFlags.Static);
-            Content content = (Content)methodInfo?.Invoke(null, new object?[] { user });
+            Content content = (Content)methodInfo?.Invoke(null, new object[] { user });
 
             File.Copy(templatePath, resultsPath, true);
 

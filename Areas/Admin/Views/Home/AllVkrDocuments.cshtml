@@ -27,15 +27,16 @@
                 }
                 @if (document.Status != DocumentStatus.Rejected)
                 {
-                    <a class="btn-sm btn-danger" asp-action="SetDocumentStatus" asp-route-status="Rejected" asp-route-id="@document.Id">Отклонить</a>
+                    <p><a class="btn-sm btn-danger" asp-action="SetDocumentStatus" asp-route-status="Rejected" asp-route-id="@document.Id">Отклонить</a></p>
                 }
 
                 @if (document.Status != DocumentStatus.Verification)
                 {
-                    <a class="btn-sm btn-danger" asp-action="SetDocumentStatus" asp-route-status="Verification" asp-route-id="@document.Id">На проверку</a>
+                    <p><a class="btn-sm btn-danger" asp-action="SetDocumentStatus" asp-route-status="Verification" asp-route-id="@document.Id">На проверку</a></p>
                 }
 
-                <a class="btn-sm btn-primary" asp-action="DownloadMainDocument" asp-route-id="@document.Id">Просмотреть</a>
+                <p><a class="btn-sm btn-primary" asp-action="DownloadMainDocument" asp-route-id="@document.Id">Просмотреть</a></p>
+                <p><a class="btn-sm btn-info" asp-action="EditComment" asp-route-id="@document.Id">Изменить комментарий</a></p>
             </td>
         </tr>
     }

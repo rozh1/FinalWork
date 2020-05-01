@@ -714,5 +714,42 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             return RedirectToAction("AllVkrDocuments", new { vkrId = document.Vkr.Id });
         }
+
+        [HttpGet]
+        public IActionResult EditComment(Guid id)
+        {
+            var doc = _context.UploadableDocuments.FirstOrDefault(d => d.Id == id && d.UpdatedByObj == null);
+
+            return View(doc);
+        }
+
+        [HttpPost]
+        public IActionResult EditComment([FromForm] UploadableDocument doc)
+        {
+            var oldDoc = _context.UploadableDocuments
+                .Include(d => d.Vkr)
+                .FirstOrDefault(i => i.Id == doc.Id && i.UpdatedByObj == null);
+
+            doc.Id = Guid.Empty;
+            _context.UploadableDocuments.Add(doc);
+
+            if (oldDoc != null)
+            {
+                oldDoc.UpdatedByObj = doc;
+                oldDoc.Vkr.UploadableDocuments.Add(doc);
+                
+                doc.CreatedDate = DateTime.Now;
+                doc.OriginalName = oldDoc.OriginalName;
+                doc.Length = oldDoc.Length;
+                doc.Path = oldDoc.Path;
+                doc.Vkr = oldDoc.Vkr;
+            }
+
+            _context.SaveChanges();
+            
+            return RedirectToAction("AllVkrDocuments", new { vkrId = doc.Vkr.Id });
+
+        }
+
     }
 }

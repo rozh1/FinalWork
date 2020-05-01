@@ -180,7 +180,8 @@ namespace FinalWork_BD_Test.Controllers
 
             foreach (var document in documentsList)
             {
-                documents.Add(document, vkr?.UploadableDocuments.FirstOrDefault(ud => ud.Type == document));
+                documents.Add(document,
+                    vkr?.UploadableDocuments.FirstOrDefault(ud => ud.Type == document && ud.UpdatedByObj == null));
             }
 
             ViewData["MainDocumentsDictionary"] = documents;
