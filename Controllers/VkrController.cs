@@ -230,29 +230,39 @@ namespace FinalWork_BD_Test.Controllers
         public IActionResult UploadDocument(IFormFile uploadedDocument, string type)
         {
             var currentUser = _userManager.GetUserAsync(this.User).Result;
-            var currentVkr = _context.VKRs.FirstOrDefault(vkr =>
+            var currentVkr = _context.VKRs
+                .Include(vkr => vkr.UploadableDocuments)
+                .FirstOrDefault(vkr =>
                 vkr.IsArchived == false && vkr.UpdatedBy == null && vkr.StudentUP.User == currentUser);
 
             if (uploadedDocument != null)
             {
-                string path = $"{_documentsConfig.Value.UploadsPath}\\{currentUser.Id}_{uploadedDocument.FileName}";
-
-                using (var fileStream = new FileStream(path, FileMode.Create))
-                {
-                    uploadedDocument.CopyTo(fileStream);
-                }
+                var previousDocument = currentVkr.UploadableDocuments.FirstOrDefault(ud => ud.Type == type);
 
                 UploadableDocument uploadableDocument = new UploadableDocument
                 {
                     Type = type,
                     OriginalName = uploadedDocument.FileName, 
-                    Path = path, 
+                    Path = "", 
                     Length = uploadedDocument.Length, 
                     Status = DocumentStatus.Verification, 
                     CreatedDate = DateTime.Now,
-                    Vkr = currentVkr
+                    Vkr = currentVkr,
+                    UpdatedByObj = previousDocument
                 };
                 _context.UploadableDocuments.Add(uploadableDocument);
+
+                var directoryPath = $"{_documentsConfig.Value.UploadsPath}\\{uploadableDocument.Type}";
+                if (!Directory.Exists(directoryPath))
+                    Directory.CreateDirectory(directoryPath);
+
+                uploadableDocument.Path = $"{directoryPath}\\{uploadableDocument.Id}_{uploadedDocument.FileName}";
+
+                using (var fileStream = new FileStream(uploadableDocument.Path, FileMode.Create))
+                {
+                    uploadedDocument.CopyTo(fileStream);
+                }
+
                 _context.SaveChanges();
             }
 
