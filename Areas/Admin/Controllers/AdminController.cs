@@ -691,9 +691,9 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .Include(up => up.Vkr)
                 .FirstOrDefault(up => up.Id == id);
 
-            if (document.Status != DocumentStatus.Approve)
+            if (document.Status != DocumentStatus.Approved)
             {
-                document.Status = DocumentStatus.Approve;
+                document.Status = DocumentStatus.Approved;
                 _context.SaveChanges();
             }
 

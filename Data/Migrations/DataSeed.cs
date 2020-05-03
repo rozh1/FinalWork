@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FinalWork_BD_Test.Data.Localization.Enum;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Data;
 using FinalWork_BD_Test.Data.Models.Profiles;
@@ -109,6 +110,17 @@ namespace FinalWork_BD_Test.Data.Migrations
                 userManager.AddToRoleAsync(adminUser, "Admin").Wait();
                 
                 adminUser.UserProfiles = new List<UserProfile>(){ new UserProfile(){CreatedDate = DateTime.Now, FirstNameIP = "Админ", SecondNameIP = "Админ"} };
+                _changed = true;
+            }
+
+            // Локализация DocumentStatus
+            if (!appContext.LocalizedDocumentStatuses.Any())
+            {
+                appContext.LocalizedDocumentStatuses.AddRange(
+                    new LocalizedDocumentStatus() {Id = DocumentStatus.Verification, LocalizedName = "На проверке"},
+                    new LocalizedDocumentStatus() {Id = DocumentStatus.Approved, LocalizedName = "Утвержден"},
+                    new LocalizedDocumentStatus() {Id = DocumentStatus.Rejected, LocalizedName = "Отклонен"}
+                );
                 _changed = true;
             }
 

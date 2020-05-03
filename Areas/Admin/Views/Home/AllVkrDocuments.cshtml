@@ -21,7 +21,7 @@
             <td>@document.Status.ToString()</td>
             <td>@document.RejectReason</td>
             <td>
-                @if (document.Status != DocumentStatus.Approve)
+                @if (document.Status != DocumentStatus.Approved)
                 {
                     <p><a class="btn-sm btn-primary" asp-action="SetDocumentStatus" asp-route-status="Approve" asp-route-id="@document.Id">Утвердить</a></p>
                 }

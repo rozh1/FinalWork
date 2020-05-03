@@ -167,7 +167,7 @@ namespace FinalWork_BD_Test.Controllers
             var currentUser = _userManager.GetUserAsync(this.User).Result;
             VKR vkr = _context.VKRs
                 .Include(vkr => vkr.StudentUP)
-                .Include(vkr => vkr.UploadableDocuments)
+                .Include(vkr => vkr.UploadableDocuments).ThenInclude(ud => ud.LocalizedStatus)
                 .FirstOrDefault(vkr => vkr.StudentUP.User == currentUser && vkr.UpdatedBy == null);
 
             var documentsList = new List<string>
@@ -257,6 +257,7 @@ namespace FinalWork_BD_Test.Controllers
                     Directory.CreateDirectory(directoryPath);
 
                 uploadableDocument.Path = $"{directoryPath}\\{uploadableDocument.Id}_{uploadedDocument.FileName}";
+
 
                 using (var fileStream = new FileStream(uploadableDocument.Path, FileMode.Create))
                 {

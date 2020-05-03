@@ -21,7 +21,7 @@
             <div class="container custom-control-inline">
                 @if (document.Value != null)
                 {
-                    <div class="col-md-2">@document.Value.Status.ToString()</div>
+                    <div class="col-md-2">@document.Value.LocalizedStatus.LocalizedName</div>
                     <div class="col-md-4">
                         <a class="btn btn-primary btn-sm" class="align-self-end"asp-action="DownloadMainDocument" asp-route-id="@document.Value.Id" role="button">Просмотреть документ</a>
                     </div>
