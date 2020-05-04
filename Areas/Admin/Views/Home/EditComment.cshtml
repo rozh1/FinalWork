@@ -11,7 +11,7 @@
     </div>
     <div class="form-group">
         <label asp-for="Status">Статус файла</label>
-        <input asp-for="Status" class="form-control" value="@Model.Type" readonly/>
+        <input asp-for="Status" class="form-control" value="@Model.LocalizedStatus.LocalizedName" readonly/>
     </div>
     <div class="form-group">
         <label asp-for="RejectReason">Комментарий</label>

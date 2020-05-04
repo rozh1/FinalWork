@@ -649,6 +649,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             var vkr = _context.VKRs
                 .Include(vkr => vkr.UploadableDocuments)
+                .Include(vkr => vkr.UploadableDocuments).ThenInclude(ud => ud.LocalizedStatus)
                 .FirstOrDefault(vkr => vkr.Id == vkrId);
 
             var documents = vkr.UploadableDocuments.Where(ud => ud.UpdatedByObj == null);
@@ -718,7 +719,9 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult EditComment(Guid id)
         {
-            var doc = _context.UploadableDocuments.FirstOrDefault(d => d.Id == id && d.UpdatedByObj == null);
+            var doc = _context.UploadableDocuments
+                .Include(ud => ud.LocalizedStatus)
+                .FirstOrDefault(d => d.Id == id && d.UpdatedByObj == null);
 
             return View(doc);
         }

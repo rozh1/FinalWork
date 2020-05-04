@@ -18,12 +18,12 @@
         <tr>
             <td style="display: none">@document.Id</td>
             <td>@document.Type</td>
-            <td>@document.Status.ToString()</td>
+            <td>@document.LocalizedStatus.LocalizedName</td>
             <td>@document.RejectReason</td>
             <td>
                 @if (document.Status != DocumentStatus.Approved)
                 {
-                    <p><a class="btn-sm btn-primary" asp-action="SetDocumentStatus" asp-route-status="Approve" asp-route-id="@document.Id">Утвердить</a></p>
+                    <p><a class="btn-sm btn-primary" asp-action="SetDocumentStatus" asp-route-status="Approved" asp-route-id="@document.Id">Утвердить</a></p>
                 }
                 @if (document.Status != DocumentStatus.Rejected)
                 {
