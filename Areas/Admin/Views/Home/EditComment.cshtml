@@ -1,0 +1,21 @@
+﻿@model FinalWork_BD_Test.Data.Models.UploadableDocument
+
+
+<form asp-action="EditComment" method="post">
+    <div class="form-group">
+        <input asp-for="Id" class="form-control" style="display: none" value="@Model.Id" readonly/>
+    </div>
+    <div class="form-group">
+        <label asp-for="Type">Вид документа</label>
+        <input asp-for="Type" class="form-control" value="@Model.Type" readonly/>
+    </div>
+    <div class="form-group">
+        <label asp-for="Status">Статус файла</label>
+        <input asp-for="Status" class="form-control" value="@Model.LocalizedStatus.LocalizedName" readonly/>
+    </div>
+    <div class="form-group">
+        <label asp-for="RejectReason">Комментарий</label>
+        <input asp-for="RejectReason" class="form-control" value="@Model.RejectReason"/>
+    </div>
+    <button type="submit" class="btn btn-primary">Изменить</button>
+</form>

@@ -1,0 +1,10 @@
+﻿<h1>Формы документов</h1>
+
+<div class="flex-column">
+@foreach (var documentForm in ViewData["DocumentsFormsDictionary"] as Dictionary<string, string>)
+{
+    <div class="container">
+        <a asp-controller="Vkr" asp-action="Generate" asp-route-templateName="@documentForm.Value">@documentForm.Key</a>
+    </div>
+}
+</div>

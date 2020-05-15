@@ -42,6 +42,7 @@ namespace FinalWork_BD_Test
             services.AddRazorPages();
             
             services.Configure<StaticFilesConfig>(Configuration.GetSection("StaticFilesConfig"));
+            services.Configure<DocumentsConfig>(Configuration.GetSection("DocumentsConfig"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

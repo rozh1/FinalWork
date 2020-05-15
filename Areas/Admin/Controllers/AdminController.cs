@@ -37,7 +37,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult AllUsers(int page=1, UserProfile searchData = null, bool isSearch = false)
+        public IActionResult AllUsers(int page = 1, UserProfile searchData = null, bool isSearch = false)
         {
             int pageSize = 7;
 
@@ -59,7 +59,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             var count = source.Count();
             var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
- 
+
             PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
             UserProfileViewModel viewModel = new UserProfileViewModel
             {
@@ -85,7 +85,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             }
 
             UserProfile model = null;
-            if (profile?.UserProfiles != null) 
+            if (profile?.UserProfiles != null)
                 model = profile.UserProfiles.FirstOrDefault(u => u.UpdatedByObj == null);
 
             return model == null ? View() : View(model);
@@ -120,7 +120,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             {
                 // если добавление
                 newProfile.CreatedDate = DateTime.Now;
-                
+
                 var newUser = newProfile.User;
 
                 if (newUser.UserProfiles.Count > 0)
@@ -130,7 +130,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                     {
                         newProfile
                     };
-                
+
                 _userManager.CreateAsync(newUser, password).Wait();
                 _userManager.AddToRoleAsync(newUser, "Student").Wait();
             }
@@ -142,12 +142,12 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .FirstOrDefault(u => u.Id == newProfile.Id);
             return View(model);
         }
-        
+
         public IActionResult DeleteUser(Guid id)
         {
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
 
-            if (user != null) 
+            if (user != null)
                 user.IsArchived = true;
 
             _context.SaveChanges();
@@ -161,7 +161,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             ViewData["ActiveView"] = "AllRoles";
             return View(_roleManager.Roles.ToList());
         }
-        
+
         public IActionResult CreateRole()
         {
             return View();
@@ -199,7 +199,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             }
             return RedirectToAction("AllRoles");
         }
-        
+
         public async Task<IActionResult> EditUserRoles(string userId)
         {
             User user = await _userManager.FindByIdAsync(userId);
@@ -219,7 +219,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             return NotFound();
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> EditUserRoles(string userId, List<string> roles)
         {
@@ -235,7 +235,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
                 await _userManager.RemoveFromRolesAsync(user, removedRoles);
 
-                return RedirectToAction("EditUserRoles", new {userId = userId});
+                return RedirectToAction("EditUserRoles", new { userId = userId });
             }
 
             return NotFound();
@@ -261,9 +261,9 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             {
                 var model = new LecturerProfile()
                 {
-                    User = new User(){ Id = id}
+                    User = new User() { Id = id }
                 };
-                
+
                 ViewData["AcademicDegreeId"] = new SelectList(_context.AcademicDegrees, "Id", "Name");
                 ViewData["AcademicTitleId"] = new SelectList(_context.AcademicTitles, "Id", "Name");
 
@@ -299,9 +299,9 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             newProfile.User.LecturerProfiles.Add(newProfile);
             _context.SaveChanges();
 
-            return RedirectToAction("EditLectureProfile", new {id = newProfile.User.Id});
+            return RedirectToAction("EditLectureProfile", new { id = newProfile.User.Id });
         }
-        
+
         [HttpGet]
         public IActionResult EditVkr(Guid id)
         {
@@ -315,46 +315,46 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .Include(t => t.Semester)
                 .FirstOrDefault(t => t.StudentUP.User.Id == id && t.UpdatedByObj == null);
 
-            ViewData["CurrentYear"] = (ulong) DateTime.Now.Year;
+            ViewData["CurrentYear"] = (ulong)DateTime.Now.Year;
 
             if (vkr != null)
             {
                 ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager, vkr.SupervisorUP);
-                
+
                 if (vkr.Semester == null)
                     vkr.Semester = _context.Semesters.First();
-                
-                ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
+
+                ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(),
                     "Id", "Name", vkr.Semester.Id);
-                
-                ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
+
+                ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(),
                     "Id", "Name", vkr.DegreeId);
-                
+
                 ViewData["ReviewerId"] = ReviewerProfile.GetReviewerList(_context, vkr.ReviewerUP);
 
                 return View(vkr);
             }
 
-            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(), 
+            ViewData["Semester.Id"] = new SelectList(_context.Semesters.AsEnumerable(),
                 "Id", "Name", Semester.CurrentSemester(_context).Id);
-                
+
             ViewData["UserProfile.Id"] = VKR.GetSupervisorList(_context, _userManager);
-            
-            ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(), 
+
+            ViewData["Degree.Id"] = new SelectList(_context.Degrees.AsEnumerable(),
                 "Id", "Name");
 
             ViewData["ReviewerId"] = ReviewerProfile.GetReviewerList(_context);
 
             var studentUp = new UserProfile()
             {
-                User = new User(){Id = id}
+                User = new User() { Id = id }
             };
-            return View(new VKR { Year = (ulong)DateTime.Now.Year, StudentUP = studentUp});
+            return View(new VKR { Year = (ulong)DateTime.Now.Year, StudentUP = studentUp });
         }
 
         [HttpPost]
         public IActionResult EditVkr([FromForm] Topic topic, [FromForm] UserProfile userProfile,
-            [FromForm] ulong year, [FromForm] Semester semester, [FromForm] Guid userId, 
+            [FromForm] ulong year, [FromForm] Semester semester, [FromForm] Guid userId,
             [FromForm] Guid? reviewerId, [FromForm] Degree degree)
         {
             var user = _context.Users.FirstOrDefault(u => u.Id == userId);
@@ -369,7 +369,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             if (_context.Degrees.FirstOrDefault(d => d.Id == degree.Id)?.Name != "Магистр")
                 reviewerId = null;
-            
+
             var vkr = new VKR()
             {
                 Topic = topic,
@@ -385,7 +385,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             if (prvVKR != null)
             {
                 if (VKR.EqualsVkr(prvVKR, vkr))
-                    return RedirectToAction("EditVkr", new {id = user.Id});
+                    return RedirectToAction("EditVkr", new { id = user.Id });
 
                 prvVKR.UpdatedByObj = vkr;
             }
@@ -393,9 +393,9 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             _context.VKRs.Add(vkr);
             _context.SaveChanges();
 
-            return RedirectToAction("EditVkr", new {id = user.Id});
+            return RedirectToAction("EditVkr", new { id = user.Id });
         }
-        
+
         [HttpGet]
         public IActionResult EditStudentProfile(Guid id)
         {
@@ -416,9 +416,9 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             {
                 var model = new StudentProfile()
                 {
-                    User = new User(){ Id = id}
+                    User = new User() { Id = id }
                 };
-                
+
                 ViewData["GenderId"] = new SelectList(_context.Genders.AsEnumerable(), "Id", "Name");
                 ViewData["EducationFormId"] = new SelectList(_context.EducationForms.AsEnumerable(), "Id", "Name");
 
@@ -454,7 +454,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             newProfile.User.StudentProfiles.Add(newProfile);
             _context.SaveChanges();
 
-            return RedirectToAction("EditStudentProfile", new {id = newProfile.User.Id});
+            return RedirectToAction("EditStudentProfile", new { id = newProfile.User.Id });
         }
 
         [HttpGet]
@@ -462,7 +462,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             return View();
         }
-        
+
         private IQueryable<UserProfile> CreateSearchExpression(UserProfile data)
         {
             var query = _context.UserProfiles
@@ -470,7 +470,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .Where(u => u.UpdatedByObj == null && u.IsArchived == false);
 
             IQueryable<UserProfile> result = null;
-            
+
             if (data.User.UserName != null)
                 result = query.Where(u => u.User.UserName == data.User.UserName);
 
@@ -488,7 +488,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             if (data.MiddleNameIP != null)
                 result = query.Where(u => u.MiddleNameIP == data.MiddleNameIP);
-            
+
             return result;
         }
 
@@ -497,7 +497,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
         {
             return View();
         }
-        
+
         private IQueryable<ReviewerProfile> CreateSearchExpression(ReviewerProfile data)
         {
             var query = _context.ReviewerProfiles
@@ -506,7 +506,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .Include(p => p.AcademicTitle);
 
             IQueryable<ReviewerProfile> result = null;
-            
+
             if (data.FirstNameIP != null)
                 result = query.Where(u => u.FirstNameIP == data.FirstNameIP);
 
@@ -521,7 +521,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             if (data.JobPost != null)
                 result = query.Where(u => u.JobPost == data.JobPost);
-            
+
             return result;
         }
 
@@ -545,7 +545,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             var count = source.Count();
             var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
- 
+
             PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
             ReviewerProfileViewModel viewModel = new ReviewerProfileViewModel
             {
@@ -555,7 +555,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             return View(viewModel);
         }
-        
+
         [HttpGet]
         public IActionResult EditReviewerProfile(Guid id)
         {
@@ -573,7 +573,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             }
 
             var model = new ReviewerProfile();
-                
+
             ViewData["AcademicTitleId"] = new SelectList(_context.AcademicTitles.AsEnumerable(), "Id", "Name");
             ViewData["AcademicDegreeId"] = new SelectList(_context.AcademicDegrees.AsEnumerable(), "Id", "Name");
 
@@ -591,7 +591,7 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             if (oldProfile != null)
             {
                 oldProfile.UpdatedByObj = newProfile;
-                
+
                 newProfile.Id = Guid.Empty;
                 newProfile.CreatedDate = DateTime.Now;
             }
@@ -603,15 +603,15 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             _context.SaveChanges();
 
-            return RedirectToAction("EditReviewerProfile", new {id = newProfile.Id});
+            return RedirectToAction("EditReviewerProfile", new { id = newProfile.Id });
         }
 
         public IActionResult DeleteReviewer(Guid id)
         {
             var profile = _context.ReviewerProfiles.FirstOrDefault(p => p.Id == id);
-            
+
             if (profile == null) return RedirectToAction("AllReviewers");
-            
+
             profile.IsArchived = true;
             _context.ReviewerProfiles.Update(profile);
             _context.SaveChanges();
@@ -631,10 +631,10 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                 .Include(t => t.Semester)
                 .Where(t => t.UpdatedByObj == null && t.IsArchived == false)
                 .ToList();
-            
+
             var count = source.Count();
             var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
- 
+
             PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
             AllVkrsViewModel viewModel = new AllVkrsViewModel
             {
@@ -644,5 +644,115 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
 
             return View(viewModel);
         }
+
+        public IActionResult AllVkrDocuments(Guid vkrId)
+        {
+            var vkr = _context.VKRs
+                .Include(vkr => vkr.UploadableDocuments)
+                .Include(vkr => vkr.UploadableDocuments).ThenInclude(ud => ud.LocalizedStatus)
+                .FirstOrDefault(vkr => vkr.Id == vkrId);
+
+            var documents = vkr.UploadableDocuments.Where(ud => ud.UpdatedByObj == null);
+
+            ViewData["Documents"] = documents;
+
+            return View();
+        }
+        public FileResult DownloadMainDocument(Guid id)
+        {
+            var document = _context.UploadableDocuments.FirstOrDefault(ud => ud.Id == id);
+
+            var fileResult = new PhysicalFileResult(document.Path, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            {
+                FileDownloadName = $"{document.OriginalName}"
+            };
+
+            return fileResult;
+        }
+
+        public IActionResult SetDocumentStatus(Guid id, DocumentStatus status)
+        {
+            var document = _context.UploadableDocuments
+                .Include(up => up.Vkr)
+                .FirstOrDefault(up => up.Id == id);
+
+            if (document.Status != status)
+            {
+                document.Status = status;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("AllVkrDocuments", new { vkrId = document.Vkr.Id });
+        }
+
+
+        public IActionResult ApproveDocument(Guid id)
+        {
+            var document = _context.UploadableDocuments
+                .Include(up => up.Vkr)
+                .FirstOrDefault(up => up.Id == id);
+
+            if (document.Status != DocumentStatus.Approved)
+            {
+                document.Status = DocumentStatus.Approved;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("AllVkrDocuments", new { vkrId = document.Vkr.Id });
+        }
+
+        public IActionResult RejectDocument(Guid id)
+        {
+            var document = _context.UploadableDocuments
+                .Include(up => up.Vkr)
+                .FirstOrDefault(up => up.Id == id);
+
+            if (document.Status != DocumentStatus.Rejected)
+            {
+                document.Status = DocumentStatus.Rejected;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("AllVkrDocuments", new { vkrId = document.Vkr.Id });
+        }
+
+        [HttpGet]
+        public IActionResult EditComment(Guid id)
+        {
+            var doc = _context.UploadableDocuments
+                .Include(ud => ud.LocalizedStatus)
+                .FirstOrDefault(d => d.Id == id && d.UpdatedByObj == null);
+
+            return View(doc);
+        }
+
+        [HttpPost]
+        public IActionResult EditComment([FromForm] UploadableDocument doc)
+        {
+            var oldDoc = _context.UploadableDocuments
+                .Include(d => d.Vkr)
+                .FirstOrDefault(i => i.Id == doc.Id && i.UpdatedByObj == null);
+
+            doc.Id = Guid.Empty;
+            _context.UploadableDocuments.Add(doc);
+
+            if (oldDoc != null)
+            {
+                oldDoc.UpdatedByObj = doc;
+                oldDoc.Vkr.UploadableDocuments.Add(doc);
+                
+                doc.CreatedDate = DateTime.Now;
+                doc.OriginalName = oldDoc.OriginalName;
+                doc.Length = oldDoc.Length;
+                doc.Path = oldDoc.Path;
+                doc.Vkr = oldDoc.Vkr;
+            }
+
+            _context.SaveChanges();
+            
+            return RedirectToAction("AllVkrDocuments", new { vkrId = doc.Vkr.Id });
+
+        }
+
     }
 }

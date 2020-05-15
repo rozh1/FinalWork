@@ -61,6 +61,9 @@ namespace FinalWork_BD_Test.Data.Models
         [DefaultValue(false)]
         public bool IsArchived { get; set; }
 
+
+        public virtual ICollection<UploadableDocument> UploadableDocuments { get; set; }
+
         public static SelectList GetSupervisorList(ApplicationDbContext context, UserManager<User> userManager, UserProfile supervisor = null)
         {
             var users = userManager.GetUsersInRoleAsync("Supervisor").Result;
@@ -82,16 +85,17 @@ namespace FinalWork_BD_Test.Data.Models
         /// <summary> Равны ли обе ВКР </summary>
         public static bool EqualsVkr(VKR beforeVkr, VKR afterVkr)
         {
+            if (beforeVkr.Topic.Title == afterVkr.Topic.Title &&
+                beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId &&
+                beforeVkr.SemesterId == afterVkr.SemesterId &&
+                beforeVkr.Year == afterVkr.Year &&
+                beforeVkr.DegreeId == afterVkr.DegreeId &&
+                beforeVkr.ReviewerUPId == afterVkr.ReviewerUPId)
+                return true;
+            
             if (beforeVkr.Topic.Title == afterVkr.Topic.Title)
-            {
                 afterVkr.Topic = beforeVkr.Topic;
-                if (beforeVkr.SupervisorUPId == afterVkr.SupervisorUPId && 
-                    beforeVkr.SemesterId == afterVkr.SemesterId &&
-                    beforeVkr.Year == afterVkr.Year && 
-                    beforeVkr.DegreeId == afterVkr.DegreeId &&
-                    beforeVkr.ReviewerUPId == afterVkr.ReviewerUPId)
-                    return true;
-            }
+
             return false;
         }
     }

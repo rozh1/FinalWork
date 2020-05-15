@@ -3,34 +3,23 @@ using System;
 using FinalWork_BD_Test.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FinalWork_BD_Test.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200420155516_Added_VKR_Field_in_UploadableDocument")]
+    partial class Added_VKR_Field_in_UploadableDocument
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            modelBuilder.Entity("FinalWork_BD_Test.Data.Localization.Enum.LocalizedDocumentStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("LocalizedName")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LocalizedDocumentStatuses");
-                });
 
             modelBuilder.Entity("FinalWork_BD_Test.Data.Models.Data.AcademicDegree", b =>
                 {
@@ -542,8 +531,6 @@ namespace FinalWork_BD_Test.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Status");
-
                     b.HasIndex("UpdatedBy");
 
                     b.HasIndex("VkrId");
@@ -929,18 +916,12 @@ namespace FinalWork_BD_Test.Migrations
 
             modelBuilder.Entity("FinalWork_BD_Test.Data.Models.UploadableDocument", b =>
                 {
-                    b.HasOne("FinalWork_BD_Test.Data.Localization.Enum.LocalizedDocumentStatus", "LocalizedStatus")
-                        .WithMany()
-                        .HasForeignKey("Status")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("FinalWork_BD_Test.Data.Models.UploadableDocument", "UpdatedByObj")
                         .WithMany()
                         .HasForeignKey("UpdatedBy");
 
                     b.HasOne("FinalWork_BD_Test.Data.Models.VKR", "Vkr")
-                        .WithMany("UploadableDocuments")
+                        .WithMany()
                         .HasForeignKey("VkrId");
                 });
 

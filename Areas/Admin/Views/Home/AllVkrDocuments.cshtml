@@ -1,0 +1,45 @@
+﻿@using System.Collections
+@using FinalWork_BD_Test.Data.Models
+
+@{
+    ViewData["Title"] = "AllVkrDocuments";
+}
+
+<table class="table table-hover table-sm table-striped col-md-12">
+    <tr>
+        <th style="display: none">ID</th>
+        <th scope="col">Тип</th>
+        <th scope="row">Статус</th>
+        <th scope="row">Комментарий</th>
+        <th scope="row"></th>
+    </tr>
+    @foreach (var document in ViewData["Documents"] as IEnumerable<UploadableDocument>)
+    {
+        <tr>
+            <td style="display: none">@document.Id</td>
+            <td>@document.Type</td>
+            <td>@document.LocalizedStatus.LocalizedName</td>
+            <td>@document.RejectReason</td>
+            <td>
+                @if (document.Status != DocumentStatus.Approved)
+                {
+                    <p><a class="btn-sm btn-primary" asp-action="SetDocumentStatus" asp-route-status="Approved" asp-route-id="@document.Id">Утвердить</a></p>
+                }
+                @if (document.Status != DocumentStatus.Rejected)
+                {
+                    <p><a class="btn-sm btn-danger" asp-action="SetDocumentStatus" asp-route-status="Rejected" asp-route-id="@document.Id">Отклонить</a></p>
+                }
+
+                @if (document.Status != DocumentStatus.Verification)
+                {
+                    <p><a class="btn-sm btn-danger" asp-action="SetDocumentStatus" asp-route-status="Verification" asp-route-id="@document.Id">На проверку</a></p>
+                }
+
+                <p><a class="btn-sm btn-primary" asp-action="DownloadMainDocument" asp-route-id="@document.Id">Просмотреть</a></p>
+                <p><a class="btn-sm btn-info" asp-action="EditComment" asp-route-id="@document.Id">Изменить комментарий</a></p>
+            </td>
+        </tr>
+    }
+</table>
+
+

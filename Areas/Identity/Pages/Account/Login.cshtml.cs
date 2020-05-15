@@ -81,7 +81,6 @@ namespace FinalWork_BD_Test.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                //ToDo: рассмотреть другие варианты
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == Input.Email);
                 if (user?.IsArchived == true)
                 {

@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using FinalWork_BD_Test.Data;
+using FinalWork_BD_Test.Data.ConfigModels;
 using FinalWork_BD_Test.Data.Models;
 using FinalWork_BD_Test.Data.Models.Data;
 using FinalWork_BD_Test.Data.Models.Profiles;
+using FinalWork_BD_Test.Documents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace FinalWork_BD_Test.Controllers
 {
@@ -23,12 +27,14 @@ namespace FinalWork_BD_Test.Controllers
         private ApplicationDbContext _context;
         private UserManager<User> _userManager;
         private RoleManager<Role> _roleManager;
+        private IOptions<DocumentsConfig> _documentsConfig;
 
-        public VkrController(ApplicationDbContext c, UserManager<User> u, RoleManager<Role> rm)
+        public VkrController(ApplicationDbContext c, UserManager<User> u, RoleManager<Role> rm, IOptions<DocumentsConfig> documentsConfig)
         {
             _roleManager = rm;
             _context = c;
             _userManager = u;
+            _documentsConfig = documentsConfig;
         }
 
         /// <summary>
@@ -101,19 +107,24 @@ namespace FinalWork_BD_Test.Controllers
             topic.Author = currentUser;
 
             _context.Entry(currentUser).Collection(cu => cu.UserProfiles).Load();
+            
+            //var superVisorLp = userProfile.User.LecturerProfiles.FirstOrDefault(l => l.UpdatedByObj == null);
+            var superVisorLp = _context.LecturerProfiles.FirstOrDefault(l =>
+                l.User.UserProfiles.FirstOrDefault(u => u.UpdatedByObj == null).Id == userProfile.Id);
 
-            VKR prvVKR = _context.VKRs
+            var prvVkr = _context.VKRs
                 .Include(t => t.Topic)
                 .FirstOrDefault(t => t.UpdatedByObj == null && t.StudentUP.User == currentUser);
 
             if (_context.Degrees.FirstOrDefault(d => d.Id == degree.Id)?.Name != "Магистр")
                 reviewerId = null;
 
-            VKR vkr = new VKR()
+            var vkr = new VKR()
             {
                 Topic = topic,
                 CreatedDate = DateTime.Now,
                 SupervisorUPId = userProfile.Id,
+                SupervisorLPId = superVisorLp?.Id,
                 StudentUP = currentUser.UserProfiles.FirstOrDefault(t => t.UpdatedByObj == null),
                 Year = year,
                 SemesterId = semester.Id,
@@ -121,24 +132,80 @@ namespace FinalWork_BD_Test.Controllers
                 DegreeId = degree.Id
             };
             
-            if (prvVKR != null)
-                if (VKR.EqualsVkr(prvVKR, vkr))
+            if (prvVkr != null)
+                if (VKR.EqualsVkr(prvVkr, vkr))
                     return RedirectToAction();
 
             _context.VKRs.Add(vkr);
 
-            if (prvVKR != null)
-                prvVKR.UpdatedByObj = vkr;
+            if (prvVkr != null)
+                prvVkr.UpdatedByObj = vkr;
 
             _context.SaveChanges();
 
             return RedirectToAction();
         }
         
-        
-        public IActionResult Documents()
+        public IActionResult DocumentsForms()
         {
-            ViewData["ActiveView"] = "Documents";
+            ViewData["ActiveView"] = "DocumentsForms";
+            ViewData["DocumentsFormsDictionary"] = new Dictionary<string, string>
+            {
+                //Название шаблона, имя файла шаблона
+                { "Приложение 1.Титульный лист", "Приложение_1.Титульный_лист"},
+                { "Приложение 2.Бланк задания на ВКР", "Приложение_2.Бланк_задания_на_ВКР"},
+                { "Приложение 3.Бланк акта предварительной защиты ВКР", "Приложение_3.Бланк_акта_предварительной_защиты_ВКР"},
+                { "Приложение 4.Бланк отзыва руководителя на ВКР", "Приложение_4.Бланк_отзыва_руководителя_на_ВКР"},
+                { "Приложение 5.Бланк рецензии на ВКР", "Приложение_5.Бланк_рецензии_на_ВКР"},
+                { "Согласие размещение текста ВКР в ЭБС КНИТУ-КАИ", "Согласие_размещение_текста_ВКР_в_ЭБС_КНИТУ-КАИ"}
+            };
+            return View();
+        }
+        public IActionResult MainDocuments()
+        {
+            ViewData["ActiveView"] = "MainDocuments";
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            VKR vkr = _context.VKRs
+                .Include(vkr => vkr.StudentUP)
+                .Include(vkr => vkr.UploadableDocuments).ThenInclude(ud => ud.LocalizedStatus)
+                .FirstOrDefault(vkr => vkr.StudentUP.User == currentUser && vkr.UpdatedBy == null);
+
+            var documentsList = new List<string>
+            {
+                "Полностью собранная ВКР",
+                "Отзыв научного руководителя",
+            };
+
+            var documents = new Dictionary<string, UploadableDocument>();
+
+            foreach (var document in documentsList)
+            {
+                documents.Add(document,
+                    vkr?.UploadableDocuments.FirstOrDefault(ud => ud.Type == document && ud.UpdatedByObj == null));
+            }
+
+            ViewData["MainDocumentsDictionary"] = documents;
+            
+
+            return View();
+        }
+
+        public FileResult DownloadMainDocument(Guid id)
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            var document = _context.UploadableDocuments.FirstOrDefault(ud => ud.Id == id);
+
+            var fileResult = new PhysicalFileResult( document.Path, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            {
+                FileDownloadName = $"{document.OriginalName}"
+            };
+
+            return fileResult;
+        }
+
+        public IActionResult OtherDocuments()
+        {
+            ViewData["ActiveView"] = "OtherDocuments";
             return View();
         }
 
@@ -146,6 +213,61 @@ namespace FinalWork_BD_Test.Controllers
         {
             ViewData["ActiveView"] = "BuildVkr";
             return View();
+        }
+
+        public IActionResult Documents()
+        {
+            ViewData["ActiveView"] = "Documents";
+            return View();
+        }
+
+        public FileResult Generate(string templateName)
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            return Generator.Generate(templateName, _context, currentUser, _documentsConfig);
+        }
+
+        public IActionResult UploadDocument(IFormFile uploadedDocument, string type)
+        {
+            var currentUser = _userManager.GetUserAsync(this.User).Result;
+            var currentVkr = _context.VKRs
+                .Include(vkr => vkr.UploadableDocuments)
+                .FirstOrDefault(vkr =>
+                vkr.IsArchived == false && vkr.UpdatedBy == null && vkr.StudentUP.User == currentUser);
+
+            if (uploadedDocument != null)
+            {
+                var previousDocument = currentVkr.UploadableDocuments.FirstOrDefault(ud => ud.Type == type);
+
+                UploadableDocument uploadableDocument = new UploadableDocument
+                {
+                    Type = type,
+                    OriginalName = uploadedDocument.FileName, 
+                    Path = "", 
+                    Length = uploadedDocument.Length, 
+                    Status = DocumentStatus.Verification, 
+                    CreatedDate = DateTime.Now,
+                    Vkr = currentVkr,
+                    UpdatedByObj = previousDocument
+                };
+                _context.UploadableDocuments.Add(uploadableDocument);
+
+                var directoryPath = $"{_documentsConfig.Value.UploadsPath}\\{uploadableDocument.Type}";
+                if (!Directory.Exists(directoryPath))
+                    Directory.CreateDirectory(directoryPath);
+
+                uploadableDocument.Path = $"{directoryPath}\\{uploadableDocument.Id}_{uploadedDocument.FileName}";
+
+
+                using (var fileStream = new FileStream(uploadableDocument.Path, FileMode.Create))
+                {
+                    uploadedDocument.CopyTo(fileStream);
+                }
+
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("MainDocuments");
         }
 
         /// <summary>

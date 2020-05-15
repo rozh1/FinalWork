@@ -1,0 +1,66 @@
+﻿@using FinalWork_BD_Test.Data.Models
+<h1>Основные документы</h1>
+
+@foreach (var document in ViewData["MainDocumentsDictionary"] as Dictionary<string, UploadableDocument>)
+{
+    <form asp-action="UploadDocument" asp-controller="Vkr" method="post" enctype="multipart/form-data">
+        <div class="input-group">
+            <div class="container custom-control-inline">
+                <div class="col-md-4">                
+                    <label for="type">@document.Key</label>
+                    <input type="hidden" id="type" name="type" value="@document.Key">
+                </div>
+                <div class="col-md custom-file">
+                    <input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" name="uploadedDocument">
+                    <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
+                </div>
+                <div class="col-md-1 input-group-append">
+                    <button class="btn btn-outline-secondary btn-sm" type="submit" id="inputGroupFileAddon04">Загрузить</button>
+                </div>
+            </div>
+            <div class="container custom-control-inline">
+                @if (document.Value != null)
+                {
+                    <div class="col-md-2">@document.Value.LocalizedStatus.LocalizedName</div>
+                    <div class="col-md-4">
+                        <a class="btn btn-primary btn-sm" class="align-self-end"asp-action="DownloadMainDocument" asp-route-id="@document.Value.Id" role="button">Просмотреть документ</a>
+                    </div>
+                }
+                @if (document.Value?.RejectReason != null)
+                {
+                    <div class="col-md-4">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#@document.Value.Id">
+                            Посмотреть комментарий
+                        </button>
+                    </div>
+
+                    var title = "Title" + document.Value?.Id;
+                    <!-- Modal -->
+                    <div class="modal fade" id="@document.Value?.Id" tabindex="-1" role="dialog" aria-labelledby=@title aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id=@title>Комментарий</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    @document.Value?.RejectReason
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </form>
+    <hr/>
+
+
+}
