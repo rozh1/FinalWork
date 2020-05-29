@@ -252,11 +252,11 @@ namespace FinalWork_BD_Test.Controllers
                 };
                 _context.UploadableDocuments.Add(uploadableDocument);
 
-                var directoryPath = $"{_documentsConfig.Value.UploadsPath}/{uploadableDocument.Type}";
+                var directoryPath = $"{_documentsConfig.Value.UploadsPath}{Path.DirectorySeparatorChar}{uploadableDocument.Type}";
                 if (!Directory.Exists(directoryPath))
                     Directory.CreateDirectory(directoryPath);
 
-                uploadableDocument.Path = $"{directoryPath}/{uploadableDocument.Id}_{uploadedDocument.FileName}";
+                uploadableDocument.Path = $"{directoryPath}{Path.DirectorySeparatorChar}{uploadableDocument.Id}_{uploadedDocument.FileName}";
 
 
                 using (var fileStream = new FileStream(uploadableDocument.Path, FileMode.Create))
