@@ -44,10 +44,10 @@ namespace FinalWork_BD_Test.Documents
 
             _fileName = $"{templateName}_{userProfile.SecondNameIP}_{userProfile.Id}.docx";
             
-            var templatePath = $"{_documentsConfig.Value.TemplatesPath}\\{templateName}\\{templateName}.docx";
-            var resultsPath = $"{_documentsConfig.Value.ResultsPath}\\{templateName}\\{_fileName}";
+            var templatePath = $"{_documentsConfig.Value.TemplatesPath}{Path.DirectorySeparatorChar}{templateName}{Path.DirectorySeparatorChar}{templateName}.docx";
+            var resultsPath = $"{_documentsConfig.Value.ResultsPath}{Path.DirectorySeparatorChar}{templateName}{Path.DirectorySeparatorChar}{_fileName}";
 
-            Directory.CreateDirectory($"{_documentsConfig.Value.ResultsPath}\\{templateName}\\");
+            Directory.CreateDirectory($"{_documentsConfig.Value.ResultsPath}{Path.DirectorySeparatorChar}{templateName}{Path.DirectorySeparatorChar}");
 
             MethodInfo methodInfo = typeof(Generator).GetMethod($"Generate{_contentNames[templateName]}Content", BindingFlags.NonPublic | BindingFlags.Static);
             Content content = (Content)methodInfo?.Invoke(null, new object[] { user });
