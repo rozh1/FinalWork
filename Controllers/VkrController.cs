@@ -107,7 +107,8 @@ namespace FinalWork_BD_Test.Controllers
             topic.Author = currentUser;
 
             _context.Entry(currentUser).Collection(cu => cu.UserProfiles).Load();
-            
+            _context.Entry(currentUser).Collection(cu => cu.StudentProfiles).Load();
+
             //var superVisorLp = userProfile.User.LecturerProfiles.FirstOrDefault(l => l.UpdatedByObj == null);
             var superVisorLp = _context.LecturerProfiles.FirstOrDefault(l =>
                 l.User.UserProfiles.FirstOrDefault(u => u.UpdatedByObj == null).Id == userProfile.Id);
@@ -119,6 +120,10 @@ namespace FinalWork_BD_Test.Controllers
             if (_context.Degrees.FirstOrDefault(d => d.Id == degree.Id)?.Name != "Магистр")
                 reviewerId = null;
 
+            // GEC Link
+            var student = currentUser.StudentProfiles.FirstOrDefault(up => up.UpdatedBy == null);
+            var gec = _context.GECs.FirstOrDefault(gec => gec.Group == student.Group);
+
             var vkr = new VKR()
             {
                 Topic = topic,
@@ -129,7 +134,8 @@ namespace FinalWork_BD_Test.Controllers
                 Year = year,
                 SemesterId = semester.Id,
                 ReviewerUPId = reviewerId,
-                DegreeId = degree.Id
+                DegreeId = degree.Id,
+                Gec = gec
             };
             
             if (prvVkr != null)

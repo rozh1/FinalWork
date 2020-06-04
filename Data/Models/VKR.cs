@@ -61,6 +61,9 @@ namespace FinalWork_BD_Test.Data.Models
         [DefaultValue(false)]
         public bool IsArchived { get; set; }
 
+        public Guid? GecId { get; set; }
+        [ForeignKey("GecId")]
+        public virtual GEC Gec { get; set; }
 
         public virtual ICollection<UploadableDocument> UploadableDocuments { get; set; }
 

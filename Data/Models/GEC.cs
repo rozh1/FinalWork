@@ -15,9 +15,21 @@ namespace FinalWork_BD_Test.Data.Models
     public class GEC : HistoricalModelBase<GEC>
     {
         // ToDo: move to separete table
-        [Required(ErrorMessage = "Введите номер специальности")]
-        [Display(Name = "Специальность")]
+        [Required(ErrorMessage = "Введите направление подготовки")]
+        [Display(Name = "Направление подготовки")]
         public string Specialty { get; set; }
+
+        [Required(ErrorMessage = "Введите профиль подготовки")]
+        [Display(Name = "Профиль подготовки")]
+        public string Profile { get; set; }
+
+        // ToDo: найти другой способ связи ГЭК и ВКР!
+        [Required(ErrorMessage = "Введите номер группы")]
+        [Display(Name = "Номер группы")]
+        [RegularExpression(@"[1-9 0]+",
+            ErrorMessage = "Номер группы должен содержать только цифры")]
+        [MaxLength(5)]
+        public string Group { get; set; }
 
         public Guid EducationFormId { get; set; }
         [ForeignKey("EducationFormId")]

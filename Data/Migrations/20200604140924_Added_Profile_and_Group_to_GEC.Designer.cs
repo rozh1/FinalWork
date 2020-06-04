@@ -3,15 +3,17 @@ using System;
 using FinalWork_BD_Test.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FinalWork_BD_Test.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200604140924_Added_Profile_and_Group_to_GEC")]
+    partial class Added_Profile_and_Group_to_GEC
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -640,9 +642,6 @@ namespace FinalWork_BD_Test.Migrations
                     b.Property<Guid?>("DegreeId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("GecId")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean");
 
@@ -678,8 +677,6 @@ namespace FinalWork_BD_Test.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DegreeId");
-
-                    b.HasIndex("GecId");
 
                     b.HasIndex("ReviewerUPId");
 
@@ -963,10 +960,6 @@ namespace FinalWork_BD_Test.Migrations
                     b.HasOne("FinalWork_BD_Test.Data.Models.Degree", "Degree")
                         .WithMany()
                         .HasForeignKey("DegreeId");
-
-                    b.HasOne("FinalWork_BD_Test.Data.Models.GEC", "Gec")
-                        .WithMany()
-                        .HasForeignKey("GecId");
 
                     b.HasOne("FinalWork_BD_Test.Data.Models.Profiles.ReviewerProfile", "ReviewerUP")
                         .WithMany()

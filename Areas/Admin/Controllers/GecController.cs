@@ -60,11 +60,11 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             {
                 ViewData["AcademicDegreeId"] =
                     new SelectList(_context.AcademicDegrees.AsNoTracking().AsEnumerable(), "Id",
-                        "Name"); //.Append(new SelectListItem("Отсутствует", "null", true));
+                        "Name").Append(new SelectListItem("Отсутствует", "null", true));
 
                 ViewData["AcademicTitleId"] =
                     new SelectList(_context.AcademicTitles.AsNoTracking().AsEnumerable(), "Id",
-                        "Name"); //.Append(new SelectListItem("Отсутствует", "null", true));
+                        "Name").Append(new SelectListItem("Отсутствует", "null", true));
             }
             else
             {
@@ -74,10 +74,10 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
                     .FirstOrDefault(g => g.Id == gecMemberId && g.UpdatedByObj == null && g.IsArchived == false);
 
                 ViewData["AcademicDegreeId"] = new SelectList(_context.AcademicDegrees.AsNoTracking().AsEnumerable(),
-                    "Id", "Name", memberProfile.AcademicDegree.Id);
+                    "Id", "Name", memberProfile?.AcademicDegree?.Id).Append(new SelectListItem("Отсутствует", "null", memberProfile?.AcademicDegree == null));
 
                 ViewData["AcademicTitleId"] = new SelectList(_context.AcademicTitles.AsNoTracking().AsEnumerable(),
-                    "Id", "Name", memberProfile.AcademicTitle.Id);
+                    "Id", "Name", memberProfile?.AcademicTitle?.Id).Append(new SelectListItem("Отсутствует", "null", memberProfile?.AcademicTitle == null));
             }
 
             ViewData["GecId"] = gecId;
@@ -124,9 +124,21 @@ namespace FinalWork_BD_Test.Areas.Admin.Controllers
             _context.GecMemberProfiles.Load();
             _context.GecMemberIntermediates.Load();
 
-            var membersProfiles = new SelectList(_context.GecMemberProfiles
-                .Where(mp => mp.UpdatedByObj == null && mp.IsArchived == false), 
-                "Id", "FirstNameIP");
+            Dictionary<Guid, string> dc = new Dictionary<Guid, string>();
+            foreach (var membersProfile in _context.GecMemberProfiles
+                .Include(rp => rp.AcademicTitle)
+                .Include(rp => rp.AcademicDegree)
+                .Where(mp => mp.UpdatedByObj == null && !mp.IsArchived))
+            {
+                dc.Add(membersProfile.Id, $"{membersProfile.AcademicTitle?.Name} {membersProfile.AcademicDegree?.Name} {membersProfile.SecondNameIP} {membersProfile.FirstNameIP[0]}.{membersProfile.MiddleNameIP?[0]}.");
+            }
+
+            var membersProfiles = new SelectList(dc, "Key", "Value");//.Append(new SelectListItem("", "null"));
+
+            //var membersProfiles = new SelectList(_context.GecMemberProfiles
+            //        .Where(mp => mp.UpdatedByObj == null && mp.IsArchived == false),
+            //    "Id", "FirstNameIP");
+
             ViewData["EducationFormId"] = new SelectList(_context.EducationForms, "Id", "Name");
 
             if (gec != null)
